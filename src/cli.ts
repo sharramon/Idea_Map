@@ -1,11 +1,9 @@
-import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Command } from 'commander';
 import { processSource } from './pipeline/process';
 import { generateGraph, openInBrowser } from './renderer/generate';
-
-dotenv.config();
+import { config, validateConfig } from './config';
 
 const program = new Command();
 
@@ -20,19 +18,17 @@ program
   .description('Process a text file through the two-pass LLM pipeline')
   .requiredOption('-f, --file <path>', 'Path to the diary/text file')
   .requiredOption('-t, --title <title>', 'Title for this source entry')
-  .option('-c, --conservatism <number>', 'Verifier conservatism 0.0–1.0 (default: 0.7)', parseFloat, 0.7)
-  .option('--extractor-model <model>', 'Extractor model', 'claude-sonnet-4-6')
-  .option('--verifier-model <model>', 'Verifier model', 'claude-haiku-4-5')
+  .option('-c, --conservatism <number>', 'Verifier conservatism 0.0–1.0', parseFloat, config.defaults.conservatism)
+  .option('--extractor-model <model>', 'Extractor model', config.models.extractor)
+  .option('--verifier-model <model>', 'Verifier model', config.models.verifier)
   .option('--dry-run', 'Preview extractions without writing to disk', false)
-  .option('-k, --api-key <key>', 'Anthropic API key (or set ANTHROPIC_API_KEY env var)')
+  .option('-k, --api-key <key>', 'Anthropic API key (overrides config)')
   .action(async opts => {
-    const apiKey = opts.apiKey || process.env.ANTHROPIC_API_KEY;
-    if (!apiKey) {
-      console.error(
-        'Error: Anthropic API key required.\n' +
-        '  Set ANTHROPIC_API_KEY in your environment or .env file,\n' +
-        '  or pass --api-key <key>',
-      );
+    const apiKeyOverride: string | undefined = opts.apiKey || undefined;
+
+    try {
+      validateConfig();
+    } catch {
       process.exit(1);
     }
 
@@ -49,7 +45,8 @@ program
     }
 
     try {
-      const result = await processSource(apiKey, rawText, opts.title, {
+      const result = await processSource(rawText, opts.title, {
+        apiKeyOverride,
         extractorModel: opts.extractorModel,
         verifierModel: opts.verifierModel,
         conservatism: opts.conservatism,

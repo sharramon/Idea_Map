@@ -1,4 +1,4 @@
-import Anthropic from '@anthropic-ai/sdk';
+import { LLMClient } from '../llm/client';
 import { Taxonomy } from '../types';
 import { ExtractorOutput } from './extractor';
 
@@ -35,17 +35,13 @@ function parseJsonArray(text: string): unknown[] {
 }
 
 export async function verifyEntries(
-  client: Anthropic,
+  client: LLMClient,
   proposed: ExtractorOutput[],
   taxonomy: Taxonomy,
   existingEntrySummaries: Array<{ id: string; core_idea: string }>,
   conservatism: number,
-  model: string,
 ): Promise<VerifierOutput[]> {
-  const systemPrompt = SYSTEM_PROMPT_TEMPLATE.replace(
-    'CONSERVATISM_LEVEL',
-    conservatism.toFixed(1),
-  );
+  const systemPrompt = SYSTEM_PROMPT_TEMPLATE.replace('CONSERVATISM_LEVEL', conservatism.toFixed(1));
 
   const userMessage = [
     '## Current Taxonomy',
@@ -60,15 +56,6 @@ export async function verifyEntries(
     JSON.stringify(proposed, null, 2),
   ].join('\n');
 
-  const response = await client.messages.create({
-    model,
-    max_tokens: 4096,
-    system: systemPrompt,
-    messages: [{ role: 'user', content: userMessage }],
-  });
-
-  const block = response.content[0];
-  if (block.type !== 'text') throw new Error('Unexpected non-text response from verifier');
-
-  return parseJsonArray(block.text) as VerifierOutput[];
+  const text = await client.complete(systemPrompt, userMessage, 4096);
+  return parseJsonArray(text) as VerifierOutput[];
 }

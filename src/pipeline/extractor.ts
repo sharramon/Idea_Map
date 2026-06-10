@@ -1,4 +1,4 @@
-import Anthropic from '@anthropic-ai/sdk';
+import { LLMClient } from '../llm/client';
 import { Taxonomy, Entry } from '../types';
 
 const SYSTEM_PROMPT = `You are a creative idea extractor. Analyze diary/journal text and extract every distinct, meaningful idea as a structured entry.
@@ -44,7 +44,6 @@ export interface ExtractorOutput {
 }
 
 function parseJsonArray(text: string): unknown[] {
-  // Strip markdown code fences if present
   const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/);
   const raw = fenced ? fenced[1].trim() : text.trim();
   const arrayMatch = raw.match(/\[[\s\S]*\]/);
@@ -53,11 +52,10 @@ function parseJsonArray(text: string): unknown[] {
 }
 
 export async function extractEntries(
-  client: Anthropic,
+  client: LLMClient,
   sourceText: string,
   taxonomy: Taxonomy,
   existingEntries: Entry[],
-  model: string,
 ): Promise<ExtractorOutput[]> {
   const existingSummary = existingEntries.length > 0
     ? JSON.stringify(existingEntries.map(e => ({ id: e.id, core_idea: e.core_idea })), null, 2)
@@ -65,15 +63,6 @@ export async function extractEntries(
 
   const userMessage = `## Taxonomy\n${JSON.stringify(taxonomy, null, 2)}\n\n## Existing Entries (do not duplicate)\n${existingSummary}\n\n## Source Text\n${sourceText}`;
 
-  const response = await client.messages.create({
-    model,
-    max_tokens: 4096,
-    system: SYSTEM_PROMPT,
-    messages: [{ role: 'user', content: userMessage }],
-  });
-
-  const block = response.content[0];
-  if (block.type !== 'text') throw new Error('Unexpected non-text response from extractor');
-
-  return parseJsonArray(block.text) as ExtractorOutput[];
+  const text = await client.complete(SYSTEM_PROMPT, userMessage, 4096);
+  return parseJsonArray(text) as ExtractorOutput[];
 }

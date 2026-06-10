@@ -1,7 +1,8 @@
-import Anthropic from '@anthropic-ai/sdk';
 import { readJson, writeJson } from '../data/store';
+import { createClient } from '../llm';
 import { extractEntries } from './extractor';
 import { verifyEntries } from './verifier';
+import { config } from '../config';
 import {
   Taxonomy, Source, SourcesFile, EntriesFile, Entry,
 } from '../types';
@@ -17,6 +18,7 @@ function generateId(prefix: string, existingIds: string[]): string {
 }
 
 export interface ProcessOptions {
+  apiKeyOverride?: string;
   extractorModel?: string;
   verifierModel?: string;
   conservatism?: number;
@@ -30,38 +32,35 @@ export interface ProcessResult {
 }
 
 export async function processSource(
-  apiKey: string,
   rawText: string,
   title: string,
   options: ProcessOptions = {},
 ): Promise<ProcessResult> {
   const {
-    extractorModel = 'claude-sonnet-4-6',
-    verifierModel = 'claude-haiku-4-5',
-    conservatism = 0.7,
+    apiKeyOverride,
+    extractorModel,
+    verifierModel,
+    conservatism = config.defaults.conservatism,
     dryRun = false,
   } = options;
 
-  const client = new Anthropic({ apiKey });
+  const extractorClient = createClient('extractor', { apiKey: apiKeyOverride, model: extractorModel });
+  const verifierClient  = createClient('verifier',  { apiKey: apiKeyOverride, model: verifierModel  });
 
-  const taxonomy = readJson<Taxonomy>('taxonomy.json');
-  const sourcesFile = readJson<SourcesFile>('sources.json');
-  const entriesFile = readJson<EntriesFile>('entries.json');
+  const taxonomy     = readJson<Taxonomy>('taxonomy.json');
+  const sourcesFile  = readJson<SourcesFile>('sources.json');
+  const entriesFile  = readJson<EntriesFile>('entries.json');
 
-  console.log(`\n[Extractor] Processing "${title}" (${rawText.length} chars) with ${extractorModel}...`);
-  const proposed = await extractEntries(
-    client, rawText, taxonomy, entriesFile.entries, extractorModel,
-  );
+  console.log(`\n[Extractor] Processing "${title}" (${rawText.length} chars)...`);
+  const proposed = await extractEntries(extractorClient, rawText, taxonomy, entriesFile.entries);
   console.log(`[Extractor] Proposed ${proposed.length} entries`);
 
   const existingSummaries = entriesFile.entries.map(e => ({ id: e.id, core_idea: e.core_idea }));
 
-  console.log(`[Verifier] Verifying with ${verifierModel} (conservatism: ${conservatism})...`);
-  const verified = await verifyEntries(
-    client, proposed, taxonomy, existingSummaries, conservatism, verifierModel,
-  );
+  console.log(`[Verifier] Verifying (conservatism: ${conservatism})...`);
+  const verified = await verifyEntries(verifierClient, proposed, taxonomy, existingSummaries, conservatism);
 
-  const unique = verified.filter(e => !e.is_duplicate);
+  const unique       = verified.filter(e => !e.is_duplicate);
   const duplicateCount = verified.length - unique.length;
   console.log(`[Verifier] ${unique.length} unique, ${duplicateCount} duplicate(s) skipped\n`);
 
@@ -72,9 +71,9 @@ export async function processSource(
   }
 
   const allSourceIds = sourcesFile.sources.map(s => s.id);
-  const sourceId = generateId('source', allSourceIds);
+  const sourceId     = generateId('source', allSourceIds);
 
-  const allEntryIds = entriesFile.entries.map(e => e.id);
+  const allEntryIds  = entriesFile.entries.map(e => e.id);
   const newEntries: Entry[] = unique.map(e => {
     const entryId = generateId('entry', allEntryIds);
     allEntryIds.push(entryId);
