@@ -78,8 +78,29 @@
     .legend {
       position: fixed; bottom: 16px; left: 16px; z-index: 10;
       background: #161b22; border: 1px solid #30363d; border-radius: 8px;
-      padding: 12px 16px; max-height: 220px; overflow-y: auto;
+      padding: 0; max-height: 220px; overflow: hidden;
+      min-width: 140px;
     }
+    .legend.legend-collapsed { max-height: none; }
+    .legend-header {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      padding: 8px 10px 8px 12px; border-bottom: 1px solid #30363d;
+    }
+    .legend.legend-collapsed .legend-header {
+      border-bottom: none; padding: 8px 10px; cursor: pointer;
+    }
+    .legend.legend-collapsed .legend-header:hover { background: #1c2128; }
+    .legend-header-label {
+      font-size: 10px; text-transform: uppercase; letter-spacing: 0.6px;
+      color: #8b949e; font-weight: 600;
+    }
+    #legend-toggle {
+      background: none; border: none; color: #8b949e; font-size: 16px; line-height: 1;
+      padding: 2px 6px; cursor: pointer; border-radius: 4px; min-width: 0;
+    }
+    #legend-toggle:hover { color: #c9d1d9; background: #21262d; }
+    .legend-body { padding: 12px 16px; overflow-y: auto; max-height: 180px; }
+    .legend.legend-collapsed .legend-body { display: none; }
     .legend-title { font-size: 10px; text-transform: uppercase; letter-spacing: 0.6px; color: #8b949e; margin-bottom: 8px; }
     .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #c9d1d9; margin-bottom: 5px; }
     .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
@@ -189,7 +210,7 @@
     });
 
     const legendEl = document.getElementById('legend');
-    legendEl.innerHTML =
+    const legendBodyHtml =
       '<div class="legend-title">Themes</div>' +
       GRAPH_DATA.themeClusters.map(t =>
         '<div class="legend-item">' +
@@ -200,6 +221,32 @@
       '<div class="legend-title" style="margin-top:10px">Nodes</div>' +
       '<div class="legend-item"><div class="legend-dot" style="background:#58a6ff"></div> Entry (circle)</div>' +
       '<div class="legend-item"><div class="legend-diamond"></div> Tag (diamond)</div>';
+    legendEl.innerHTML =
+      '<div class="legend-header" id="legend-header">' +
+        '<span class="legend-header-label" id="legend-header-label">Legend</span>' +
+        '<button type="button" id="legend-toggle" aria-label="Minimize legend" title="Minimize">−</button>' +
+      '</div>' +
+      '<div class="legend-body" id="legend-body">' + legendBodyHtml + '</div>';
+    const legendHeader = document.getElementById('legend-header');
+    const legendToggle = document.getElementById('legend-toggle');
+    const legendHeaderLabel = document.getElementById('legend-header-label');
+    function setLegendCollapsed(collapsed) {
+      legendEl.classList.toggle('legend-collapsed', collapsed);
+      legendToggle.textContent = collapsed ? '+' : '−';
+      legendToggle.setAttribute('aria-label', collapsed ? 'Expand legend' : 'Minimize legend');
+      legendToggle.title = collapsed ? 'Expand' : 'Minimize';
+      legendHeaderLabel.textContent = collapsed ? 'Legend · tap to expand' : 'Legend';
+    }
+    function toggleLegend() {
+      setLegendCollapsed(!legendEl.classList.contains('legend-collapsed'));
+    }
+    legendToggle.addEventListener('click', e => {
+      e.stopPropagation();
+      toggleLegend();
+    });
+    legendHeader.addEventListener('click', () => {
+      if (legendEl.classList.contains('legend-collapsed')) toggleLegend();
+    });
 
     const entryCount = GRAPH_DATA.nodes.filter(n => n.node_type === 'entry').length;
     const tagCount   = GRAPH_DATA.nodes.filter(n => n.node_type === 'tag').length;
