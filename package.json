@@ -6,6 +6,7 @@
     "build": "tsc",
     "cli": "ts-node src/cli.ts",
     "view": "ts-node src/cli.ts view",
+    "deploy": "ts-node src/cli.ts deploy --no-open",
     "process": "ts-node src/cli.ts process"
   },
   "dependencies": {

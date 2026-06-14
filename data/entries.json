@@ -216,6 +216,186 @@
         }
       },
       "related_entry_ids": []
+    },
+    {
+      "id": "entry_007",
+      "source_id": "source_006",
+      "core_idea": "The narrator contemplates the paradoxical nature of identity as an inescapable, infinite loop full of hidden depths and personal veils, expressing both familiarity and fear toward their own complex self.",
+      "evidence_excerpt": "Identity, the greatest lie of all. How can I see me from outside myself, when trying to get out leads me back to myself. To try and look at yourself is trying to escape the mobius strip by walking along it. Identity is an infinite trap... I know myself better than I know anybody, and the infinite alleys and curtains that branch and veil. I am afraid of the dark paths, that is why I have drawn curtains over them... Yet who but I can call myself by my own highest name? Who else can tread along these winding roads that split and crack and still comfortably call it home?",
+      "primary_theme": "identity",
+      "secondary_themes": [
+        "philosophy"
+      ],
+      "tags": [
+        "self_discovery",
+        "existential_questioning",
+        "concealment"
+      ],
+      "tag_rationales": {
+        "self_discovery": "The narrator explores multiple veiled and hidden aspects of self, indicating deep and ongoing self-knowledge pursuit.",
+        "existential_questioning": "The paradox of escaping oneself and the infinite trap metaphor reflect deep questions about existence and self.",
+        "concealment": "Fear of dark paths and drawing curtains over them suggests hiding or masking parts of the self."
+      },
+      "confidence": {
+        "primary_theme": 0.95,
+        "tags": {
+          "self_discovery": 0.9,
+          "existential_questioning": 0.9,
+          "concealment": 0.85
+        }
+      },
+      "tag_quality": {
+        "tags": {
+          "self_discovery": 0.9,
+          "existential_questioning": 0.9,
+          "concealment": 0.85
+        }
+      },
+      "related_entry_ids": []
+    },
+    {
+      "id": "entry_008",
+      "source_id": "source_007",
+      "core_idea": "The narrator uses the metaphor of learning to depict the creative process as a journey of discovery, refinement, and striving for shared understanding through art, emphasizing the aesthetic sensibility and gradual mastery involved.",
+      "evidence_excerpt": "Imagine a time before art where a person stumbled upon a brick... They decided this moment... started about capturing it... Then about how there seems to be a line of light on the edge of the darkest edges... One day as he is doing this someone will stop him and say ‘that’s not quite how a brick looks’. It is in this moment that the gap has been closed.",
+      "primary_theme": "creativity",
+      "secondary_themes": [
+        "learning"
+      ],
+      "tags": [
+        "inspiration",
+        "aesthetics",
+        "skill_building"
+      ],
+      "tag_rationales": {
+        "inspiration": "The creative impulse to capture and render the brick signifies the spark that drives artistic creation.",
+        "aesthetics": "The attention to form, light, and color relates to aesthetic sensibility.",
+        "skill_building": "The progression from rudimentary drawing to nuanced shading shows deliberate craft improvement."
+      },
+      "confidence": {
+        "primary_theme": 0.9,
+        "tags": {
+          "inspiration": 0.9,
+          "aesthetics": 0.9,
+          "skill_building": 0.85
+        }
+      },
+      "tag_quality": {
+        "tags": {
+          "inspiration": 0.9,
+          "aesthetics": 0.9,
+          "skill_building": 0.85
+        }
+      },
+      "related_entry_ids": []
+    },
+    {
+      "id": "entry_009",
+      "source_id": "source_008",
+      "core_idea": "The essay presents society as an artificial and malleable construction without absolute truths, emphasizing that social morals and systems are human-made and can be changed through conscious understanding.",
+      "evidence_excerpt": "Society is a construction. By a construction I mean to say that it carries two important qualities: it is artificial, and it is malleable. Society, being artificial, has no hard and fast truths; no absolute values. So all our morals, justice, and freedoms are all just constructs built on abstract nothings. So all of society is malleable, and nothing that is has to be that way. We can change it.",
+      "primary_theme": "observations",
+      "secondary_themes": [
+        "philosophy"
+      ],
+      "tags": [
+        "culture",
+        "social_systems",
+        "malleability"
+      ],
+      "tag_rationales": {
+        "culture": "Captures society as a shared context shaped by humans.",
+        "social_systems": "Emphasizes systemic nature of societal constructs.",
+        "malleability": "Highlights that society can be changed."
+      },
+      "confidence": {
+        "primary_theme": 0.95,
+        "tags": {
+          "culture": 0.9,
+          "social_systems": 0.9,
+          "malleability": 0.85
+        }
+      },
+      "tag_quality": {
+        "tags": {
+          "culture": 0.9,
+          "social_systems": 0.9,
+          "malleability": 0.85
+        }
+      },
+      "related_entry_ids": []
+    },
+    {
+      "id": "entry_010",
+      "source_id": "source_008",
+      "core_idea": "The narrative critiques modern societal pathologies such as bureaucratic complexity, loss of solid moralities, and attention marketization, advocating for systemic awareness and meta-understanding to better see and interact with the complex systems shaping our world.",
+      "evidence_excerpt": "The progress of science and economy has brought us this far ... But now the themes of the day are a loss of solid moralities, near kafkaesque nightmares of bureaucracy, and marketization of our own attention... The problem is that we need to figure out how to see and interact with the systems that make up our world.",
+      "primary_theme": "observations",
+      "secondary_themes": [
+        "philosophy"
+      ],
+      "tags": [
+        "technology",
+        "systemic_critique",
+        "meta_understanding"
+      ],
+      "tag_rationales": {
+        "technology": "Highlights role of internet and digital systems in societal issues.",
+        "systemic_critique": "Central to the critique of bureaucracy and societal dysfunction.",
+        "meta_understanding": "Emphasizes meta-game thinking and awareness of systems."
+      },
+      "confidence": {
+        "primary_theme": 0.9,
+        "tags": {
+          "technology": 0.8,
+          "systemic_critique": 0.9,
+          "meta_understanding": 0.85
+        }
+      },
+      "tag_quality": {
+        "tags": {
+          "technology": 0.8,
+          "systemic_critique": 0.9,
+          "meta_understanding": 0.85
+        }
+      },
+      "related_entry_ids": []
+    },
+    {
+      "id": "entry_011",
+      "source_id": "source_008",
+      "core_idea": "The essay argues for the importance of understanding and engaging in society-building as a meta-game, learning the hidden rules, cultural narratives, and strategic moves that shape social structures to meaningfully influence and better the world.",
+      "evidence_excerpt": "The full meta-game comes in when we go into society building. In the creation of societies there are moves that we can make, the creation of cultural heroes and villains, a central narrative, celebrations... Society and its beliefs have building blocks.",
+      "primary_theme": "philosophy",
+      "secondary_themes": [
+        "values"
+      ],
+      "tags": [
+        "culture",
+        "meta_game",
+        "society_building"
+      ],
+      "tag_rationales": {
+        "culture": "Reflects myths, narratives, and shared meaning shaping society.",
+        "meta_game": "Captures the concept of strategic understanding of society.",
+        "society_building": "Emphasizes active engagement in constructing social realities."
+      },
+      "confidence": {
+        "primary_theme": 0.9,
+        "tags": {
+          "culture": 0.85,
+          "meta_game": 0.9,
+          "society_building": 0.85
+        }
+      },
+      "tag_quality": {
+        "tags": {
+          "culture": 0.85,
+          "meta_game": 0.9,
+          "society_building": 0.85
+        }
+      },
+      "related_entry_ids": []
     }
   ]
 }

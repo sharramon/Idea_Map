@@ -24,13 +24,16 @@ export function tagOverlapRatio(a: string[], b: string[]): number {
  */
 export function entriesAreDistinct(a: VerifierOutput, b: VerifierOutput): boolean {
   const overlap = tagOverlapRatio(a.tags ?? [], b.tags ?? []);
-
-  if (overlap < 0.34) return true;
-  if (overlap >= 0.5) return false;
-
   const aCore = (a.core_idea ?? '').trim().toLowerCase();
   const bCore = (b.core_idea ?? '').trim().toLowerCase();
-  if (aCore && bCore && aCore !== bCore && overlap < 0.5) return true;
+  const differentCore = Boolean(aCore && bCore && aCore !== bCore);
+
+  if (overlap < 0.34) return true;
+
+  // Sibling splits from one source may share bridge tags — core_idea still separates them.
+  if (overlap >= 0.5) return differentCore;
+
+  if (differentCore) return true;
 
   if (a.primary_theme !== b.primary_theme && overlap === 0) return true;
 

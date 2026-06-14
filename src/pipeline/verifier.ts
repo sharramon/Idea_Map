@@ -2,7 +2,7 @@ import { LLMClient } from '../llm/client';
 import { Taxonomy } from '../types';
 import { ExtractorOutput, VerifierOutput, normalizeThemeCandidates, countQualifyingSplitThemes, qualifyingSplitThemeIds, OWN_ENTRY_CENTRALITY_THRESHOLD } from './classification';
 import { parseLlmJsonArray } from './parseLlmJson';
-import { MAX_SECONDARY_THEMES, MAX_TAGS_PER_ENTRY } from './scale';
+import { MAX_SECONDARY_THEMES, MAX_TAGS_PER_ENTRY, softMaxEntries } from './scale';
 
 const SYSTEM_PROMPT_TEMPLATE = `You are a semantic writing classification verifier.
 
@@ -41,7 +41,7 @@ Main workflow:
 5. For each final entry, assign one primary_theme.
 6. Only after primary_theme is established, check whether secondary_themes are needed.
 7. Only after themes are established, verify or assign tags.
-8. Finally, check semantic anchors, confidence, tag_quality, and duplicate status.
+8. Run the final tag check pass on every entry (see below) — then finalize confidence, tag_quality, and duplicate status.
 
 At every step, themes and tags must be reusable across many entries.
 
@@ -312,10 +312,18 @@ Use at most MAX_SECONDARY_THEMES.
 Tag verification:
 Only after primary_theme and secondary_themes are established, verify tags.
 
-tags = reusable motifs that distinguish this entry from nearby entries under the same theme.
+tags = reusable motifs that locate this entry on the map and connect it to similar ideas elsewhere.
 
 Tags should answer:
 “What recurring pattern would I want to find again later?”
+
+Sibling entries (same source):
+When this source yields 2+ final entries, they are sections of one essay — not unrelated map nodes.
+
+* Tags should distinguish an entry from **unrelated** entries elsewhere (other sources, other dates, other sustained threads).
+* Do NOT force artificial tag uniqueness between sibling sections of the same raw_text.
+* When a motif is central to multiple sections, **reuse the same tag id** on those sibling entries — tag bridges within one essay cluster are good.
+* Each sibling should still carry at least one tag reflecting what is **distinctive about that section**; the rest may be shared bridge tags.
 
 Keep 2–MAX_TAGS_PER_ENTRY tags with the highest map value.
 
@@ -353,6 +361,33 @@ Use a generic tag only when it is truly the best reusable motif for the entry.
 Prefer the most specific reusable motif that still applies across future entries.
 
 Prefer exact taxonomy ids when they fit. Propose a new reusable snake_case id only if no existing taxonomy id captures the motif.
+
+Final tag check pass (MANDATORY — run on every entry before returning JSON):
+After themes, splits, core_idea, and evidence_excerpt are finalized, pause and audit tags separately. Do NOT return until this pass is complete for every entry.
+
+For each final entry, in order:
+
+1. List the draft tags and ask: does each tag earn a place on the map, or is it essay vocabulary / a near-duplicate / redundant with primary_theme?
+2. Map to taxonomy first: if a taxonomy id (including aliases) captures ≥80% of the motif, REPLACE the draft tag with that id. Prefer existing taxonomy over novel ids.
+3. Bridge the corpus: when two labels are equally valid, prefer a tag id already used in existing stored entries, on **sibling entries from this same raw_text**, or elsewhere in this batch — the map should connect, not sprawl.
+4. Sibling tag pass: if returning 2+ entries from this source, scan all final entries together. Reuse shared bridge tags where the same motif is central to multiple sections. Do not invent synonym tags (e.g. society / culture / societal_change) when one taxonomy or batch id would link the cluster.
+5. Collapse near-duplicates within the entry: if two tags describe the same map neighborhood (e.g. constructs + culture + myths, or narratives + storytelling), keep the single best taxonomy id.
+6. Drop weak tags: tag_quality below 0.7 → reject or replace unless no better label exists.
+7. Mint new ids only when: no taxonomy id fits, the motif is reusable across future entries (not essay-specific jargon), and conservatism allows it.
+8. Normalize: every tag id must be snake_case (spaces and hyphens → underscores). No spaces in final ids.
+9. Trim to 2–MAX_TAGS_PER_ENTRY highest map-value tags after replacements. Re-write tag_rationales and re-score confidence.tags and tag_quality for the kept set only.
+
+Tag check rejections (replace or drop):
+* essay-specific vocabulary that is unlikely to recur (e.g. one essay's section heading as a tag)
+* synonyms of an existing taxonomy id or alias
+* tags redundant with each other in the same entry
+* tags redundant with primary_theme (theme already locates the entry; tag must add discriminating motif)
+* malformed ids (spaces, Title Case, prose phrases)
+
+Conservatism level: CONSERVATISM_LEVEL (0.0–1.0) — controls willingness to create new taxonomy tag ids during the tag check pass.
+* ≥0.7 (default): strongly prefer taxonomy; new ids only when clearly necessary and highly reusable.
+* 0.4–0.6: balanced; new ids when taxonomy is a poor fit.
+* ≤0.3: more willing to mint new reusable motifs.
 
 Centrality rule:
 A theme or tag should be used only if it describes the central function of the final entry.
@@ -406,8 +441,6 @@ Confidence:
 * Use 0.65–0.84 when reasonable but debatable.
 * Use below 0.65 only when weak or uncertain.
 * Never assign the same confidence to every label unless genuinely justified.
-
-Conservatism level: CONSERVATISM_LEVEL (0.0–1.0) — controls willingness to create new taxonomy tag ids.
 
 Return ONLY a valid JSON array. Output length may differ from proposed count after split/merge/reject.
 
@@ -488,6 +521,7 @@ export async function verifyEntries(
     'Proposed entries below are recall-oriented hypotheses — likely over-split. Do NOT rubber-stamp.',
     'Re-derive theme ontology from raw_text first. Merge aggressively when proposals are facets of one essay.',
     'Split when hard split rule applies (≥2 themes at centrality ≥ threshold with distinct evidence).',
+    'Before returning: run the final tag check pass on every entry — prefer taxonomy ids, bridge to tags already in the corpus, reuse shared tags across sibling entries from this source, collapse near-duplicates, normalize to snake_case.',
     '',
     '## Scale',
     `Source length: ${wordCount} words`,
@@ -505,6 +539,14 @@ export async function verifyEntries(
       ? [
           `[Merge check] Extractor proposed ${proposed.length} entries — verify each has a distinct ontological center in raw_text.`,
           'Merge if they are rhetorical movements, tone shifts, or generic-theme relabelings of one essay answering one prompt.',
+        ]
+      : []),
+    ...(proposed.length < targetCount && wordCount >= 2000
+      ? [
+          `[Under-proposal check] Extractor returned ${proposed.length} but baseline for ${wordCount} words is ~${targetCount} (soft max ~${softMaxEntries(wordCount, targetCount)}).`,
+          'Perform your own split check from raw_text. Long essays with multiple sustained sections should not collapse into 1–2 catch-all entries.',
+          'Split when sections answer "what is this about?" differently — e.g. construction thesis vs historical critique vs meta-game vs subjectivity vs prescription.',
+          'Do NOT merge distinct sections just because they share observations/philosophy as generic primary labels.',
         ]
       : []),
     '',

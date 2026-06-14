@@ -857,15 +857,34 @@ function buildHtml(data: GraphData): string {
 </html>`;
 }
 
-export function generateGraph(themeFilter?: string): string {
-  const data = getGraph(themeFilter);
-  const html = buildHtml(data);
+function writeGraphOutputs(html: string): { distPath: string; sitePath: string } {
+  const distDir = path.join(__dirname, '../../dist');
+  const docsDir = path.join(__dirname, '../../docs');
+  fs.mkdirSync(distDir, { recursive: true });
+  fs.mkdirSync(docsDir, { recursive: true });
 
-  const outDir = path.join(__dirname, '../../dist');
-  fs.mkdirSync(outDir, { recursive: true });
-  const outPath = path.join(outDir, 'graph.html');
-  fs.writeFileSync(outPath, html, 'utf-8');
-  return outPath;
+  const distPath = path.join(distDir, 'graph.html');
+  const sitePath = path.join(docsDir, 'index.html');
+  fs.writeFileSync(distPath, html, 'utf-8');
+  fs.writeFileSync(sitePath, html, 'utf-8');
+  fs.writeFileSync(path.join(docsDir, '.nojekyll'), '', 'utf-8');
+  return { distPath, sitePath };
+}
+
+export function generateGraph(themeFilter?: string): string {
+  const html = buildHtml(getGraph(themeFilter));
+  return writeGraphOutputs(html).distPath;
+}
+
+/** Build dist/graph.html and docs/index.html for GitHub Pages. */
+export function publishSite(themeFilter?: string): { distPath: string; sitePath: string } {
+  const html = buildHtml(getGraph(themeFilter));
+  return writeGraphOutputs(html);
+}
+
+export function githubPagesUrl(repo = 'sharramon/Idea_Map'): string {
+  const [owner, name] = repo.split('/');
+  return `https://${owner.toLowerCase()}.github.io/${name}/`;
 }
 
 export function openInBrowser(filePath: string): void {

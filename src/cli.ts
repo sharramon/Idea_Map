@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Command } from 'commander';
 import { processSource, DuplicateSourceError } from './pipeline/process';
-import { generateGraph, openInBrowser } from './renderer/generate';
+import { generateGraph, publishSite, githubPagesUrl, openInBrowser } from './renderer/generate';
 import { config, validateConfig } from './config';
 
 const program = new Command();
@@ -88,6 +88,30 @@ program
       }
     } catch (err) {
       console.error('View failed:', err instanceof Error ? err.message : err);
+      process.exit(1);
+    }
+  });
+
+// ─── deploy ──────────────────────────────────────────────────────────────────
+program
+  .command('deploy')
+  .description('Build docs/index.html for GitHub Pages (phone-friendly URL after push)')
+  .option('--theme <themeId>', 'Filter to a specific theme id')
+  .option('--no-open', 'Generate site files without opening the browser')
+  .action(opts => {
+    try {
+      const { distPath, sitePath } = publishSite(opts.theme);
+      console.log(`Local graph:  ${distPath}`);
+      console.log(`Site bundle:  ${sitePath}`);
+      console.log(`\nAfter push + GitHub Pages deploy, open on your phone:`);
+      console.log(`  ${githubPagesUrl()}`);
+      console.log('\nPrivacy: the site embeds full diary text. Use a private GitHub repo.');
+      console.log('Push to main, then enable Pages: Settings → Pages → Source: GitHub Actions.');
+      if (opts.open !== false) {
+        openInBrowser(sitePath);
+      }
+    } catch (err) {
+      console.error('Deploy build failed:', err instanceof Error ? err.message : err);
       process.exit(1);
     }
   });

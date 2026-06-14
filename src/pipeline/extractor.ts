@@ -1,6 +1,6 @@
 import { LLMClient } from '../llm/client';
 import { Taxonomy, Entry } from '../types';
-import { MAX_SECONDARY_THEMES } from './scale';
+import { MAX_SECONDARY_THEMES, softMaxEntries } from './scale';
 import { parseLlmJsonArray } from './parseLlmJson';
 import { ExtractorOutput, OWN_ENTRY_CENTRALITY_THRESHOLD } from './classification';
 
@@ -237,10 +237,18 @@ Use at most MAX_SECONDARY_THEMES.
 Tag pass:
 Only after primary_theme and secondary_themes are established, assign tags.
 
-tags = reusable motifs that distinguish this entry from nearby entries under the same theme.
+tags = reusable motifs that locate this entry on the map and connect it to similar ideas elsewhere.
 
 Tags should answer:
 “What recurring pattern would I want to find again later?”
+
+Sibling entries (same source):
+When this source yields 2+ JSON array entries, they are sections of one essay — not unrelated map nodes.
+
+* Tags should distinguish an entry from **unrelated** entries elsewhere (other sources, other dates, other sustained threads).
+* Do NOT force artificial tag uniqueness between sibling sections of the same source.
+* When a motif is central to multiple sections, **reuse the same tag id** on those sibling entries — tag bridges within one essay cluster are good.
+* Each sibling should still carry at least one tag reflecting what is **distinctive about that section**; the rest may be shared bridge tags.
 
 Good tags are reusable but specific enough to be useful.
 
@@ -361,6 +369,23 @@ function buildScaleUserMessage(wordCount: number, targetCount: number): string[]
     lines.push(
       `Split check: if source-level scan finds ≥2 distinct themes with centrality ≥${OWN_ENTRY_CENTRALITY_THRESHOLD}, return 2+ JSON array entries (each must have should_be_own_entry: true).`,
       'Do NOT list qualifying themes only inside theme_candidates on a single object.',
+    );
+  }
+
+  if (wordCount >= 1200 && wordCount < 2500) {
+    lines.push(
+      `Medium source: baseline ~${targetCount} entries. Scan for sustained section shifts (different answers to "what is this about?").`,
+      `If ≥2 themes reach centrality ≥${OWN_ENTRY_CENTRALITY_THRESHOLD}, return separate JSON array entries — not one object with many theme_candidates.`,
+    );
+  }
+
+  if (wordCount >= 2500) {
+    const softMax = softMaxEntries(wordCount, targetCount);
+    lines.push(
+      `Long source (${wordCount} words): propose at least ${targetCount} entries; recall mode may propose up to ~${softMax} when sections have distinct ontological centers.`,
+      'Typical splits: historical survey vs systemic critique vs meta-game/prescription vs philosophical digression vs closing vision — when each could recur as its own map node.',
+      'Do NOT collapse the whole essay into 1–2 catch-all summaries. Prefer over-proposing; verifier merges if too fine.',
+      `Hard split bias: themes at centrality ≥${OWN_ENTRY_CENTRALITY_THRESHOLD} with distinct evidence → separate JSON entries with should_be_own_entry: true.`,
     );
   }
 
