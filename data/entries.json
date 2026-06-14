@@ -1,1 +1,221 @@
-{ "entries": [] }
+{
+  "entries": [
+    {
+      "id": "entry_001",
+      "source_id": "source_001",
+      "core_idea": "The narrator reflects on self-identity through the lens of what they are not, revealing a deep fear of rejection and a struggle with honesty and authenticity, while tracing these feelings back to childhood experiences and the desire to live a genuine life.",
+      "evidence_excerpt": "I’m not honest, but I try my best to be genuine... I think the main, or perhaps only reason people lie is because they’re afraid... Maybe I’m afraid of being dropped, of people finding out that I’m some sort of failure... Those moments when I returned home with a bad grade and had to then endure hours of being shouted at... I think I like this answer to this prompt. I am not an ostrich.",
+      "primary_theme": "identity",
+      "secondary_themes": [
+        "emotions",
+        "values"
+      ],
+      "tags": [
+        "self_discovery",
+        "fear_of_rejection",
+        "vulnerability",
+        "authenticity"
+      ],
+      "tag_rationales": {
+        "self_discovery": "The narrator engages in introspection and learning about their own fears and values.",
+        "fear_of_rejection": "Fear of social rejection motivates much of the narrator’s inner conflict.",
+        "vulnerability": "The openness about fear and dishonesty illustrates a willingness to be emotionally exposed.",
+        "authenticity": "The narrator’s desire to live genuinely despite their fears underscores this key motif."
+      },
+      "confidence": {
+        "primary_theme": 0.95,
+        "tags": {
+          "self_discovery": 0.9,
+          "fear_of_rejection": 0.9,
+          "vulnerability": 0.85,
+          "authenticity": 0.85
+        }
+      },
+      "tag_quality": {
+        "tags": {
+          "self_discovery": 0.9,
+          "fear_of_rejection": 0.9,
+          "vulnerability": 0.85,
+          "authenticity": 0.85
+        }
+      },
+      "related_entry_ids": []
+    },
+    {
+      "id": "entry_002",
+      "source_id": "source_002",
+      "core_idea": "The narrator reflects on a personal identity transition marked by the end of a chapter defined by resilience, anger, and coping mechanisms, now replaced by emptiness, coldness, and existential questioning.",
+      "evidence_excerpt": "I had been closing a chapter in my life. One written by wanting to be myself in a world that seemed perversely interested in finding ways to kick me down... I felt empty, hopelessly weighed down by all these self-made structures that no one could understand. The driving force of anger had burned to nothing, leaving me cold. Why was I here? Who was to blame? I hated it all.",
+      "primary_theme": "identity",
+      "secondary_themes": [
+        "emotions",
+        "values"
+      ],
+      "tags": [
+        "self_discovery",
+        "disillusionment",
+        "existential_questioning"
+      ],
+      "tag_rationales": {
+        "self_discovery": "The narrator is exploring and re-evaluating their self-identity.",
+        "disillusionment": "Expressed through loss of purpose and frustration with self-made defenses.",
+        "existential_questioning": "Underlying questions about purpose and existence are central to the reflection."
+      },
+      "confidence": {
+        "primary_theme": 0.95,
+        "tags": {
+          "self_discovery": 0.9,
+          "disillusionment": 0.9,
+          "existential_questioning": 0.85
+        }
+      },
+      "tag_quality": {
+        "tags": {
+          "self_discovery": 0.9,
+          "disillusionment": 0.9,
+          "existential_questioning": 0.85
+        }
+      },
+      "related_entry_ids": []
+    },
+    {
+      "id": "entry_004",
+      "source_id": "source_002",
+      "core_idea": "The narrator explores relational dynamics through intimate conversation about empathy, sympathy, and vulnerability, reflecting on the difficulties of truly connecting and the desire to alleviate isolation.",
+      "evidence_excerpt": "We had talked about empathy and sympathy... To understand one person IS to sympathize with them!... I explained that to understand doesn’t mean that you sympathize... Yet we can hate ourselves... Because then no one would have to feel hopelessly isolated.",
+      "primary_theme": "relationships",
+      "secondary_themes": [
+        "emotions"
+      ],
+      "tags": [
+        "vulnerability",
+        "communication"
+      ],
+      "tag_rationales": {
+        "vulnerability": "Implied by openness required for such intimate conversations.",
+        "communication": "The entry focuses on their dialogue and exchange of ideas."
+      },
+      "confidence": {
+        "primary_theme": 0.9,
+        "tags": {
+          "vulnerability": 0.8,
+          "communication": 0.8
+        }
+      },
+      "tag_quality": {
+        "tags": {
+          "vulnerability": 0.8,
+          "communication": 0.8
+        }
+      },
+      "related_entry_ids": []
+    },
+    {
+      "id": "entry_003",
+      "source_id": "source_003",
+      "core_idea": "The narrator reflects on a persistent, intimate internal dialogue with an existential question that has accompanied them for over a decade, driving deep philosophical inquiry about life’s meaning, purpose, and the value of existence, shaping their worldview and moral understanding over time.",
+      "evidence_excerpt": "I wonder if there has been a single day in the past decade where you have not taken up at least some corner of my thoughts... One frenchman even said “There is only one really serious philosophical question, and that is suicide.” ... Remember that time when I thought that life was about what you can leave behind?... I really did read too much fantasy back in the day... I had a stage where I thought life was about hope ...",
+      "primary_theme": "philosophy",
+      "secondary_themes": [
+        "values",
+        "emotions"
+      ],
+      "tags": [
+        "existential_questioning",
+        "purpose",
+        "moral_idealism"
+      ],
+      "tag_rationales": {
+        "existential_questioning": "The narrator wrestles continuously with the fundamental question of life’s worth and meaning.",
+        "purpose": "The narrative explores changing ideas about what makes life meaningful and worth living.",
+        "moral_idealism": "Reflection on living according to ideals such as hope, kindness, and helping others informs moral questioning."
+      },
+      "confidence": {
+        "primary_theme": 0.95,
+        "tags": {
+          "existential_questioning": 0.95,
+          "purpose": 0.85,
+          "moral_idealism": 0.8
+        }
+      },
+      "tag_quality": {
+        "tags": {
+          "existential_questioning": 0.95,
+          "purpose": 0.85,
+          "moral_idealism": 0.8
+        }
+      },
+      "related_entry_ids": []
+    },
+    {
+      "id": "entry_005",
+      "source_id": "source_004",
+      "core_idea": "Individual identity and reality are fundamentally shaped by one’s thoughts and perceptions, meaning each person creates their own internal world that defines their sense of self and how they interpret the external world.",
+      "evidence_excerpt": "The person is defined by what they think and why they think it. ... As an extension of this thought, it would be fair to think that the idea is the world. The world is defined by what we think regardless of how the world itself is arranged. ... Every mind is a world for the world is in the eyes of the beholder.",
+      "primary_theme": "identity",
+      "secondary_themes": [
+        "observations"
+      ],
+      "tags": [
+        "self_discovery",
+        "mind_over_matter",
+        "perception"
+      ],
+      "tag_rationales": {
+        "self_discovery": "Highlights the process of understanding how one's thoughts define personal identity.",
+        "mind_over_matter": "Emphasizes the concept that thought shapes the experience of the world.",
+        "perception": "Focuses on the role of individual perception in creating personal realities."
+      },
+      "confidence": {
+        "primary_theme": 0.9,
+        "tags": {
+          "self_discovery": 0.9,
+          "mind_over_matter": 0.85,
+          "perception": 0.85
+        }
+      },
+      "tag_quality": {
+        "tags": {
+          "self_discovery": 0.9,
+          "mind_over_matter": 0.85,
+          "perception": 0.85
+        }
+      },
+      "related_entry_ids": []
+    },
+    {
+      "id": "entry_006",
+      "source_id": "source_005",
+      "core_idea": "The narrator reflects on the profound challenge of truly expressing their unique inner world through language and art, revealing a deep yearning to be genuinely known and to understand others beyond superficial interactions.",
+      "evidence_excerpt": "'How limited our means to do this. All language and art can't cover our whole existence. For my thoughts create a world, and your thoughts your world... I want to be known. I do so very want to be seen. I do so very want to see.'",
+      "primary_theme": "identity",
+      "secondary_themes": [],
+      "tags": [
+        "self_discovery",
+        "vulnerability",
+        "authenticity"
+      ],
+      "tag_rationales": {
+        "self_discovery": "The narrator examines their own identity and the desire to understand and be understood.",
+        "vulnerability": "Expressed by the openness and fear involved in revealing one's inner world.",
+        "authenticity": "The longing to be genuinely seen beyond superficial masks."
+      },
+      "confidence": {
+        "primary_theme": 0.95,
+        "tags": {
+          "self_discovery": 0.9,
+          "vulnerability": 0.85,
+          "authenticity": 0.85
+        }
+      },
+      "tag_quality": {
+        "tags": {
+          "self_discovery": 0.9,
+          "vulnerability": 0.85,
+          "authenticity": 0.85
+        }
+      },
+      "related_entry_ids": []
+    }
+  ]
+}

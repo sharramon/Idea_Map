@@ -25,6 +25,7 @@ export interface Source {
   title: string;
   summary: string;
   raw_text: string;
+  content_hash: string;
   child_entry_ids: string[];
 }
 
@@ -32,19 +33,28 @@ export interface SourcesFile {
   sources: Source[];
 }
 
+export interface ThemeCandidate {
+  theme: string;
+  evidence_excerpt: string;
+  centrality: number;
+  reason: string;
+  should_be_own_entry: boolean;
+}
+
 export interface Entry {
   id: string;
   source_id: string;
+  core_idea: string;
+  evidence_excerpt: string;
   primary_theme: string;
   secondary_themes: string[];
   tags: string[];
-  core_idea: string;
-  expanded_summary: string;
-  source_excerpt: string;
-  source_start_char: number;
-  source_end_char: number;
+  tag_rationales: Record<string, string>;
   confidence: {
     primary_theme: number;
+    tags: Record<string, number>;
+  };
+  tag_quality: {
     tags: Record<string, number>;
   };
   related_entry_ids: string[];
@@ -93,11 +103,26 @@ export interface AnchorsFile {
 export interface GraphNode {
   id: string;
   label: string;
-  theme: string;
-  tags: string[];
+  node_type: 'entry' | 'tag';
+  theme?: string;        // primary theme id — only for entry nodes
+  secondary_themes?: string[];
+  tags?: string[];
+  core_idea?: string;
+  evidence_excerpt?: string;
+  source_id?: string;
   connectionCount: number;
-  core_idea: string;
-  expanded_summary: string;
+}
+
+export interface GraphSourceMeta {
+  id: string;
+  title: string;
+  created_at: string;
+  raw_text: string;
+}
+
+export interface GraphThemeCluster {
+  id: string;
+  name: string;
 }
 
 export interface GraphEdge {
@@ -113,4 +138,6 @@ export interface GraphData {
   nodes: GraphNode[];
   edges: GraphEdge[];
   themes: Theme[];
+  themeClusters: GraphThemeCluster[];
+  sources: Record<string, GraphSourceMeta>;
 }

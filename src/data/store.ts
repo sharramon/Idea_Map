@@ -8,7 +8,8 @@ export function readJson<T>(filename: string): T {
   if (!fs.existsSync(filepath)) {
     throw new Error(`Data file not found: ${filepath}\nRun from the project root.`);
   }
-  return JSON.parse(fs.readFileSync(filepath, 'utf-8')) as T;
+  const raw = fs.readFileSync(filepath, 'utf-8').replace(/^\uFEFF/, '');
+  return JSON.parse(raw) as T;
 }
 
 export function writeJson<T>(filename: string, data: T): void {

@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { Command } from 'commander';
-import { processSource } from './pipeline/process';
+import { processSource, DuplicateSourceError } from './pipeline/process';
 import { generateGraph, openInBrowser } from './renderer/generate';
 import { config, validateConfig } from './config';
 
@@ -22,6 +22,7 @@ program
   .option('--extractor-model <model>', 'Extractor model', config.models.extractor)
   .option('--verifier-model <model>', 'Verifier model', config.models.verifier)
   .option('--dry-run', 'Preview extractions without writing to disk', false)
+  .option('--reprocess', 'Delete previous analysis of this text and re-run', false)
   .option('-k, --api-key <key>', 'Anthropic API key (overrides config)')
   .action(async opts => {
     const apiKeyOverride: string | undefined = opts.apiKey || undefined;
@@ -51,6 +52,7 @@ program
         verifierModel: opts.verifierModel,
         conservatism: opts.conservatism,
         dryRun: opts.dryRun,
+        reprocess: opts.reprocess,
       });
 
       if (!opts.dryRun && result.source) {
@@ -61,6 +63,11 @@ program
         console.log('\nRun `npm run view` to see your updated map.');
       }
     } catch (err) {
+      if (err instanceof DuplicateSourceError) {
+        console.error(`Already processed: ${err.message}`);
+        console.error('Use --reprocess to delete the previous analysis and run again.');
+        process.exit(1);
+      }
       console.error('Processing failed:', err instanceof Error ? err.message : err);
       process.exit(1);
     }
@@ -95,7 +102,7 @@ program
       const { readJson } = require('./data/store');
       const { EntriesFile } = require('./types');
       // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const { entries } = readJson('entries.json') as { entries: Array<{ id: string; primary_theme: string; core_idea: string; tags: string[] }> };
+      const { entries } = readJson('entries.json') as { entries: Array<{ id: string; primary_theme: string; tags: string[] }> };
       const filtered = opts.theme
         ? entries.filter((e: { primary_theme: string }) => e.primary_theme === opts.theme)
         : entries;
@@ -105,9 +112,9 @@ program
         return;
       }
 
-      filtered.forEach((e: { id: string; primary_theme: string; core_idea: string; tags: string[] }) => {
-        console.log(`[${e.id}] (${e.primary_theme}) ${e.core_idea}`);
-        if (e.tags.length > 0) console.log(`  tags: ${e.tags.join(', ')}`);
+      filtered.forEach((e: { id: string; primary_theme: string; tags: string[]; core_idea?: string }) => {
+        const idea = e.core_idea ? `\n    ${e.core_idea}` : '';
+        console.log(`[${e.id}] (${e.primary_theme}) ${e.tags.join(', ')}${idea}`);
       });
       console.log(`\n${filtered.length} entries total`);
     } catch (err) {

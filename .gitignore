@@ -1,5 +1,7 @@
 CLAUDE.md
 node_modules/
 dist/
+diary/
 .env
+keys.txt
 *.js.map
