@@ -1,4 +1,4 @@
-import { VerifierOutput, combinedTagScore, entryHasRequiredAnchors } from './classification';
+import { VerifierOutput, combinedTagScore, entryHasRequiredAnchors, countQualifyingSplitThemes } from './classification';
 import {
   HIGH_CONFIDENCE_THRESHOLD,
   EXTRA_ENTRY_STRONG_SCORE,
@@ -38,6 +38,13 @@ export function entriesAreDistinct(a: VerifierOutput, b: VerifierOutput): boolea
   if (a.primary_theme !== b.primary_theme && overlap === 0) return true;
 
   return false;
+}
+
+/** Verifier returned 2+ entries with evidence of a real split (not just extractor noise). */
+export function hasStrongSplitCase(entries: VerifierOutput[]): boolean {
+  if (entries.length < 2) return false;
+  if (countQualifyingSplitThemes(entries) >= 2) return true;
+  return new Set(entries.map(e => e.primary_theme)).size >= 2;
 }
 
 export function averageTagScore(entry: VerifierOutput): number {
@@ -90,6 +97,11 @@ export function capRankScore(entry: VerifierOutput): number {
   return Math.max(0, Math.min(1, score));
 }
 
+export interface FlexibleCapOptions {
+  /** Verifier confirmed ≥2 distinct central themes — relax word-count ceiling and score bar. */
+  strongSplitConfirmed?: boolean;
+}
+
 /**
  * Keep the best baseline entries, then allow extras up to soft/hard caps only when strong and distinct.
  */
@@ -97,14 +109,25 @@ export function applyFlexibleCap(
   entries: VerifierOutput[],
   target: number,
   wordCount: number,
+  options: FlexibleCapOptions = {},
 ): {
   kept: VerifierOutput[];
   dropped: number;
   keptExtra: number;
   droppedThin: number;
 } {
-  const softMax = softMaxEntries(wordCount, target);
-  const hardMax = hardMaxEntries(wordCount, target);
+  const { strongSplitConfirmed = false } = options;
+  let softMax = softMaxEntries(wordCount, target);
+  let hardMax = hardMaxEntries(wordCount, target);
+
+  if (strongSplitConfirmed) {
+    const splitFloor = Math.min(
+      entries.length,
+      Math.max(2, countQualifyingSplitThemes(entries)),
+    );
+    softMax = Math.max(softMax, splitFloor);
+    hardMax = Math.max(hardMax, splitFloor);
+  }
 
   if (entries.length <= target) {
     return { kept: entries, dropped: 0, keptExtra: 0, droppedThin: 0 };
@@ -113,6 +136,7 @@ export function applyFlexibleCap(
   const sorted = [...entries].sort((a, b) => capRankScore(b) - capRankScore(a));
   const kept: VerifierOutput[] = [];
   let droppedThin = 0;
+  const strongExtraBar = strongSplitConfirmed ? HIGH_CONFIDENCE_THRESHOLD : EXTRA_ENTRY_STRONG_SCORE;
 
   for (const entry of sorted) {
     if (kept.length >= hardMax) continue;
@@ -129,11 +153,14 @@ export function applyFlexibleCap(
     const thin = isThinEntry(entry);
 
     if (kept.length >= softMax) {
-      if (score < EXTRA_ENTRY_STRONG_SCORE || thin) {
+      if (score < strongExtraBar || (!strongSplitConfirmed && thin)) {
         if (thin) droppedThin++;
         continue;
       }
-    } else if (score < HIGH_CONFIDENCE_THRESHOLD || (thin && score < EXTRA_ENTRY_STRONG_SCORE)) {
+    } else if (
+      score < HIGH_CONFIDENCE_THRESHOLD ||
+      (!strongSplitConfirmed && thin && score < EXTRA_ENTRY_STRONG_SCORE)
+    ) {
       if (thin) droppedThin++;
       continue;
     }

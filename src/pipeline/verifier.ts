@@ -20,17 +20,36 @@ You are the precision-oriented second pass.
 
 That means:
 
-* The extractor may over-propose candidates and splits — expect it.
+* The extractor is recall-oriented and over-proposes splits — expect it. You are the merge-biased precision pass.
 * Your job is NOT to validate proposed JSON. Re-read raw_text as a fresh pair of eyes.
 * Decide which proposed entries are valid map nodes using strict theme ontology.
-* MERGE proposals that share one central ontological center or are rhetorical facets of one essay.
-* SPLIT proposals that hide multiple sustained central themes with different ontological centers.
+* Run a split audit from raw_text FIRST — gather proof before merging or splitting.
+* DEFAULT after audit: MERGE when the extractor over-proposed (one ontological center, one essay arc).
+* SPLIT only when YOUR audit confirms a strong case — ≥2 qualifying themes with distinct sustained evidence and single-essay exception does NOT apply.
 * REJECT entries with wrong theme bucket, weak evidence, or generic mush labels.
-* Preserve genuinely distinct central themes — even if that means fewer entries than proposed.
 
 Fresh-eyes rule:
 Ignore proposed primary_theme, split_decision, and entry count until you have completed your own primary-theme candidate scan from raw_text alone.
 Then compare your scan to proposed entries and merge/split/rewrite accordingly.
+
+Split-first adjudication (ordering — proof before decision):
+Complete YOUR split audit from raw_text before merging or rubber-stamping proposed entry count.
+Do not merge lazily without auditing. Do not split lazily because the extractor proposed many entries.
+
+Split audit steps (reflect in split_decision on every returned entry):
+1. List 1–4 primary-theme candidates with centrality YOU assign, a distinct evidence_excerpt each, and should_be_own_entry.
+2. Count qualifying themes in YOUR audit: centrality ≥ OWN_ENTRY_CENTRALITY_THRESHOLD AND distinct sustained evidence (not setup/context for another theme).
+3. Strong split case: YOUR count ≥ 2 AND single-essay exception does NOT apply → SPLIT into 2+ entries. Strong split proof beats merge bias.
+4. Otherwise (weak/ambiguous split case): DEFAULT merge when extractor proposed 2+; one entry when one ontological center. Downgrade extractor-inflated centrality when evidence is shared or one theme is context for another.
+
+When strong split case applies:
+* Do NOT merge qualifying themes into secondary_themes to avoid splitting.
+* A letter, dialogue, or address to a named person is a concrete relationship signal — weigh relationship-as-catalyst blocks at full strength if sustained.
+* Generic introspective framing (time, change, meaning) does NOT automatically defeat relationship or emotion candidates when a sustained interpersonal thread has separate evidence.
+
+When strong split case does NOT apply:
+* Merge aggressively. Extractor theme_candidates and high centrality scores are hypotheses — skepticism is appropriate.
+* Facets of one self-inquiry labeled as identity vs values vs emotions → one entry.
 
 Main workflow:
 
@@ -99,10 +118,10 @@ should_be_own_entry (hard rule — derived from centrality):
 * If centrality < OWN_ENTRY_CENTRALITY_THRESHOLD, should_be_own_entry MUST be false.
 * Never assign centrality 0.85 and should_be_own_entry: false. That is invalid output.
 
-Hard split rule (MUST obey):
-After your source-level theme_candidates scan, count distinct themes with centrality ≥ OWN_ENTRY_CENTRALITY_THRESHOLD and distinct evidence.
+Hard split rule (MUST obey when YOUR audit confirms strong split case):
+After YOUR source-level theme_candidates scan (re-score centrality yourself), count distinct themes with centrality ≥ OWN_ENTRY_CENTRALITY_THRESHOLD and distinct sustained evidence.
 
-If count ≥ 2, you MUST return 2+ JSON array entries — unless the single-essay exception applies.
+If YOUR count ≥ 2, you MUST return 2+ JSON array entries — unless the single-essay exception applies.
 
 Single-essay exception (narrow — the ONLY valid reason to return 1 entry when count ≥ 2):
 * The whole source answers ONE prompt/title with ONE voice and ONE rhetorical arc.
@@ -192,8 +211,12 @@ Ontology guidance:
 
 If two proposed entries differ only by generic theme label (e.g. values vs identity vs emotions) but raw_text is one sustained arc answering one prompt, MERGE into the single best ontological center.
 
-Over-proposal merge discipline:
-When the extractor proposed 2+ entries, assume over-splitting until raw_text proves otherwise.
+Over-proposal merge discipline (default after split audit):
+When the extractor proposed 2+ entries, assume over-splitting until YOUR split audit proves a strong split case.
+
+DEFAULT: MERGE proposed entries that share one ontological center, one voice, or one rhetorical arc.
+
+SPLIT only when YOUR audit confirms the strong split case (≥ 2 qualifying themes with distinct sustained evidence; single-essay exception does NOT apply).
 
 MERGE proposed entries when:
 
@@ -419,7 +442,7 @@ Tasks per final entry:
 1. core_idea: concise central idea or central pattern. Rewrite if misaligned with raw_text.
 2. evidence_excerpt: non-empty and grounded in raw_text. Prefer a short verbatim quote. If the entry spans non-contiguous passages, use multiple short verbatim snippets joined with "...".
 3. theme_candidates: show the strongest primary-theme candidates considered before finalizing this entry.
-4. split_decision: explain why the source was or was not split.
+4. split_decision: REQUIRED split-audit record. Format: "Split audit: [N] qualifying themes ([theme ids]). Decision: split|merge. [If merge: cite single-essay exception or <2 qualifying themes. If split: cite which themes forced separate entries.]"
 5. primary_theme: valid taxonomy id when possible; must reflect central function, not incidental vocabulary.
 6. secondary_themes: optional. Use [] often. Max MAX_SECONDARY_THEMES. Use 2 only when strongly necessary. Remove padding.
 7. tags: keep 2–MAX_TAGS_PER_ENTRY tags with highest map value.
@@ -519,8 +542,9 @@ export async function verifyEntries(
   const userMessage = [
     '## Instructions',
     'Proposed entries below are recall-oriented hypotheses — likely over-split. Do NOT rubber-stamp.',
-    'Re-derive theme ontology from raw_text first. Merge aggressively when proposals are facets of one essay.',
-    'Split when hard split rule applies (≥2 themes at centrality ≥ threshold with distinct evidence).',
+    'WORKFLOW ORDER: (1) YOUR split audit from raw_text with proof → (2) split/merge decision → (3) per-entry themes/tags → (4) tag check pass.',
+    'Default posture: MERGE over-proposals after audit. Split only when YOUR audit confirms a strong split case (≥2 qualifying themes, distinct evidence, no single-essay exception).',
+    'Re-score centrality yourself — do not inherit extractor scores blindly.',
     'Before returning: run the final tag check pass on every entry — prefer taxonomy ids, bridge to tags already in the corpus, reuse shared tags across sibling entries from this source, collapse near-duplicates, normalize to snake_case.',
     '',
     '## Scale',
@@ -528,17 +552,18 @@ export async function verifyEntries(
     `Baseline guideline: ~${targetCount} entr${targetCount === 1 ? 'y' : 'ies'} — verifier decides final count from raw_text`,
     `Proposed entries: ${proposed.length}. You may return more or fewer after rewrite/merge/split/reject.`,
     `Tags: max ${MAX_TAGS_PER_ENTRY} per entry after quality filter; min 2`,
-    ...(qualifyingSplitCount >= 2
-      ? [
-          `[Hard split signal] ${qualifyingSplitCount} distinct themes at centrality ≥${OWN_ENTRY_CENTRALITY_THRESHOLD}: ${qualifyingThemes.join(', ')}.`,
-          'Each must have should_be_own_entry: true (centrality-derived). If single-essay exception does NOT apply, you MUST return 2+ entries.',
-          'Do NOT merge with "cohesive meditation" / "interwoven" rationale when this signal is present.',
-        ]
-      : []),
     ...(proposed.length >= 2
       ? [
-          `[Merge check] Extractor proposed ${proposed.length} entries — verify each has a distinct ontological center in raw_text.`,
-          'Merge if they are rhetorical movements, tone shifts, or generic-theme relabelings of one essay answering one prompt.',
+          `[Over-proposal — merge default after audit] Extractor proposed ${proposed.length} entries. Run YOUR split audit first.`,
+          'DEFAULT: merge unless YOUR audit confirms strong split case (≥2 themes at centrality ≥ threshold with distinct sustained evidence; single-essay exception does not apply).',
+          'Merge if proposals are rhetorical movements, tone shifts, or generic-theme relabelings of one essay.',
+        ]
+      : []),
+    ...(qualifyingSplitCount >= 2
+      ? [
+          `[Split signal — verify, do not rubber-stamp] Extractor claimed ${qualifyingSplitCount} themes at centrality ≥${OWN_ENTRY_CENTRALITY_THRESHOLD}: ${qualifyingThemes.join(', ')}.`,
+          'Re-score in YOUR audit. If YOU confirm strong split case → split (proof beats merge bias). If themes are facets of one arc → merge despite extractor scores.',
+          'Do NOT absorb confirmed qualifying themes into secondary_themes to avoid splitting.',
         ]
       : []),
     ...(proposed.length < targetCount && wordCount >= 2000

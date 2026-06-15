@@ -396,6 +396,224 @@
         }
       },
       "related_entry_ids": []
+    },
+    {
+      "id": "entry_012",
+      "source_id": "source_009",
+      "core_idea": "Understanding loneliness and pain comes from personal emotional experience, while reaching out to others expresses relational empathy and shared human connection.",
+      "evidence_excerpt": "Those who know loneliness are the ones who will understand what it means to be lonely. The ones who reach out to help others are the ones who know pain. ... Perhaps that’s where we can see hope.",
+      "primary_theme": "emotions",
+      "secondary_themes": [
+        "relationships"
+      ],
+      "tags": [
+        "loneliness",
+        "trust"
+      ],
+      "tag_rationales": {
+        "loneliness": "Captures the central emotional pattern of feeling disconnected.",
+        "trust": "Reflects the relational bond implied by reaching out to others."
+      },
+      "confidence": {
+        "primary_theme": 0.9,
+        "tags": {
+          "loneliness": 0.9,
+          "trust": 0.85
+        }
+      },
+      "tag_quality": {
+        "tags": {
+          "loneliness": 0.9,
+          "trust": 0.85
+        }
+      },
+      "related_entry_ids": []
+    },
+    {
+      "id": "entry_014",
+      "source_id": "source_011",
+      "core_idea": "The narrator reflects on emotional disengagement and indifference as a slow decay of meaningful experience, illustrating how this emotional fatigue dulls perception of time and effort, while also grappling with existential awareness of living life fully in the present moment.",
+      "evidence_excerpt": "When indifference settles, it settles like dust. Filling the grooves of effort painfully etched with the minutes, dulling their edges... All is slow and time quite immeasurable so that the seconds fade into minutes, and the minutes somehow to days... Life is now. Life is here.",
+      "primary_theme": "emotions",
+      "secondary_themes": [
+        "philosophy"
+      ],
+      "tags": [
+        "emotional_renewal",
+        "existential_questioning",
+        "time"
+      ],
+      "tag_rationales": {
+        "emotional_renewal": "Captures the central motif of emotional decay and the dulling of engagement.",
+        "existential_questioning": "Reflects the core philosophical questioning of life’s presence and meaning.",
+        "time": "Highlights the theme of temporal experience and the subjective perception of time."
+      },
+      "confidence": {
+        "primary_theme": 0.93,
+        "tags": {
+          "emotional_renewal": 0.9,
+          "existential_questioning": 0.9,
+          "time": 0.85
+        }
+      },
+      "tag_quality": {
+        "tags": {
+          "emotional_renewal": 0.9,
+          "existential_questioning": 0.9,
+          "time": 0.85
+        }
+      },
+      "related_entry_ids": []
+    },
+    {
+      "id": "entry_015",
+      "source_id": "source_012",
+      "core_idea": "The narrator experiences emotional fatigue and existential doubt while grappling with philosophical ideas and personal introspection, highlighting an internal struggle with motivation, meaning, and emotional renewal.",
+      "evidence_excerpt": "It sometimes feels like the reward for having a dream is doubt and poor sleep...Nietzche’s eternal recurrence, Sartre’s good faith, Camus’ absurd hero...My mind suddenly prompted...slowly turning into sludge from the accumulation of the everyday annoyances and vapid thoughts",
+      "primary_theme": "emotions",
+      "secondary_themes": [
+        "philosophy",
+        "identity"
+      ],
+      "tags": [
+        "emotional_renewal",
+        "existential_questioning",
+        "self_discovery"
+      ],
+      "tag_rationales": {
+        "emotional_renewal": "The narrator's descriptions of doubt and mental fatigue emphasize emotional strain and the need for renewal.",
+        "existential_questioning": "Philosophical references and existential prompts highlight deep questioning of existence and meaning.",
+        "self_discovery": "Introspection and awareness of internal states align with personal insight and identity exploration."
+      },
+      "confidence": {
+        "primary_theme": 0.9,
+        "tags": {
+          "emotional_renewal": 0.9,
+          "existential_questioning": 0.9,
+          "self_discovery": 0.85
+        }
+      },
+      "tag_quality": {
+        "tags": {
+          "emotional_renewal": 0.9,
+          "existential_questioning": 0.9,
+          "self_discovery": 0.85
+        }
+      },
+      "related_entry_ids": []
+    },
+    {
+      "id": "entry_016",
+      "source_id": "source_012",
+      "core_idea": "The narrator struggles with self-discipline, motivation, and self-imposed pressures to act, reflecting deeply on personal agency, the construction of internal barriers, and conflicting emotions about progress and worth.",
+      "evidence_excerpt": "I remember my journal entries for the last few years, demanding action, constructing this weird prison around myself to try and leave me no choice but to keep acting...Then am I the master or the slave? And how have I done so little?",
+      "primary_theme": "identity",
+      "secondary_themes": [
+        "goals",
+        "emotions"
+      ],
+      "tags": [
+        "self_discovery",
+        "motivation"
+      ],
+      "tag_rationales": {
+        "self_discovery": "The narrator's questioning of self-mastery highlights ongoing self-awareness development.",
+        "motivation": "Reflections on demanding action and persistently pushing oneself relate directly to motivational forces."
+      },
+      "confidence": {
+        "primary_theme": 0.9,
+        "tags": {
+          "self_discovery": 0.9,
+          "motivation": 0.85
+        }
+      },
+      "tag_quality": {
+        "tags": {
+          "self_discovery": 0.9,
+          "motivation": 0.85
+        }
+      },
+      "related_entry_ids": []
+    },
+    {
+      "id": "entry_013",
+      "source_id": "source_010",
+      "core_idea": "The narrator reflects on the fluid nature of time and its deep connection to self-identity and personal growth, using temporal markers to grasp change and acknowledging past beliefs about others' care as filtered through personal experience.",
+      "evidence_excerpt": "It’s almost been a year. I think it’s odd that we mark the passage of time so much when time itself seems like a continuous concept that keeps flowing on... Time is tied to our ideas of change. Identity is a tricky thing to define, and so we look at makers- the days, the weeks, the years- in an attempt to grasp at what feels ungraspable... I hold little belief in the illusion that you would care about me at all. There are undercurrents of my past in this belief, as people seem to have a knack of not caring about me.",
+      "primary_theme": "identity",
+      "secondary_themes": [
+        "philosophy"
+      ],
+      "tags": [
+        "self_discovery",
+        "existential_questioning",
+        "time",
+        "growth_mindset"
+      ],
+      "tag_rationales": {
+        "self_discovery": "The essay focuses on understanding oneself through the lens of time and change.",
+        "existential_questioning": "The philosophical reflection on time and meaning reveals deep existential inquiry.",
+        "time": "Time is a persistent metaphor and conceptual frame throughout the essay.",
+        "growth_mindset": "The narrator considers growth and change as markers of identity evolution."
+      },
+      "confidence": {
+        "primary_theme": 0.9,
+        "tags": {
+          "self_discovery": 0.9,
+          "existential_questioning": 0.85,
+          "time": 0.85,
+          "growth_mindset": 0.8
+        }
+      },
+      "tag_quality": {
+        "tags": {
+          "self_discovery": 0.9,
+          "existential_questioning": 0.85,
+          "time": 0.85,
+          "growth_mindset": 0.8
+        }
+      },
+      "related_entry_ids": []
+    },
+    {
+      "id": "entry_017",
+      "source_id": "source_010",
+      "core_idea": "The narrator grapples with relational distance, hope, and pain in connection with another person, expressing longing for understanding while confronting past wounds, intentional disconnection, and vulnerability in relationship dynamics.",
+      "evidence_excerpt": "Part of me hopes that you are still lost because maybe then there would be something to talk about, something both of us can relate to... I do not have the perspective to appreciate your answer... it was me who decided to raze even whatever hope we had to building a bridge between us... I wanted the cut... to be absolute.",
+      "primary_theme": "relationships",
+      "secondary_themes": [
+        "emotions"
+      ],
+      "tags": [
+        "trust",
+        "vulnerability",
+        "fear_of_rejection",
+        "disillusionment"
+      ],
+      "tag_rationales": {
+        "trust": "Trust and mistrust are central to the narrator's reflection on relational connection.",
+        "vulnerability": "The narrator exposes deep vulnerability in hopes, fears, and regret about connection.",
+        "fear_of_rejection": "The fear of being uncared for and of relationship loss is a driving motif.",
+        "disillusionment": "The intentional severance and regret reflect disillusionment with the relationship."
+      },
+      "confidence": {
+        "primary_theme": 0.9,
+        "tags": {
+          "trust": 0.9,
+          "vulnerability": 0.85,
+          "fear_of_rejection": 0.8,
+          "disillusionment": 0.75
+        }
+      },
+      "tag_quality": {
+        "tags": {
+          "trust": 0.9,
+          "vulnerability": 0.85,
+          "fear_of_rejection": 0.8,
+          "disillusionment": 0.75
+        }
+      },
+      "related_entry_ids": []
     }
   ]
 }

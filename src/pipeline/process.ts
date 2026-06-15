@@ -5,7 +5,7 @@ import { extractEntries } from './extractor';
 import { verifyEntries } from './verifier';
 import { trimClassification, entryHasRequiredAnchors, countQualifyingSplitThemes, qualifyingSplitThemeIds, OWN_ENTRY_CENTRALITY_THRESHOLD, finalizeEntryForStorage } from './classification';
 import { countWords, targetEntryCount } from './scale';
-import { applyFlexibleCap, HIGH_CONFIDENCE_THRESHOLD, EXTRA_ENTRY_STRONG_SCORE } from './distinct';
+import { applyFlexibleCap, hasStrongSplitCase, HIGH_CONFIDENCE_THRESHOLD, EXTRA_ENTRY_STRONG_SCORE } from './distinct';
 import { config } from '../config';
 import {
   Taxonomy, Source, SourcesFile, EntriesFile, Entry,
@@ -139,8 +139,17 @@ export async function processSource(
   }
 
   if (valid.length > targetCount) {
-    const { kept, dropped, keptExtra, droppedThin } = applyFlexibleCap(valid, targetCount, wordCount);
+    const strongSplit = hasStrongSplitCase(valid);
+    const { kept, dropped, keptExtra, droppedThin } = applyFlexibleCap(
+      valid,
+      targetCount,
+      wordCount,
+      { strongSplitConfirmed: strongSplit },
+    );
     valid = kept;
+    if (strongSplit && keptExtra > 0) {
+      console.log('[Filter]   Relaxed cap for verifier-confirmed strong split');
+    }
     if (keptExtra > 0) {
       console.log(
         `[Filter]   Kept ${keptExtra} extra distinct entr${keptExtra === 1 ? 'y' : 'ies'} above baseline ` +
