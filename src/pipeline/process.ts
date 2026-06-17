@@ -3,12 +3,14 @@ import { readJson, writeJson } from '../data/store';
 import { createClient } from '../llm';
 import { extractEntries } from './extractor';
 import { verifyEntries } from './verifier';
+import { remapEntriesAndTaxonomy } from './remap';
+import { updateLinksIncremental } from './links';
 import { trimClassification, entryHasRequiredAnchors, countQualifyingSplitThemes, qualifyingSplitThemeIds, OWN_ENTRY_CENTRALITY_THRESHOLD, finalizeEntryForStorage } from './classification';
 import { countWords, targetEntryCount } from './scale';
 import { applyFlexibleCap, hasStrongSplitCase, HIGH_CONFIDENCE_THRESHOLD, EXTRA_ENTRY_STRONG_SCORE } from './distinct';
 import { config } from '../config';
 import {
-  Taxonomy, Source, SourcesFile, EntriesFile, Entry,
+  Taxonomy, Source, SourcesFile, EntriesFile, Entry, LinksFile,
 } from '../types';
 
 export class DuplicateSourceError extends Error {
@@ -30,6 +32,63 @@ function generateId(prefix: string, existingIds: string[]): string {
     if (!existing.has(id)) return id;
     i++;
   }
+}
+
+function logThemeCandidateCentrality(
+  stage: 'Extractor' | 'Verifier',
+  entries: Array<{ theme_candidates?: Array<{ theme: string; centrality: number }> }>,
+): void {
+  const maxByTheme = new Map<string, number>();
+  for (const entry of entries) {
+    for (const candidate of entry.theme_candidates ?? []) {
+      const current = maxByTheme.get(candidate.theme);
+      if (current === undefined || candidate.centrality > current) {
+        maxByTheme.set(candidate.theme, candidate.centrality);
+      }
+    }
+  }
+
+  if (!maxByTheme.size) {
+    console.log(`[${stage}]   Theme centrality: none reported`);
+    return;
+  }
+
+  const sorted = Array.from(maxByTheme.entries())
+    .sort((a, b) => b[1] - a[1]);
+  const formatted = sorted
+    .map(([theme, centrality]) => `${theme}=${centrality.toFixed(2)}`)
+    .join(', ');
+  console.log(`[${stage}]   Theme centrality (max by theme): ${formatted}`);
+}
+
+function collectThemeSet(
+  entries: Array<{ theme_candidates?: Array<{ theme: string }> }>,
+): string[] {
+  const themes = new Set<string>();
+  for (const entry of entries) {
+    for (const candidate of entry.theme_candidates ?? []) {
+      if (candidate.theme?.trim()) themes.add(candidate.theme);
+    }
+  }
+  return Array.from(themes).sort();
+}
+
+function toTitleCaseThemeName(themeId: string): string {
+  return themeId
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, c => c.toUpperCase());
+}
+
+function ensureThemeExistsInTaxonomy(taxonomy: Taxonomy, themeId: string): boolean {
+  const id = (themeId ?? '').trim();
+  if (!id) return false;
+  if (taxonomy.themes.some(t => t.id === id)) return false;
+  taxonomy.themes.push({
+    id,
+    name: toTitleCaseThemeName(id),
+    description: `Auto-added from extracted primary theme "${id}".`,
+  });
+  return true;
 }
 
 export interface ProcessOptions {
@@ -64,6 +123,8 @@ export async function processSource(
   const taxonomy = readJson<Taxonomy>('taxonomy.json');
   const sourcesFile = readJson<SourcesFile>('sources.json');
   const entriesFile = readJson<EntriesFile>('entries.json');
+  const linksFile = readJson<LinksFile>('links.json');
+  let removedEntryIds: string[] = [];
 
   const hash = hashText(rawText);
   const existing = sourcesFile.sources.find(s => s.content_hash === hash);
@@ -74,6 +135,7 @@ export async function processSource(
   // Remove the old version before duplicate detection so reprocessed entries are not
   // compared against the entries they are supposed to replace.
   if (existing && reprocess) {
+    removedEntryIds = [...existing.child_entry_ids];
     sourcesFile.sources = sourcesFile.sources.filter(s => s.id !== existing.id);
     entriesFile.entries = entriesFile.entries.filter(
       e => !existing.child_entry_ids.includes(e.id),
@@ -97,6 +159,7 @@ export async function processSource(
   console.log(`[Extractor] Proposed ${proposed.length} entr${proposed.length === 1 ? 'y' : 'ies'}`);
   const qualifyingSplitCount = countQualifyingSplitThemes(proposed);
   const qualifyingThemes = qualifyingSplitThemeIds(proposed);
+  const extractorThemeSet = collectThemeSet(proposed);
   console.log(
     `[Extractor]   ${qualifyingSplitCount} theme${qualifyingSplitCount === 1 ? '' : 's'} at centrality ≥${OWN_ENTRY_CENTRALITY_THRESHOLD}` +
     (qualifyingThemes.length ? `: ${qualifyingThemes.join(', ')}` : ''),
@@ -104,6 +167,12 @@ export async function processSource(
   if (qualifyingSplitCount >= 2) {
     console.log('[Extractor]   Hard split signal: ≥2 qualifying themes (should_be_own_entry derived from centrality)');
   }
+  if (extractorThemeSet.length > 0) {
+    console.log(`[Verifier]   Allowed theme set from extractor: ${extractorThemeSet.join(', ')}`);
+  } else {
+    console.log('[Verifier]   Allowed theme set from extractor: none');
+  }
+  logThemeCandidateCentrality('Extractor', proposed);
 
   const existingSummaries = entriesFile.entries.map(e => ({
     id: e.id,
@@ -123,9 +192,29 @@ export async function processSource(
     targetCount,
     wordCount,
   )).map(trimClassification);
+  const remapped = await remapEntriesAndTaxonomy(
+    verifierClient,
+    rawText,
+    verified,
+    taxonomy,
+  );
+  const remappedEntries = remapped.entries.map(trimClassification);
+  if (remapped.addedThemes || remapped.addedTags || remapped.updatedDefs) {
+    console.log(
+      `[Remap] Added themes=${remapped.addedThemes}, tags=${remapped.addedTags}, definition updates=${remapped.updatedDefs}`,
+    );
+  }
+  const taxonomyDirtyFromRemap = (remapped.addedThemes + remapped.addedTags + remapped.updatedDefs) > 0;
+  const verifierThemeSet = collectThemeSet(remappedEntries);
+  console.log(
+    `[Verifier]   Themes passed through: ${
+      verifierThemeSet.length > 0 ? verifierThemeSet.join(', ') : 'none'
+    }`,
+  );
+  logThemeCandidateCentrality('Verifier', remappedEntries);
 
-  const duplicateCount = verified.filter(e => e.is_duplicate).length;
-  const unique = verified.filter(e => !e.is_duplicate);
+  const duplicateCount = remappedEntries.filter(e => e.is_duplicate).length;
+  const unique = remappedEntries.filter(e => !e.is_duplicate);
   const underTagged = unique.filter(e => e.tags.length < 2).length;
   const missingAnchors = unique.filter(e => e.tags.length >= 2 && !entryHasRequiredAnchors(e)).length;
   let valid = unique.filter(e => e.tags.length >= 2 && entryHasRequiredAnchors(e));
@@ -181,20 +270,14 @@ export async function processSource(
   }
   console.log();
 
-  if (dryRun) {
-    console.log('[Dry run] Would add:');
-    valid.forEach(e => {
-      console.log(`  · [${e.primary_theme}] ${e.tags.join(', ')}`);
-      console.log(`    ${e.core_idea}`);
-    });
-    return { source: null, entries: [], skippedDuplicates: duplicateCount };
-  }
-
   const allSourceIds = sourcesFile.sources.map(s => s.id);
   const sourceId = generateId('source', allSourceIds);
-
   const allEntryIds = entriesFile.entries.map(e => e.id);
+  let addedThemeCount = 0;
   const newEntries: Entry[] = valid.map(e => {
+    if (ensureThemeExistsInTaxonomy(taxonomy, e.primary_theme)) {
+      addedThemeCount++;
+    }
     const entryId = generateId('entry', allEntryIds);
     allEntryIds.push(entryId);
     return finalizeEntryForStorage(
@@ -207,6 +290,19 @@ export async function processSource(
       taxonomy,
     );
   });
+
+  if (dryRun) {
+    const projectedEntries = [...entriesFile.entries, ...newEntries];
+    const projectedChangedIds = [...removedEntryIds, ...newEntries.map(e => e.id)];
+    const { links } = updateLinksIncremental(projectedEntries, linksFile.links, projectedChangedIds);
+    console.log('[Dry run] Would add:');
+    valid.forEach(e => {
+      console.log(`  · [${e.primary_theme}] ${e.tags.join(', ')}`);
+      console.log(`    ${e.core_idea}`);
+    });
+    console.log(`[Dry run] Would update links: ${linksFile.links.length} -> ${links.length}`);
+    return { source: null, entries: [], skippedDuplicates: duplicateCount };
+  }
 
   const today = new Date().toISOString().split('T')[0];
   const source: Source = {
@@ -223,9 +319,24 @@ export async function processSource(
 
   sourcesFile.sources.push(source);
   entriesFile.entries.push(...newEntries);
+  const changedEntryIds = [...removedEntryIds, ...newEntries.map(e => e.id)];
+  const updated = updateLinksIncremental(entriesFile.entries, linksFile.links, changedEntryIds);
+  entriesFile.entries = updated.entriesWithRelatedIds;
+  linksFile.links = updated.links;
 
   writeJson('sources.json', sourcesFile);
   writeJson('entries.json', entriesFile);
+  writeJson('links.json', linksFile);
+  if (addedThemeCount > 0 || taxonomyDirtyFromRemap) {
+    writeJson('taxonomy.json', taxonomy);
+    if (addedThemeCount > 0) {
+      console.log(`[Taxonomy] Added ${addedThemeCount} new theme entr${addedThemeCount === 1 ? 'y' : 'ies'} from primary_theme output`);
+    }
+  }
+  console.log(
+    `[Links] Updated ${updated.links.length} links across ${entriesFile.entries.length} entries ` +
+    `(changed entries: ${changedEntryIds.length})`,
+  );
 
   return { source, entries: newEntries, skippedDuplicates: duplicateCount };
 }

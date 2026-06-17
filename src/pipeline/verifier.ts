@@ -1,6 +1,6 @@
 import { LLMClient } from '../llm/client';
 import { Taxonomy } from '../types';
-import { ExtractorOutput, VerifierOutput, normalizeThemeCandidates, countQualifyingSplitThemes, qualifyingSplitThemeIds, OWN_ENTRY_CENTRALITY_THRESHOLD } from './classification';
+import { ExtractorOutput, VerifierOutput, normalizeThemeCandidates, ensureMinimumThemeCandidates, countQualifyingSplitThemes, qualifyingSplitThemeIds, OWN_ENTRY_CENTRALITY_THRESHOLD } from './classification';
 import { parseLlmJsonArray } from './parseLlmJson';
 import { MAX_SECONDARY_THEMES, MAX_TAGS_PER_ENTRY, softMaxEntries } from './scale';
 
@@ -86,8 +86,23 @@ Source of truth:
 * If a proposed label, theme, tag, core_idea, evidence_excerpt, theme_candidate, or split_decision is unsupported or misaligned with raw_text, fix or remove it.
 * Do not inherit extractor mistakes. Re-derive themes and tags from raw_text when needed.
 
-Primary-theme candidate scan:
+Primary-theme candidate scan (constrained to extractor themes):
 Before deciding whether the source should be one entry or multiple entries, identify the 1–4 strongest possible reusable primary themes in raw_text.
+
+HOWEVER, you must treat the extractor’s theme_candidates as the closed set of allowed theme ids for this source.
+
+You MAY:
+* re-score centrality for those themes
+* drop themes that raw_text does not support
+* change which of those themes become primary vs secondary in final entries
+
+You MUST NOT:
+* introduce new theme ids that were not present in any proposed.theme_candidates.theme
+* invent new primary_theme or secondary_themes outside the extractor’s theme set for this source
+
+Minimum theme-candidate rule:
+* Every final entry must include at least one theme_candidate when confidence.primary_theme >= 0.5.
+* An empty theme_candidates list is allowed only when confidence.primary_theme < 0.5.
 
 Ask:
 
@@ -113,7 +128,7 @@ If the extractor proposed only one entry, still perform your own split check fro
 
 If raw_text contains two or more sustained primary-theme candidates, you may return more entries than the extractor proposed.
 
-should_be_own_entry (hard rule — derived from centrality):
+should_be_own_entry (hard rule — derived from centrality; still constrained to extractor theme set):
 * If centrality ≥ OWN_ENTRY_CENTRALITY_THRESHOLD, should_be_own_entry MUST be true. You cannot veto to false.
 * If centrality < OWN_ENTRY_CENTRALITY_THRESHOLD, should_be_own_entry MUST be false.
 * Never assign centrality 0.85 and should_be_own_entry: false. That is invalid output.
@@ -187,6 +202,9 @@ For example:
 * If the entry is truly about self-concept, self-image, belonging, role, or personal definition, identity may be the right primary_theme.
 
 Do not choose a primary_theme because it is broadly plausible. Choose the reusable theme that best explains the central function of the entry.
+
+Technical theme resolution level:
+When writing is deeply technical, theme ids should stay at domain-level resolution (not mechanism-level). Examples of the right resolution: human_computer_interaction, systems_design, software_engineering, ai_ml, hardware_interfaces, cognitive_science (or neuroscience when treated as its own domain), product_strategy.
 
 Theme ontology (strict):
 Assign primary_theme from what raw_text is functionally about — not from introspective tone, vocabulary overlap, or proposed labels.
@@ -596,7 +614,12 @@ export async function verifyEntries(
   const raw = parseLlmJsonArray(text) as VerifierOutput[];
   return raw.map(e => ({
     ...e,
-    theme_candidates: normalizeThemeCandidates(e.theme_candidates),
+    theme_candidates: ensureMinimumThemeCandidates(
+      normalizeThemeCandidates(e.theme_candidates),
+      e.primary_theme,
+      e.confidence?.primary_theme ?? 0,
+      e.evidence_excerpt ?? '',
+    ),
     split_decision: e.split_decision ?? '',
     tag_quality: e.tag_quality ?? { tags: {} },
     is_duplicate: e.is_duplicate ?? false,

@@ -2,7 +2,7 @@ import { LLMClient } from '../llm/client';
 import { Taxonomy, Entry } from '../types';
 import { MAX_SECONDARY_THEMES, softMaxEntries } from './scale';
 import { parseLlmJsonArray } from './parseLlmJson';
-import { ExtractorOutput, OWN_ENTRY_CENTRALITY_THRESHOLD } from './classification';
+import { ExtractorOutput, OWN_ENTRY_CENTRALITY_THRESHOLD, ensureMinimumThemeCandidates } from './classification';
 
 const SYSTEM_PROMPT = `You are a semantic writing extractor for a topological map of recurring ideas, experiences, and inner patterns.
 
@@ -153,7 +153,14 @@ For example:
 * If it is truly about emotional processing, emotions may be the right primary_theme.
 * If it is truly about abstract inquiry, worldview, morality, or meaning, philosophy or meaning may be the right primary_theme.
 
+HCI disambiguation:
+When text discusses body tracking, hand input, haptics, avatar rigs, controller affordances, UX constraints, interaction techniques, or hardware limitations in digital systems, treat it as projects/creativity/observations (HCI/interaction design) unless the central focus is personal wellbeing, illness, sleep, stress, or energy management.
+Do NOT map interface ergonomics or interaction mechanics to health by default.
+
 Do not choose a primary_theme because it is broadly plausible. Choose the reusable theme that best explains the central function of the entry.
+
+Technical theme resolution level:
+When writing is deeply technical, theme ids should stay at domain-level resolution (not mechanism-level). Examples of the right resolution: human_computer_interaction, systems_design, software_engineering, ai_ml, hardware_interfaces, cognitive_science, product_strategy.
 
 Splitting rule:
 After the primary-theme candidate scan, decide whether the source contains one central idea or multiple meaningfully distinct central ideas.
@@ -423,5 +430,14 @@ export async function extractEntries(
   ].join('\n');
 
   const text = await client.complete(SYSTEM_PROMPT, userMessage, 8192);
-  return parseLlmJsonArray(text) as ExtractorOutput[];
+  const parsed = parseLlmJsonArray(text) as ExtractorOutput[];
+  return parsed.map(entry => ({
+    ...entry,
+    theme_candidates: ensureMinimumThemeCandidates(
+      entry.theme_candidates,
+      entry.primary_theme,
+      entry.confidence?.primary_theme ?? 0,
+      entry.evidence_excerpt ?? '',
+    ),
+  }));
 }

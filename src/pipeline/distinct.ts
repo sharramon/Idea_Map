@@ -27,6 +27,12 @@ export function entriesAreDistinct(a: VerifierOutput, b: VerifierOutput): boolea
   const aCore = (a.core_idea ?? '').trim().toLowerCase();
   const bCore = (b.core_idea ?? '').trim().toLowerCase();
   const differentCore = Boolean(aCore && bCore && aCore !== bCore);
+  const sharedSecondaryCount = (a.secondary_themes ?? [])
+    .filter(theme => (b.secondary_themes ?? []).includes(theme))
+    .length;
+
+  // User preference: do not keep sibling entries that share primary + any secondary.
+  if (a.primary_theme === b.primary_theme && sharedSecondaryCount > 0) return false;
 
   if (overlap < 0.34) return true;
 
@@ -136,7 +142,6 @@ export function applyFlexibleCap(
   const sorted = [...entries].sort((a, b) => capRankScore(b) - capRankScore(a));
   const kept: VerifierOutput[] = [];
   let droppedThin = 0;
-  const strongExtraBar = strongSplitConfirmed ? HIGH_CONFIDENCE_THRESHOLD : EXTRA_ENTRY_STRONG_SCORE;
 
   for (const entry of sorted) {
     if (kept.length >= hardMax) continue;
@@ -153,7 +158,7 @@ export function applyFlexibleCap(
     const thin = isThinEntry(entry);
 
     if (kept.length >= softMax) {
-      if (score < strongExtraBar || (!strongSplitConfirmed && thin)) {
+      if (score < EXTRA_ENTRY_STRONG_SCORE || thin) {
         if (thin) droppedThin++;
         continue;
       }

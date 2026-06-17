@@ -30,9 +30,19 @@ export function getGraph(themeFilter?: string): GraphData {
     ? entries.filter(e => e.primary_theme === themeFilter || e.secondary_themes.includes(themeFilter))
     : entries;
 
+  const knownThemeIds = new Set(taxonomy.themes.map(t => t.id));
+  const syntheticThemes = [...new Set(filteredEntries.map(e => e.primary_theme))]
+    .filter(id => id && !knownThemeIds.has(id))
+    .map(id => ({
+      id,
+      name: id.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+      description: 'Synthetic theme generated from entry primary_theme.',
+    }));
+  const allThemes = [...taxonomy.themes, ...syntheticThemes];
+
   const usedThemeIds = new Set(filteredEntries.map(e => e.primary_theme));
 
-  const themeClusters: GraphThemeCluster[] = taxonomy.themes
+  const themeClusters: GraphThemeCluster[] = allThemes
     .filter(t => usedThemeIds.has(t.id))
     .map(t => ({ id: t.id, name: t.name }));
 
@@ -96,7 +106,7 @@ export function getGraph(themeFilter?: string): GraphData {
   return {
     nodes: [...entryNodes, ...tagNodes],
     edges,
-    themes: taxonomy.themes,
+    themes: allThemes,
     themeClusters,
     sources: sourcesById,
   };

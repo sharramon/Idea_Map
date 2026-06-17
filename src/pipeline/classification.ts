@@ -59,6 +59,26 @@ export function normalizeThemeCandidates(raw: unknown): ThemeCandidate[] {
   }).filter(c => c.theme.trim());
 }
 
+export function ensureMinimumThemeCandidates(
+  rawCandidates: unknown,
+  primaryTheme: string,
+  primaryThemeConfidence: number,
+  evidenceExcerpt: string,
+): ThemeCandidate[] {
+  const normalized = normalizeThemeCandidates(rawCandidates);
+  if (normalized.length > 0) return normalized;
+  if (!primaryTheme?.trim()) return normalized;
+  if (primaryThemeConfidence < 0.5) return normalized;
+
+  return [{
+    theme: primaryTheme,
+    evidence_excerpt: evidenceExcerpt?.trim() || 'Derived from primary_theme due to missing theme_candidates.',
+    centrality: primaryThemeConfidence,
+    reason: 'Fallback from primary_theme because theme_candidates were missing.',
+    should_be_own_entry: deriveShouldBeOwnEntry(primaryThemeConfidence),
+  }];
+}
+
 /** Distinct themes with centrality ≥ threshold across proposed/verified entries. */
 export function countQualifyingSplitThemes(
   entries: ExtractorOutput[],
@@ -133,11 +153,18 @@ export function trimClassification(entry: VerifierOutput): VerifierOutput {
     (entry.secondary_themes ?? []).filter(t => t && t !== entry.primary_theme),
   )].slice(0, MAX_SECONDARY_THEMES);
 
+  const themeCandidates = ensureMinimumThemeCandidates(
+    entry.theme_candidates,
+    entry.primary_theme,
+    primaryConf,
+    entry.evidence_excerpt ?? '',
+  );
+
   return {
     ...entry,
     core_idea: entry.core_idea ?? '',
     evidence_excerpt: entry.evidence_excerpt ?? '',
-    theme_candidates: normalizeThemeCandidates(entry.theme_candidates),
+    theme_candidates: themeCandidates,
     split_decision: entry.split_decision ?? '',
     secondary_themes: secondaryThemes,
     tags,

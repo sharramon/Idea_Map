@@ -1,1 +1,612 @@
-{ "links": [] }
+{
+  "links": [
+    {
+      "id": "link_entry_001__entry_002",
+      "from_entry_id": "entry_001",
+      "to_entry_id": "entry_002",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery | shared themes: primary:identity, secondary:emotions, secondary:values",
+      "confidence": 0.9066666666666666
+    },
+    {
+      "id": "link_entry_001__entry_004",
+      "from_entry_id": "entry_001",
+      "to_entry_id": "entry_004",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: vulnerability | shared themes: secondary:emotions",
+      "confidence": 0.6849999999999998
+    },
+    {
+      "id": "link_entry_001__entry_005",
+      "from_entry_id": "entry_001",
+      "to_entry_id": "entry_005",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery | shared themes: primary:identity",
+      "confidence": 0.7466666666666666
+    },
+    {
+      "id": "link_entry_001__entry_006",
+      "from_entry_id": "entry_001",
+      "to_entry_id": "entry_006",
+      "relationship": "supports",
+      "explanation": "shared tags: self_discovery, vulnerability, authenticity | shared themes: primary:identity",
+      "confidence": 0.95
+    },
+    {
+      "id": "link_entry_001__entry_007",
+      "from_entry_id": "entry_001",
+      "to_entry_id": "entry_007",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery | shared themes: primary:identity",
+      "confidence": 0.7466666666666666
+    },
+    {
+      "id": "link_entry_001__entry_013",
+      "from_entry_id": "entry_001",
+      "to_entry_id": "entry_013",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery | shared themes: primary:identity",
+      "confidence": 0.7174999999999999
+    },
+    {
+      "id": "link_entry_001__entry_016",
+      "from_entry_id": "entry_001",
+      "to_entry_id": "entry_016",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery | shared themes: primary:identity, secondary:emotions",
+      "confidence": 0.8849999999999998
+    },
+    {
+      "id": "link_entry_001__entry_017",
+      "from_entry_id": "entry_001",
+      "to_entry_id": "entry_017",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: fear_of_rejection, vulnerability | shared themes: secondary:emotions",
+      "confidence": 0.7649999999999999
+    },
+    {
+      "id": "link_entry_001__entry_019",
+      "from_entry_id": "entry_001",
+      "to_entry_id": "entry_019",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery | shared themes: primary:identity",
+      "confidence": 0.8049999999999998
+    },
+    {
+      "id": "link_entry_001__entry_023",
+      "from_entry_id": "entry_001",
+      "to_entry_id": "entry_023",
+      "relationship": "supports",
+      "explanation": "shared tags: self_discovery, vulnerability | shared themes: primary:identity, secondary:emotions",
+      "confidence": 0.95
+    },
+    {
+      "id": "link_entry_001__entry_027",
+      "from_entry_id": "entry_001",
+      "to_entry_id": "entry_027",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery | shared themes: primary:identity",
+      "confidence": 0.7466666666666666
+    },
+    {
+      "id": "link_entry_002__entry_003",
+      "from_entry_id": "entry_002",
+      "to_entry_id": "entry_003",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: existential_questioning | shared themes: secondary:emotions, secondary:values",
+      "confidence": 0.7066666666666666
+    },
+    {
+      "id": "link_entry_002__entry_005",
+      "from_entry_id": "entry_002",
+      "to_entry_id": "entry_005",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery | shared themes: primary:identity",
+      "confidence": 0.7466666666666666
+    },
+    {
+      "id": "link_entry_002__entry_006",
+      "from_entry_id": "entry_002",
+      "to_entry_id": "entry_006",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery | shared themes: primary:identity",
+      "confidence": 0.7466666666666666
+    },
+    {
+      "id": "link_entry_002__entry_007",
+      "from_entry_id": "entry_002",
+      "to_entry_id": "entry_007",
+      "relationship": "supports",
+      "explanation": "shared tags: self_discovery, existential_questioning | shared themes: primary:identity",
+      "confidence": 0.9433333333333332
+    },
+    {
+      "id": "link_entry_002__entry_013",
+      "from_entry_id": "entry_002",
+      "to_entry_id": "entry_013",
+      "relationship": "supports",
+      "explanation": "shared tags: self_discovery, existential_questioning | shared themes: primary:identity",
+      "confidence": 0.9433333333333332
+    },
+    {
+      "id": "link_entry_002__entry_015",
+      "from_entry_id": "entry_002",
+      "to_entry_id": "entry_015",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery, existential_questioning",
+      "confidence": 0.7433333333333333
+    },
+    {
+      "id": "link_entry_002__entry_016",
+      "from_entry_id": "entry_002",
+      "to_entry_id": "entry_016",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery | shared themes: primary:identity, secondary:emotions",
+      "confidence": 0.8849999999999998
+    },
+    {
+      "id": "link_entry_002__entry_017",
+      "from_entry_id": "entry_002",
+      "to_entry_id": "entry_017",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: disillusionment | shared themes: secondary:emotions",
+      "confidence": 0.6266666666666666
+    },
+    {
+      "id": "link_entry_002__entry_018",
+      "from_entry_id": "entry_002",
+      "to_entry_id": "entry_018",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: disillusionment | shared themes: secondary:emotions",
+      "confidence": 0.6266666666666666
+    },
+    {
+      "id": "link_entry_002__entry_019",
+      "from_entry_id": "entry_002",
+      "to_entry_id": "entry_019",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery | shared themes: primary:identity",
+      "confidence": 0.8049999999999998
+    },
+    {
+      "id": "link_entry_002__entry_023",
+      "from_entry_id": "entry_002",
+      "to_entry_id": "entry_023",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery | shared themes: primary:identity, secondary:emotions",
+      "confidence": 0.8266666666666665
+    },
+    {
+      "id": "link_entry_002__entry_027",
+      "from_entry_id": "entry_002",
+      "to_entry_id": "entry_027",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery | shared themes: primary:identity",
+      "confidence": 0.7466666666666666
+    },
+    {
+      "id": "link_entry_003__entry_028",
+      "from_entry_id": "entry_003",
+      "to_entry_id": "entry_028",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: purpose, existential_questioning",
+      "confidence": 0.7433333333333333
+    },
+    {
+      "id": "link_entry_004__entry_006",
+      "from_entry_id": "entry_004",
+      "to_entry_id": "entry_006",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: vulnerability",
+      "confidence": 0.6049999999999999
+    },
+    {
+      "id": "link_entry_004__entry_017",
+      "from_entry_id": "entry_004",
+      "to_entry_id": "entry_017",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: vulnerability | shared themes: primary:relationships, secondary:emotions",
+      "confidence": 0.8849999999999998
+    },
+    {
+      "id": "link_entry_004__entry_018",
+      "from_entry_id": "entry_004",
+      "to_entry_id": "entry_018",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: vulnerability | shared themes: primary:relationships, secondary:emotions",
+      "confidence": 0.8849999999999998
+    },
+    {
+      "id": "link_entry_004__entry_022",
+      "from_entry_id": "entry_004",
+      "to_entry_id": "entry_022",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: vulnerability, communication",
+      "confidence": 0.86
+    },
+    {
+      "id": "link_entry_004__entry_023",
+      "from_entry_id": "entry_004",
+      "to_entry_id": "entry_023",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: vulnerability | shared themes: secondary:emotions",
+      "confidence": 0.6849999999999998
+    },
+    {
+      "id": "link_entry_005__entry_006",
+      "from_entry_id": "entry_005",
+      "to_entry_id": "entry_006",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery | shared themes: primary:identity",
+      "confidence": 0.7466666666666666
+    },
+    {
+      "id": "link_entry_005__entry_007",
+      "from_entry_id": "entry_005",
+      "to_entry_id": "entry_007",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery | shared themes: primary:identity",
+      "confidence": 0.7466666666666666
+    },
+    {
+      "id": "link_entry_005__entry_013",
+      "from_entry_id": "entry_005",
+      "to_entry_id": "entry_013",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery | shared themes: primary:identity",
+      "confidence": 0.7466666666666666
+    },
+    {
+      "id": "link_entry_005__entry_016",
+      "from_entry_id": "entry_005",
+      "to_entry_id": "entry_016",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery | shared themes: primary:identity",
+      "confidence": 0.8049999999999998
+    },
+    {
+      "id": "link_entry_005__entry_019",
+      "from_entry_id": "entry_005",
+      "to_entry_id": "entry_019",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery | shared themes: primary:identity",
+      "confidence": 0.8049999999999998
+    },
+    {
+      "id": "link_entry_005__entry_023",
+      "from_entry_id": "entry_005",
+      "to_entry_id": "entry_023",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery | shared themes: primary:identity",
+      "confidence": 0.7466666666666666
+    },
+    {
+      "id": "link_entry_005__entry_027",
+      "from_entry_id": "entry_005",
+      "to_entry_id": "entry_027",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery | shared themes: primary:identity",
+      "confidence": 0.7466666666666666
+    },
+    {
+      "id": "link_entry_006__entry_007",
+      "from_entry_id": "entry_006",
+      "to_entry_id": "entry_007",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery | shared themes: primary:identity",
+      "confidence": 0.7466666666666666
+    },
+    {
+      "id": "link_entry_006__entry_013",
+      "from_entry_id": "entry_006",
+      "to_entry_id": "entry_013",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery | shared themes: primary:identity",
+      "confidence": 0.7466666666666666
+    },
+    {
+      "id": "link_entry_006__entry_016",
+      "from_entry_id": "entry_006",
+      "to_entry_id": "entry_016",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery | shared themes: primary:identity",
+      "confidence": 0.8049999999999998
+    },
+    {
+      "id": "link_entry_006__entry_019",
+      "from_entry_id": "entry_006",
+      "to_entry_id": "entry_019",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery | shared themes: primary:identity",
+      "confidence": 0.8049999999999998
+    },
+    {
+      "id": "link_entry_006__entry_023",
+      "from_entry_id": "entry_006",
+      "to_entry_id": "entry_023",
+      "relationship": "supports",
+      "explanation": "shared tags: self_discovery, vulnerability | shared themes: primary:identity",
+      "confidence": 0.9433333333333332
+    },
+    {
+      "id": "link_entry_006__entry_027",
+      "from_entry_id": "entry_006",
+      "to_entry_id": "entry_027",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery | shared themes: primary:identity",
+      "confidence": 0.7466666666666666
+    },
+    {
+      "id": "link_entry_007__entry_013",
+      "from_entry_id": "entry_007",
+      "to_entry_id": "entry_013",
+      "relationship": "supports",
+      "explanation": "shared tags: self_discovery, existential_questioning | shared themes: primary:identity, secondary:philosophy",
+      "confidence": 0.95
+    },
+    {
+      "id": "link_entry_007__entry_014",
+      "from_entry_id": "entry_007",
+      "to_entry_id": "entry_014",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: existential_questioning | shared themes: secondary:philosophy",
+      "confidence": 0.6266666666666666
+    },
+    {
+      "id": "link_entry_007__entry_015",
+      "from_entry_id": "entry_007",
+      "to_entry_id": "entry_015",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery, existential_questioning | shared themes: secondary:philosophy",
+      "confidence": 0.8233333333333333
+    },
+    {
+      "id": "link_entry_007__entry_016",
+      "from_entry_id": "entry_007",
+      "to_entry_id": "entry_016",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery | shared themes: primary:identity",
+      "confidence": 0.8049999999999998
+    },
+    {
+      "id": "link_entry_007__entry_019",
+      "from_entry_id": "entry_007",
+      "to_entry_id": "entry_019",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery | shared themes: primary:identity",
+      "confidence": 0.8049999999999998
+    },
+    {
+      "id": "link_entry_007__entry_023",
+      "from_entry_id": "entry_007",
+      "to_entry_id": "entry_023",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery | shared themes: primary:identity",
+      "confidence": 0.7466666666666666
+    },
+    {
+      "id": "link_entry_007__entry_027",
+      "from_entry_id": "entry_007",
+      "to_entry_id": "entry_027",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery | shared themes: primary:identity",
+      "confidence": 0.7466666666666666
+    },
+    {
+      "id": "link_entry_007__entry_028",
+      "from_entry_id": "entry_007",
+      "to_entry_id": "entry_028",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: existential_questioning | shared themes: secondary:philosophy",
+      "confidence": 0.6266666666666666
+    },
+    {
+      "id": "link_entry_008__entry_022",
+      "from_entry_id": "entry_008",
+      "to_entry_id": "entry_022",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: inspiration | shared themes: primary:creativity, secondary:learning",
+      "confidence": 0.8266666666666665
+    },
+    {
+      "id": "link_entry_012__entry_017",
+      "from_entry_id": "entry_012",
+      "to_entry_id": "entry_017",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: trust",
+      "confidence": 0.6049999999999999
+    },
+    {
+      "id": "link_entry_012__entry_018",
+      "from_entry_id": "entry_012",
+      "to_entry_id": "entry_018",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: trust, loneliness",
+      "confidence": 0.86
+    },
+    {
+      "id": "link_entry_012__entry_023",
+      "from_entry_id": "entry_012",
+      "to_entry_id": "entry_023",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: loneliness",
+      "confidence": 0.6049999999999999
+    },
+    {
+      "id": "link_entry_013__entry_014",
+      "from_entry_id": "entry_013",
+      "to_entry_id": "entry_014",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: existential_questioning, time | shared themes: secondary:philosophy",
+      "confidence": 0.8233333333333333
+    },
+    {
+      "id": "link_entry_013__entry_015",
+      "from_entry_id": "entry_013",
+      "to_entry_id": "entry_015",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: existential_questioning, self_discovery | shared themes: secondary:philosophy",
+      "confidence": 0.8233333333333333
+    },
+    {
+      "id": "link_entry_013__entry_016",
+      "from_entry_id": "entry_013",
+      "to_entry_id": "entry_016",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery | shared themes: primary:identity",
+      "confidence": 0.8049999999999998
+    },
+    {
+      "id": "link_entry_013__entry_019",
+      "from_entry_id": "entry_013",
+      "to_entry_id": "entry_019",
+      "relationship": "supports",
+      "explanation": "shared tags: time, self_discovery | shared themes: primary:identity",
+      "confidence": 0.95
+    },
+    {
+      "id": "link_entry_013__entry_023",
+      "from_entry_id": "entry_013",
+      "to_entry_id": "entry_023",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery | shared themes: primary:identity",
+      "confidence": 0.7174999999999999
+    },
+    {
+      "id": "link_entry_013__entry_027",
+      "from_entry_id": "entry_013",
+      "to_entry_id": "entry_027",
+      "relationship": "supports",
+      "explanation": "shared tags: self_discovery, growth_mindset | shared themes: primary:identity",
+      "confidence": 0.9433333333333332
+    },
+    {
+      "id": "link_entry_013__entry_028",
+      "from_entry_id": "entry_013",
+      "to_entry_id": "entry_028",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: existential_questioning | shared themes: secondary:philosophy",
+      "confidence": 0.6266666666666666
+    },
+    {
+      "id": "link_entry_014__entry_015",
+      "from_entry_id": "entry_014",
+      "to_entry_id": "entry_015",
+      "relationship": "supports",
+      "explanation": "shared tags: emotional_renewal, existential_questioning | shared themes: primary:emotions, secondary:philosophy",
+      "confidence": 0.95
+    },
+    {
+      "id": "link_entry_014__entry_019",
+      "from_entry_id": "entry_014",
+      "to_entry_id": "entry_019",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: time",
+      "confidence": 0.6049999999999999
+    },
+    {
+      "id": "link_entry_014__entry_028",
+      "from_entry_id": "entry_014",
+      "to_entry_id": "entry_028",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: existential_questioning | shared themes: secondary:philosophy",
+      "confidence": 0.6266666666666666
+    },
+    {
+      "id": "link_entry_015__entry_016",
+      "from_entry_id": "entry_015",
+      "to_entry_id": "entry_016",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery",
+      "confidence": 0.6049999999999999
+    },
+    {
+      "id": "link_entry_015__entry_019",
+      "from_entry_id": "entry_015",
+      "to_entry_id": "entry_019",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery",
+      "confidence": 0.6049999999999999
+    },
+    {
+      "id": "link_entry_015__entry_028",
+      "from_entry_id": "entry_015",
+      "to_entry_id": "entry_028",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: existential_questioning | shared themes: secondary:philosophy",
+      "confidence": 0.6266666666666666
+    },
+    {
+      "id": "link_entry_016__entry_019",
+      "from_entry_id": "entry_016",
+      "to_entry_id": "entry_019",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery | shared themes: primary:identity",
+      "confidence": 0.8049999999999998
+    },
+    {
+      "id": "link_entry_016__entry_023",
+      "from_entry_id": "entry_016",
+      "to_entry_id": "entry_023",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery | shared themes: primary:identity, secondary:emotions",
+      "confidence": 0.8849999999999998
+    },
+    {
+      "id": "link_entry_016__entry_027",
+      "from_entry_id": "entry_016",
+      "to_entry_id": "entry_027",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery | shared themes: primary:identity",
+      "confidence": 0.8049999999999998
+    },
+    {
+      "id": "link_entry_017__entry_018",
+      "from_entry_id": "entry_017",
+      "to_entry_id": "entry_018",
+      "relationship": "supports",
+      "explanation": "shared tags: trust, disillusionment, vulnerability | shared themes: primary:relationships, secondary:emotions",
+      "confidence": 0.95
+    },
+    {
+      "id": "link_entry_018__entry_023",
+      "from_entry_id": "entry_018",
+      "to_entry_id": "entry_023",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: loneliness, vulnerability | shared themes: secondary:emotions",
+      "confidence": 0.7649999999999999
+    },
+    {
+      "id": "link_entry_019__entry_023",
+      "from_entry_id": "entry_019",
+      "to_entry_id": "entry_023",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery | shared themes: primary:identity",
+      "confidence": 0.8049999999999998
+    },
+    {
+      "id": "link_entry_019__entry_027",
+      "from_entry_id": "entry_019",
+      "to_entry_id": "entry_027",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery | shared themes: primary:identity",
+      "confidence": 0.8049999999999998
+    },
+    {
+      "id": "link_entry_021__entry_027",
+      "from_entry_id": "entry_021",
+      "to_entry_id": "entry_027",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: curiosity",
+      "confidence": 0.6049999999999999
+    },
+    {
+      "id": "link_entry_023__entry_027",
+      "from_entry_id": "entry_023",
+      "to_entry_id": "entry_027",
+      "relationship": "analogous_to",
+      "explanation": "shared tags: self_discovery | shared themes: primary:identity",
+      "confidence": 0.7466666666666666
+    }
+  ]
+}

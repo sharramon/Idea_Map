@@ -39,7 +39,19 @@
           "authenticity": 0.85
         }
       },
-      "related_entry_ids": []
+      "related_entry_ids": [
+        "entry_002",
+        "entry_004",
+        "entry_005",
+        "entry_006",
+        "entry_007",
+        "entry_013",
+        "entry_016",
+        "entry_017",
+        "entry_019",
+        "entry_023",
+        "entry_027"
+      ]
     },
     {
       "id": "entry_002",
@@ -76,7 +88,21 @@
           "existential_questioning": 0.85
         }
       },
-      "related_entry_ids": []
+      "related_entry_ids": [
+        "entry_001",
+        "entry_003",
+        "entry_005",
+        "entry_006",
+        "entry_007",
+        "entry_013",
+        "entry_015",
+        "entry_016",
+        "entry_017",
+        "entry_018",
+        "entry_019",
+        "entry_023",
+        "entry_027"
+      ]
     },
     {
       "id": "entry_004",
@@ -108,7 +134,14 @@
           "communication": 0.8
         }
       },
-      "related_entry_ids": []
+      "related_entry_ids": [
+        "entry_001",
+        "entry_006",
+        "entry_017",
+        "entry_018",
+        "entry_022",
+        "entry_023"
+      ]
     },
     {
       "id": "entry_003",
@@ -145,7 +178,10 @@
           "moral_idealism": 0.8
         }
       },
-      "related_entry_ids": []
+      "related_entry_ids": [
+        "entry_002",
+        "entry_028"
+      ]
     },
     {
       "id": "entry_005",
@@ -181,7 +217,17 @@
           "perception": 0.85
         }
       },
-      "related_entry_ids": []
+      "related_entry_ids": [
+        "entry_001",
+        "entry_002",
+        "entry_006",
+        "entry_007",
+        "entry_013",
+        "entry_016",
+        "entry_019",
+        "entry_023",
+        "entry_027"
+      ]
     },
     {
       "id": "entry_006",
@@ -215,7 +261,18 @@
           "authenticity": 0.85
         }
       },
-      "related_entry_ids": []
+      "related_entry_ids": [
+        "entry_001",
+        "entry_002",
+        "entry_004",
+        "entry_005",
+        "entry_007",
+        "entry_013",
+        "entry_016",
+        "entry_019",
+        "entry_023",
+        "entry_027"
+      ]
     },
     {
       "id": "entry_007",
@@ -251,7 +308,20 @@
           "concealment": 0.85
         }
       },
-      "related_entry_ids": []
+      "related_entry_ids": [
+        "entry_001",
+        "entry_002",
+        "entry_005",
+        "entry_006",
+        "entry_013",
+        "entry_014",
+        "entry_015",
+        "entry_016",
+        "entry_019",
+        "entry_023",
+        "entry_027",
+        "entry_028"
+      ]
     },
     {
       "id": "entry_008",
@@ -287,7 +357,9 @@
           "skill_building": 0.85
         }
       },
-      "related_entry_ids": []
+      "related_entry_ids": [
+        "entry_022"
+      ]
     },
     {
       "id": "entry_009",
@@ -427,7 +499,11 @@
           "trust": 0.85
         }
       },
-      "related_entry_ids": []
+      "related_entry_ids": [
+        "entry_017",
+        "entry_018",
+        "entry_023"
+      ]
     },
     {
       "id": "entry_014",
@@ -463,7 +539,13 @@
           "time": 0.85
         }
       },
-      "related_entry_ids": []
+      "related_entry_ids": [
+        "entry_007",
+        "entry_013",
+        "entry_015",
+        "entry_019",
+        "entry_028"
+      ]
     },
     {
       "id": "entry_015",
@@ -500,7 +582,15 @@
           "self_discovery": 0.85
         }
       },
-      "related_entry_ids": []
+      "related_entry_ids": [
+        "entry_002",
+        "entry_007",
+        "entry_013",
+        "entry_014",
+        "entry_016",
+        "entry_019",
+        "entry_028"
+      ]
     },
     {
       "id": "entry_016",
@@ -533,7 +623,18 @@
           "motivation": 0.85
         }
       },
-      "related_entry_ids": []
+      "related_entry_ids": [
+        "entry_001",
+        "entry_002",
+        "entry_005",
+        "entry_006",
+        "entry_007",
+        "entry_013",
+        "entry_015",
+        "entry_019",
+        "entry_023",
+        "entry_027"
+      ]
     },
     {
       "id": "entry_013",
@@ -573,7 +674,20 @@
           "growth_mindset": 0.8
         }
       },
-      "related_entry_ids": []
+      "related_entry_ids": [
+        "entry_001",
+        "entry_002",
+        "entry_005",
+        "entry_006",
+        "entry_007",
+        "entry_014",
+        "entry_015",
+        "entry_016",
+        "entry_019",
+        "entry_023",
+        "entry_027",
+        "entry_028"
+      ]
     },
     {
       "id": "entry_017",
@@ -613,7 +727,457 @@
           "disillusionment": 0.75
         }
       },
+      "related_entry_ids": [
+        "entry_001",
+        "entry_002",
+        "entry_004",
+        "entry_012",
+        "entry_018"
+      ]
+    },
+    {
+      "id": "entry_018",
+      "source_id": "source_013",
+      "core_idea": "The narrator confronts feelings of relational disconnection and doubts about being cared for, reflecting on emotional loneliness, the limits of human connection, and the desire for authentic understanding despite past hurt and deliberate distancing.",
+      "evidence_excerpt": "I hold little belief in the illusion that you would care about me at all. There are undercurrents of my past in this belief...people have little time to spare about others who are not central to their lives...I was tired of hurt...My rather horrifying approach was the only way I could think of achieving it...I hope that my actions did not make you jaded in any way.",
+      "primary_theme": "relationships",
+      "secondary_themes": [
+        "emotions"
+      ],
+      "tags": [
+        "trust",
+        "loneliness",
+        "disillusionment",
+        "vulnerability"
+      ],
+      "tag_rationales": {
+        "trust": "Reflects doubts and beliefs about mutual care and attention.",
+        "loneliness": "Expresses the emotional experience of relational isolation.",
+        "disillusionment": "Shows the loss of idealism about connection.",
+        "vulnerability": "Highlights openness and risk in relational exposure."
+      },
+      "confidence": {
+        "primary_theme": 0.9,
+        "tags": {
+          "trust": 0.85,
+          "loneliness": 0.8,
+          "disillusionment": 0.75,
+          "vulnerability": 0.75
+        }
+      },
+      "tag_quality": {
+        "tags": {
+          "trust": 0.85,
+          "loneliness": 0.8,
+          "disillusionment": 0.75,
+          "vulnerability": 0.75
+        }
+      },
+      "related_entry_ids": [
+        "entry_002",
+        "entry_004",
+        "entry_012",
+        "entry_017",
+        "entry_023"
+      ]
+    },
+    {
+      "id": "entry_019",
+      "source_id": "source_013",
+      "core_idea": "The narrator reflects on how humans use markers of time to grasp identity and change, exploring the flow of time as a continuous concept tied to personal growth and self-understanding.",
+      "evidence_excerpt": "It’s almost been a year. I think it’s odd that we mark the passage of time so much when time itself seems like a continuous concept that keeps flowing on. It feels a little like seeing a river and trying to put marks in the water.",
+      "primary_theme": "identity",
+      "secondary_themes": [],
+      "tags": [
+        "time",
+        "self_discovery"
+      ],
+      "tag_rationales": {
+        "time": "Discusses marking the passage of time as tied to understanding self and change.",
+        "self_discovery": "Explores how temporal markers relate to grasping identity and growth."
+      },
+      "confidence": {
+        "primary_theme": 0.9,
+        "tags": {
+          "time": 0.9,
+          "self_discovery": 0.85
+        }
+      },
+      "tag_quality": {
+        "tags": {
+          "time": 0.9,
+          "self_discovery": 0.85
+        }
+      },
+      "related_entry_ids": [
+        "entry_001",
+        "entry_002",
+        "entry_005",
+        "entry_006",
+        "entry_007",
+        "entry_013",
+        "entry_014",
+        "entry_015",
+        "entry_016",
+        "entry_023",
+        "entry_027"
+      ]
+    },
+    {
+      "id": "entry_022",
+      "source_id": "source_015",
+      "core_idea": "The writer aims to create an innovative, playful yet emotionally resonant XR experience that balances light vulnerability and deep connection within a brief moment.",
+      "evidence_excerpt": "I want to give people a chance to be ‘playful’. But also I want moments where vulnerability is needed. Some way to connect. Not TOO deep, but deep enough....The ‘vibes’ should keep updating...People should understand the ‘sell’ as fast as possible",
+      "primary_theme": "creativity",
+      "secondary_themes": [
+        "learning",
+        "relationships"
+      ],
+      "tags": [
+        "inspiration",
+        "making",
+        "vulnerability",
+        "communication"
+      ],
+      "tag_rationales": {
+        "inspiration": "The writer expresses a strong creative impulse and desire to innovate.",
+        "making": "The writing discusses creating a new and clever XR experience.",
+        "vulnerability": "The desire for moments requiring vulnerability is central to the experience.",
+        "communication": "Focus on connection and messaging implies relational communication."
+      },
+      "confidence": {
+        "primary_theme": 0.9,
+        "tags": {
+          "inspiration": 0.9,
+          "making": 0.85,
+          "vulnerability": 0.85,
+          "communication": 0.8
+        }
+      },
+      "tag_quality": {
+        "tags": {
+          "inspiration": 0.9,
+          "making": 0.85,
+          "vulnerability": 0.85,
+          "communication": 0.8
+        }
+      },
+      "related_entry_ids": [
+        "entry_004",
+        "entry_008"
+      ]
+    },
+    {
+      "id": "entry_023",
+      "source_id": "source_016",
+      "core_idea": "The narrator reflects on a child's painful struggle to assert self-worth and be heard within a hostile family environment, highlighting the child's naive belief in his agency, the harsh rejection he faces, and the intense loneliness and emotional turmoil that ensue.",
+      "evidence_excerpt": "He thought that if he tried as hard as he could, he could change everything around him... but his voice wasn’t heard. Arguments that were so one sided, where his voice wasn’t heard. But his voice SHOULD be heard... If only he could TALK. If only he could be heard in this hellhole of a place... Why one earth was he so alone. Why did no one listen?",
+      "primary_theme": "identity",
+      "secondary_themes": [
+        "emotions"
+      ],
+      "tags": [
+        "self_discovery",
+        "loneliness",
+        "childhood_invalidation",
+        "vulnerability"
+      ],
+      "tag_rationales": {
+        "self_discovery": "The child's internal efforts and belief in his worth reflect a process of understanding and affirming his identity.",
+        "loneliness": "The pervasive feeling of being unheard and isolated is central to the emotional tone.",
+        "childhood_invalidation": "The repeated rejection and dismissal by family typifies early experiences of being unseen and shamed.",
+        "vulnerability": "The child's sensitive nature and emotional openness underpin the heartfelt appeal for acknowledgment."
+      },
+      "confidence": {
+        "primary_theme": 0.9,
+        "tags": {
+          "self_discovery": 0.9,
+          "loneliness": 0.85,
+          "childhood_invalidation": 0.8,
+          "vulnerability": 0.8
+        }
+      },
+      "tag_quality": {
+        "tags": {
+          "self_discovery": 0.9,
+          "loneliness": 0.85,
+          "childhood_invalidation": 0.8,
+          "vulnerability": 0.8
+        }
+      },
+      "related_entry_ids": [
+        "entry_001",
+        "entry_002",
+        "entry_004",
+        "entry_005",
+        "entry_006",
+        "entry_007",
+        "entry_012",
+        "entry_013",
+        "entry_016",
+        "entry_018",
+        "entry_019",
+        "entry_027"
+      ]
+    },
+    {
+      "id": "entry_020",
+      "source_id": "source_014",
+      "core_idea": "The writer reflects on how culture can emerge within small groups through social roles and hierarchy, using gaming roles as an example, and expresses curiosity about how to study long-term cultural experiments.",
+      "evidence_excerpt": "There must be a way that culture is created, even if it’s just between ten people... But this is also kind of how close range DPS, healer, tanker, long range DPS works in MMOs... I don’t know what long term experiments in culture creation even looks like.",
+      "primary_theme": "culture",
+      "secondary_themes": [],
+      "tags": [
+        "culture",
+        "hierarchy",
+        "social_roles"
+      ],
+      "tag_rationales": {
+        "culture": "Central to the reflection on how shared meanings and social structures arise.",
+        "hierarchy": "Highlights the introduction of rank and role in small group culture formation.",
+        "social_roles": "Uses MMO role archetypes as examples of cultural role mythologies."
+      },
+      "confidence": {
+        "primary_theme": 0.95,
+        "tags": {
+          "culture": 0.9,
+          "hierarchy": 0.85,
+          "social_roles": 0.8
+        }
+      },
+      "tag_quality": {
+        "tags": {
+          "culture": 0.9,
+          "hierarchy": 0.85,
+          "social_roles": 0.8
+        }
+      },
       "related_entry_ids": []
+    },
+    {
+      "id": "entry_021",
+      "source_id": "source_014",
+      "core_idea": "The writer expresses uncertainty and curiosity about how to study and understand long-term culture creation processes.",
+      "evidence_excerpt": "I don’t know what long term experiments in culture creation even looks like. It would be good to read some stuff in this vein.",
+      "primary_theme": "learning",
+      "secondary_themes": [],
+      "tags": [
+        "curiosity",
+        "experimentation"
+      ],
+      "tag_rationales": {
+        "curiosity": "Reflects the expressed desire to understand and explore culture creation.",
+        "experimentation": "Focuses on mention of long-term experiments related to culture."
+      },
+      "confidence": {
+        "primary_theme": 0.9,
+        "tags": {
+          "curiosity": 0.85,
+          "experimentation": 0.8
+        }
+      },
+      "tag_quality": {
+        "tags": {
+          "curiosity": 0.85,
+          "experimentation": 0.8
+        }
+      },
+      "related_entry_ids": [
+        "entry_027"
+      ]
+    },
+    {
+      "id": "entry_024",
+      "source_id": "source_017",
+      "core_idea": "Current VR systems fundamentally track only head and hands, using software estimation to create a full avatar body, which leads to imprecise and sometimes visibly incorrect body poses, highlighting a technical limitation that affects embodiment and user experience.",
+      "evidence_excerpt": "In VR, that means that the software takes the position of your head and hands and then fits the whole body depending on those, knowing basic stuff like your elbows shouldn’t bend outwards. This is why in VR you sometimes get your avatar’s elbows sticking out to your sides, the program is just guessing wrong. But what all this means is that your body isn’t really there, what’s actually there is just your head and your hands.",
+      "primary_theme": "technology",
+      "secondary_themes": [],
+      "tags": [
+        "body_tracking",
+        "avatar",
+        "vr_systems"
+      ],
+      "tag_rationales": {
+        "body_tracking": "Highlights the core issue of how VR tracks body parts for avatar representation.",
+        "avatar": "Captures the concept of virtual body representation affected by tracking limits.",
+        "vr_systems": "Broad contextual tag for commercial virtual reality hardware and software."
+      },
+      "confidence": {
+        "primary_theme": 0.9,
+        "tags": {
+          "body_tracking": 0.9,
+          "avatar": 0.85,
+          "vr_systems": 0.8
+        }
+      },
+      "tag_quality": {
+        "tags": {
+          "body_tracking": 0.9,
+          "avatar": 0.85,
+          "vr_systems": 0.8
+        }
+      },
+      "related_entry_ids": []
+    },
+    {
+      "id": "entry_025",
+      "source_id": "source_017",
+      "core_idea": "The lack of tactile feedback and limitations in current VR input devices create a mismatch between natural hand interactions and their virtual representations, resulting in clumsy, inaccurate object manipulation and a sense of disembodiment.",
+      "evidence_excerpt": "For example, when we pick up a cup full of water we first need to feel the cup on our skin. The tactile feeling of the cup on our skin, as well as the resistance that the weight of the cup gives gives us precise signals as to how to move ... All of this is just not possible with the current control scheme in VR. Even with hand tracking there is no tactile feedback or resistance offered by objects.",
+      "primary_theme": "embodiment",
+      "secondary_themes": [],
+      "tags": [
+        "tactile_feedback",
+        "sensory_experience",
+        "embodied_interaction"
+      ],
+      "tag_rationales": {
+        "tactile_feedback": "Captures the core missing sensory element impacting natural VR interaction.",
+        "sensory_experience": "Highlights embodied perception critical to successful object manipulation.",
+        "embodied_interaction": "Focuses on how body experience informs interaction in VR environments."
+      },
+      "confidence": {
+        "primary_theme": 0.92,
+        "tags": {
+          "tactile_feedback": 0.9,
+          "sensory_experience": 0.85,
+          "embodied_interaction": 0.85
+        }
+      },
+      "tag_quality": {
+        "tags": {
+          "tactile_feedback": 0.9,
+          "sensory_experience": 0.85,
+          "embodied_interaction": 0.85
+        }
+      },
+      "related_entry_ids": []
+    },
+    {
+      "id": "entry_026",
+      "source_id": "source_017",
+      "core_idea": "VR control schemes represent hands as simplistic input devices often reduced to spheres or handles, limiting precision and naturalness, while varied controller designs attempt to approximate hand gestures and grips to enhance immersion and interaction fidelity.",
+      "evidence_excerpt": "Our hands actually aren’t hands. They’re too limited. The hands are actually an illusion, and it’s easier to think of them as spheres with button inputs to perform specific actions. People have come up with various clever ways of using the oculus controllers to do various things... The Valve Index controllers go a little bit further ... it can sense if you’re actually grabbing an object as opposed to just having your fingers down.",
+      "primary_theme": "interfaces",
+      "secondary_themes": [
+        "embodiment"
+      ],
+      "tags": [
+        "vr_controllers",
+        "input_devices",
+        "hand_tracking"
+      ],
+      "tag_rationales": {
+        "vr_controllers": "Focuses on hardware used as primary interaction method in VR.",
+        "input_devices": "Generalizes the theme of physical controls facilitating virtual input.",
+        "hand_tracking": "Covers the technology and limitations around sensing hand positions and gestures."
+      },
+      "confidence": {
+        "primary_theme": 0.9,
+        "tags": {
+          "vr_controllers": 0.9,
+          "input_devices": 0.85,
+          "hand_tracking": 0.8
+        }
+      },
+      "tag_quality": {
+        "tags": {
+          "vr_controllers": 0.9,
+          "input_devices": 0.85,
+          "hand_tracking": 0.8
+        }
+      },
+      "related_entry_ids": []
+    },
+    {
+      "id": "entry_027",
+      "source_id": "source_018",
+      "core_idea": "The author reflects on their evolving reading journey from enjoying fantasy and entertainment in adolescence to appreciating challenging classic and philosophical literature, which broadened their understanding of life and themselves.",
+      "evidence_excerpt": "I was an avid reader during my adolescent years... I started off with Harry Potter, LotR, Discworld... tried classics like 'A Christmas Carol', 'Oliver Twist', Lord of the Flies, Shakespeare, Dostoevsky, and more... I read Woolf and tried to piece together Dostoevsky's nihilism... This progression expanded my view from mere entertainment to deeper life experiences.",
+      "primary_theme": "identity",
+      "secondary_themes": [
+        "learning"
+      ],
+      "tags": [
+        "self_discovery",
+        "growth_mindset",
+        "curiosity"
+      ],
+      "tag_rationales": {
+        "self_discovery": "The narrative centers on how reading shaped the author's self-identity and worldview.",
+        "growth_mindset": "Shows openness to challenge and evolving understanding through literature.",
+        "curiosity": "Highlights the drive to explore deeper meaning in books beyond entertainment."
+      },
+      "confidence": {
+        "primary_theme": 0.9,
+        "tags": {
+          "self_discovery": 0.9,
+          "growth_mindset": 0.85,
+          "curiosity": 0.8
+        }
+      },
+      "tag_quality": {
+        "tags": {
+          "self_discovery": 0.9,
+          "growth_mindset": 0.85,
+          "curiosity": 0.8
+        }
+      },
+      "related_entry_ids": [
+        "entry_001",
+        "entry_002",
+        "entry_005",
+        "entry_006",
+        "entry_007",
+        "entry_013",
+        "entry_016",
+        "entry_019",
+        "entry_021",
+        "entry_023"
+      ]
+    },
+    {
+      "id": "entry_028",
+      "source_id": "source_018",
+      "core_idea": "The author advocates for engaging with challenging, 'difficult' literature to access deeper human experiences, shared life lessons, and philosophical questions, critiquing reading solely for entertainment or status.",
+      "evidence_excerpt": "Books are about life, experiences, and beliefs... it’s the sharing of life and ideas that should matter, not difficulty or status... I try to get people to read more difficult books because there is so much life being missed... discussing Kierkegaard, Dostoevsky, and Pennac's 'Rights of the Reader' on literature as a gift to understand life's meaning.",
+      "primary_theme": "values",
+      "secondary_themes": [
+        "philosophy"
+      ],
+      "tags": [
+        "purpose",
+        "literature_as_life",
+        "existential_questioning"
+      ],
+      "tag_rationales": {
+        "purpose": "Focus on why engaging with tough literature enriches one's understanding of what matters in life.",
+        "literature_as_life": "Sees books as vessels for shared human experience and deeper life engagement.",
+        "existential_questioning": "Highlights the philosophical inquiry evoked through challenging literature."
+      },
+      "confidence": {
+        "primary_theme": 0.9,
+        "tags": {
+          "purpose": 0.9,
+          "literature_as_life": 0.85,
+          "existential_questioning": 0.8
+        }
+      },
+      "tag_quality": {
+        "tags": {
+          "purpose": 0.9,
+          "literature_as_life": 0.85,
+          "existential_questioning": 0.8
+        }
+      },
+      "related_entry_ids": [
+        "entry_003",
+        "entry_007",
+        "entry_013",
+        "entry_014",
+        "entry_015"
+      ]
     }
   ]
 }

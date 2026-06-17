@@ -31,10 +31,8 @@ export function targetEntryCount(wordCount: number): number {
 
 /** Soft guideline — usual max entries for a source length. */
 export function softMaxEntries(wordCount: number, targetCount: number): number {
-  if (wordCount < 700) return 1;
-  if (wordCount < 1200) return 2;
-  if (wordCount < 2500) return 3;
-  return Math.max(targetCount + 2, targetCount);
+  const byWords = Math.max(1, Math.ceil(wordCount / 800));
+  return Math.max(targetCount, byWords);
 }
 
 /** Hard ceiling — never exceed this many entries per source. */
