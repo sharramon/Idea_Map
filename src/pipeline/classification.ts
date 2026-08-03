@@ -181,6 +181,91 @@ export function trimClassification(entry: VerifierOutput): VerifierOutput {
   };
 }
 
+export const MAX_THEME_ID_LENGTH = 40;
+export const MAX_THEME_SEGMENTS = 4;
+
+/** Normalize a raw theme string to snake_case. */
+export function normalizeThemeId(raw: string): string {
+  return raw
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '')
+    .replace(/_+/g, '_');
+}
+
+/** Theme ids must be short snake_case domain labels, not thesis sentences. */
+export function isValidThemeId(id: string): boolean {
+  if (!id || id.length > MAX_THEME_ID_LENGTH) return false;
+  if (id.split('_').length > MAX_THEME_SEGMENTS) return false;
+  return /^[a-z][a-z0-9]*(_[a-z0-9]+)*$/.test(id);
+}
+
+/** Map a theme string to a taxonomy id, or null if unknown. */
+export function resolveThemeId(raw: string, taxonomy: Taxonomy): string | null {
+  const trimmed = (raw ?? '').trim();
+  if (!trimmed) return null;
+  const themeIds = new Set(taxonomy.themes.map(t => t.id));
+  if (themeIds.has(trimmed)) return trimmed;
+  const normalized = normalizeThemeId(trimmed);
+  if (themeIds.has(normalized)) return normalized;
+  for (const theme of taxonomy.themes) {
+    if (normalizeThemeId(theme.name) === normalized) return theme.id;
+  }
+  return null;
+}
+
+/** Pick the best taxonomy primary_theme, falling back through candidates. */
+export function coercePrimaryThemeToTaxonomy(
+  entry: ExtractorOutput,
+  taxonomy: Taxonomy,
+): string {
+  const themeIds = new Set(taxonomy.themes.map(t => t.id));
+  const direct = resolveThemeId(entry.primary_theme, taxonomy);
+  if (direct && themeIds.has(direct)) return direct;
+
+  const normalized = normalizeThemeId(entry.primary_theme);
+  if (isValidThemeId(normalized) && themeIds.has(normalized)) return normalized;
+
+  const candidates = normalizeThemeCandidates(entry.theme_candidates)
+    .sort((a, b) => b.centrality - a.centrality);
+  for (const candidate of candidates) {
+    const resolved = resolveThemeId(candidate.theme, taxonomy);
+    if (resolved && themeIds.has(resolved)) return resolved;
+  }
+
+  if (isValidThemeId(normalized)) return normalized;
+  return taxonomy.themes[0]?.id ?? 'observations';
+}
+
+/** Slugify theme fields and resolve against taxonomy where possible. */
+export function sanitizeEntryThemes<T extends ExtractorOutput>(entry: T, taxonomy: Taxonomy): T {
+  const primary = coercePrimaryThemeToTaxonomy(entry, taxonomy);
+  const secondaryThemes = [...new Set(
+    (entry.secondary_themes ?? [])
+      .map(t => resolveThemeId(t, taxonomy) ?? (isValidThemeId(normalizeThemeId(t)) ? normalizeThemeId(t) : null))
+      .filter((t): t is string => !!t && t !== primary),
+  )].slice(0, MAX_SECONDARY_THEMES);
+
+  const themeCandidates = normalizeThemeCandidates(entry.theme_candidates).map(candidate => ({
+    ...candidate,
+    theme: resolveThemeId(candidate.theme, taxonomy)
+      ?? (isValidThemeId(normalizeThemeId(candidate.theme)) ? normalizeThemeId(candidate.theme) : primary),
+  }));
+
+  return {
+    ...entry,
+    primary_theme: primary,
+    secondary_themes: secondaryThemes,
+    theme_candidates: ensureMinimumThemeCandidates(
+      themeCandidates,
+      primary,
+      entry.confidence?.primary_theme ?? 0,
+      entry.evidence_excerpt ?? '',
+    ),
+  };
+}
+
 function slugifyTagId(raw: string): string {
   return raw.trim().toLowerCase().replace(/-/g, '_');
 }
@@ -234,10 +319,12 @@ export function finalizeEntryForStorage(
   }
 
   const tags = resolvedTags.slice(0, MAX_TAGS_PER_ENTRY);
-  const primaryTheme = trimmed.primary_theme;
+  const primaryTheme = coercePrimaryThemeToTaxonomy(trimmed, taxonomy);
 
   const secondaryThemes = [...new Set(
-    (trimmed.secondary_themes ?? []).filter(t => t && t !== primaryTheme && themeIds.has(t)),
+    (trimmed.secondary_themes ?? [])
+      .map(t => resolveThemeId(t, taxonomy) ?? (isValidThemeId(normalizeThemeId(t)) ? normalizeThemeId(t) : null))
+      .filter((t): t is string => !!t && t !== primaryTheme),
   )].slice(0, MAX_SECONDARY_THEMES);
 
   const base = entry as Entry;

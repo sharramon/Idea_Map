@@ -1,4 +1,5 @@
 {
+  "_comment": "Seed taxonomy — the baseline vocabulary to restore taxonomy.json from if it gets wiped or corrupted. Do not delete. Not used by the pipeline directly; copy into taxonomy.json to reset.",
   "themes": [
     {
       "id": "career",
@@ -62,758 +63,254 @@
     },
     {
       "id": "culture",
-      "name": "Culture",
-      "description": "Auto-added from extracted primary theme \"culture\"."
+      "name": "Culture & Media",
+      "description": "Art, literature, shared narratives, cultural patterns"
     },
     {
       "id": "technology",
-      "name": "Technology",
-      "description": "Auto-added from extracted primary theme \"technology\"."
+      "name": "Technology & Systems",
+      "description": "Software, hardware, digital tools, technical systems"
     },
     {
-      "id": "embodiment",
-      "name": "Embodiment",
-      "description": "Auto-added from extracted primary theme \"embodiment\"."
-    },
-    {
-      "id": "interfaces",
-      "name": "Interfaces",
-      "description": "Auto-added from extracted primary theme \"interfaces\"."
+      "id": "society",
+      "name": "Society & Institutions",
+      "description": "Social structures, norms, institutions, collective behavior"
     }
   ],
   "tags": [
     {
-      "id": "ambition",
-      "name": "ambition",
-      "ids": [
-        "career",
-        "goals"
+      "id": "inner_conflict",
+      "name": "inner conflict",
+      "theme_ids": [
+        "emotions"
       ],
-      "aliases": [
-        "drive",
-        "aspiration"
-      ],
-      "description": "Desire to achieve or become something"
+      "aliases": [],
+      "description": "Conflicts and struggles within one's own mind and emotions, including feelings of powerlessness, doubt, hesitation, and loneliness caused by internal isolation."
     },
     {
-      "id": "burnout",
-      "name": "burnout",
-      "ids": [
-        "career",
-        "health"
+      "id": "creative_process",
+      "name": "creative process",
+      "theme_ids": [
+        "emotions"
       ],
-      "aliases": [
-        "exhaustion",
-        "depletion"
-      ],
-      "description": "Emotional/physical depletion from sustained effort"
+      "aliases": [],
+      "description": "The steps, challenges, and experience involved in creating new work or artistic expression, including the desire and effort to express one's unique inner experiences."
     },
     {
-      "id": "skill_building",
-      "name": "skill-building",
-      "ids": [
-        "career",
+      "id": "self_control",
+      "name": "self control",
+      "theme_ids": [
+        "emotions"
+      ],
+      "aliases": [],
+      "description": "Discipline, willpower, and mastery over one's own habits, behaviors, and impulses."
+    },
+    {
+      "id": "existential_doubt",
+      "name": "existential doubt",
+      "theme_ids": [
+        "emotions"
+      ],
+      "aliases": [],
+      "description": "Questions and uncertainties about purpose, meaning, and existence."
+    },
+    {
+      "id": "innovation",
+      "name": "innovation",
+      "theme_ids": [
+        "creativity",
+        "technology"
+      ],
+      "aliases": [],
+      "description": "Innovation is the act of creating or introducing something new or improved, often involving creative problem solving and technical advancement."
+    },
+    {
+      "id": "social_roles",
+      "name": "social roles",
+      "theme_ids": [
+        "society",
+        "culture"
+      ],
+      "aliases": [
+        "role_dynamics"
+      ],
+      "description": "Social roles involve the functions, hierarchies, and behaviors individuals adopt within groups, shaping group structure and collective mythology."
+    },
+    {
+      "id": "cultural_formation",
+      "name": "cultural formation",
+      "theme_ids": [
+        "culture"
+      ],
+      "aliases": [],
+      "description": "Culture encompasses the creation and evolution of shared narratives, social patterns, and group identities, including how cultural phenomena and formations emerge among small or large groups."
+    },
+    {
+      "id": "perception",
+      "name": "perception",
+      "theme_ids": [
+        "identity",
+        "observations"
+      ],
+      "aliases": [],
+      "description": "Perception involves the cognitive process of interpreting sensory information, influencing personal experience and reality construction."
+    },
+    {
+      "id": "subjective_reality",
+      "name": "subjective reality",
+      "theme_ids": [
+        "identity",
+        "observations"
+      ],
+      "aliases": [],
+      "description": "Subjective reality refers to the individual experience and interpretation of the world, which can differ significantly among people, highlighting personal perceptions and beliefs."
+    },
+    {
+      "id": "body_representation",
+      "name": "body representation",
+      "theme_ids": [
+        "technology"
+      ],
+      "aliases": [],
+      "description": "Addresses how VR systems model user bodies based on limited tracking."
+    },
+    {
+      "id": "user_experience",
+      "name": "user experience",
+      "theme_ids": [
+        "technology"
+      ],
+      "aliases": [],
+      "description": "Focuses on the impact these limits have on how users experience VR."
+    },
+    {
+      "id": "haptic_feedback",
+      "name": "haptic feedback",
+      "theme_ids": [
+        "technology"
+      ],
+      "aliases": [],
+      "description": "Describes the absence of tactile and force feedback crucial for realistic interaction."
+    },
+    {
+      "id": "interaction_design",
+      "name": "interaction design",
+      "theme_ids": [
+        "technology"
+      ],
+      "aliases": [],
+      "description": "Interaction design covers the creation of intuitive and expressive user control mechanisms, including novel gesture-based input techniques and body movements used to enhance user interaction in virtual environments."
+    },
+    {
+      "id": "reading_habits",
+      "name": "reading habits",
+      "theme_ids": [
         "learning"
       ],
       "aliases": [
-        "learning",
-        "practice",
-        "craft"
+        "book_habits"
       ],
-      "description": "Deliberately improving at something"
+      "description": "The evolving and personal patterns of engaging with reading as a habit, including preferences and frequency."
     },
     {
-      "id": "leadership",
-      "name": "leadership",
-      "ids": [
-        "career",
-        "relationships"
+      "id": "literary_expansion",
+      "name": "literary expansion",
+      "theme_ids": [
+        "learning"
       ],
       "aliases": [
-        "management",
-        "influence"
+        "reading_breadth"
       ],
-      "description": "Guiding others or taking ownership"
+      "description": "The process of broadening one’s literary horizons by exploring diverse and more challenging genres or authors."
     },
     {
-      "id": "work_life_balance",
-      "name": "work-life-balance",
-      "ids": [
-        "career",
-        "health"
-      ],
-      "aliases": [
-        "boundaries",
-        "rest"
-      ],
-      "description": "Tension between work demands and personal life"
-    },
-    {
-      "id": "self_image",
-      "name": "self-image",
-      "ids": [
+      "id": "personal_growth",
+      "name": "personal growth",
+      "theme_ids": [
         "identity"
       ],
       "aliases": [
-        "self-perception",
-        "self-concept"
+        "self_development"
       ],
-      "description": "How I see myself"
+      "description": "The development and transformation of one’s self in intellectual, emotional, or moral dimensions, often facilitated by experiences like reading."
     },
     {
-      "id": "authenticity",
-      "name": "authenticity",
-      "ids": [
-        "identity",
+      "id": "literature_value",
+      "name": "literature value",
+      "theme_ids": [
+        "values",
+        "culture"
+      ],
+      "aliases": [],
+      "description": "The importance of valuing books for their meaningful content beyond mere entertainment, highlighting the profound insights literature can convey."
+    },
+    {
+      "id": "book_interpretation",
+      "name": "book interpretation",
+      "theme_ids": [
+        "values",
+        "culture"
+      ],
+      "aliases": [],
+      "description": "Perspectives and approaches regarding how books are understood and valued, especially distinctions between entertainment and serious literary merit."
+    },
+    {
+      "id": "depth_of_content",
+      "name": "depth of content",
+      "theme_ids": [
+        "values",
+        "culture"
+      ],
+      "aliases": [],
+      "description": "The complexity and richness found in difficult literature that offers layered meanings and profound human insights."
+    },
+    {
+      "id": "empathy",
+      "name": "empathy",
+      "theme_ids": [
+        "emotions",
         "values"
       ],
-      "aliases": [
-        "genuine",
-        "true-self"
-      ],
-      "description": "Being real and consistent with core self"
+      "aliases": [],
+      "description": "The emotional capacity to understand and share the feelings of others, promoting compassion and connection."
     },
     {
-      "id": "growth_mindset",
-      "name": "growth-mindset",
-      "ids": [
-        "identity",
-        "learning"
-      ],
-      "aliases": [
-        "adaptability",
-        "openness"
-      ],
-      "description": "Belief in capacity to change and improve"
-    },
-    {
-      "id": "vulnerability",
-      "name": "vulnerability",
-      "ids": [
-        "identity",
-        "relationships",
+      "id": "hope",
+      "name": "hope",
+      "theme_ids": [
+        "values",
         "emotions"
       ],
-      "aliases": [
-        "openness",
-        "exposure"
-      ],
-      "description": "Willingness to be seen or hurt"
+      "aliases": [],
+      "description": "Hope is a feeling of expectation and desire for a certain positive outcome, often providing motivation and resilience in difficult times."
     },
     {
-      "id": "self_discovery",
-      "name": "self-discovery",
-      "ids": [
-        "identity"
+      "id": "systemic_thinking",
+      "name": "systemic thinking",
+      "theme_ids": [
+        "society"
       ],
-      "aliases": [
-        "introspection",
-        "self-awareness"
-      ],
-      "description": "Learning new things about oneself"
-    },
-    {
-      "id": "concealment",
-      "name": "concealment",
-      "ids": [
-        "identity",
-        "relationships",
-        "emotions"
-      ],
-      "aliases": [
-        "hiding",
-        "masking",
-        "secrecy"
-      ],
-      "description": "Hiding truth, feelings, or self from others or oneself"
-    },
-    {
-      "id": "fear_of_rejection",
-      "name": "fear-of-rejection",
-      "ids": [
-        "identity",
-        "relationships",
-        "emotions"
-      ],
-      "aliases": [
-        "rejection-anxiety",
-        "social-fear"
-      ],
-      "description": "Avoidance driven by dread of being dismissed or excluded"
-    },
-    {
-      "id": "defensive_humor",
-      "name": "defensive-humor",
-      "ids": [
-        "identity",
-        "relationships",
-        "emotions"
-      ],
-      "aliases": [
-        "deflection",
-        "joking-as-shield"
-      ],
-      "description": "Using humor to deflect vulnerability or discomfort"
-    },
-    {
-      "id": "childhood_invalidation",
-      "name": "childhood-invalidation",
-      "ids": [
-        "identity",
-        "emotions",
-        "relationships"
-      ],
-      "aliases": [
-        "early-wounds",
-        "parental-dismissal"
-      ],
-      "description": "Early experiences of being dismissed, shamed, or unseen"
-    },
-    {
-      "id": "trust",
-      "name": "trust",
-      "ids": [
-        "relationships"
-      ],
-      "aliases": [
-        "reliability",
-        "faith"
-      ],
-      "description": "Belief in another's reliability or goodwill"
-    },
-    {
-      "id": "communication",
-      "name": "communication",
-      "ids": [
-        "relationships"
-      ],
-      "aliases": [
-        "conversation",
-        "dialogue"
-      ],
-      "description": "The exchange of meaning between people"
+      "aliases": [],
+      "description": "Systemic thinking is the ability to understand and analyze complex systems holistically, recognizing interdependencies and underlying structures in social and organizational contexts."
     },
     {
       "id": "loneliness",
       "name": "loneliness",
-      "ids": [
-        "relationships",
+      "theme_ids": [
         "emotions"
       ],
-      "aliases": [
-        "isolation",
-        "disconnection"
-      ],
-      "description": "Feeling of disconnection or absence"
+      "aliases": [],
+      "description": "A feeling of isolation and emotional distance from others, often arising from disconnect between one's inner world and external understanding."
     },
     {
-      "id": "friendship",
-      "name": "friendship",
-      "ids": [
-        "relationships"
-      ],
-      "aliases": [
-        "companionship",
-        "bond"
-      ],
-      "description": "Chosen relationships of mutual care"
-    },
-    {
-      "id": "boundaries",
-      "name": "boundaries",
-      "ids": [
-        "relationships",
-        "values"
-      ],
-      "aliases": [
-        "limits",
-        "space"
-      ],
-      "description": "Defining what is acceptable or needed"
-    },
-    {
-      "id": "inspiration",
-      "name": "inspiration",
-      "ids": [
-        "creativity"
-      ],
-      "aliases": [
-        "spark",
-        "muse"
-      ],
-      "description": "The felt impulse to create"
-    },
-    {
-      "id": "creative_block",
-      "name": "creative-block",
-      "ids": [
-        "creativity"
-      ],
-      "aliases": [
-        "stuck",
-        "resistance"
-      ],
-      "description": "Difficulty accessing creative flow"
-    },
-    {
-      "id": "making",
-      "name": "making",
-      "ids": [
+      "id": "self_expression",
+      "name": "self expression",
+      "theme_ids": [
         "creativity",
-        "projects"
-      ],
-      "aliases": [
-        "building",
-        "crafting"
-      ],
-      "description": "The act of bringing something into existence"
-    },
-    {
-      "id": "storytelling",
-      "name": "storytelling",
-      "ids": [
-        "creativity",
-        "observations"
-      ],
-      "aliases": [
-        "narrative",
-        "writing"
-      ],
-      "description": "Shaping experience into story"
-    },
-    {
-      "id": "aesthetics",
-      "name": "aesthetics",
-      "ids": [
-        "creativity",
-        "observations"
-      ],
-      "aliases": [
-        "beauty",
-        "taste",
-        "style"
-      ],
-      "description": "Sensibility about what is beautiful or resonant"
-    },
-    {
-      "id": "curiosity",
-      "name": "curiosity",
-      "ids": [
-        "learning",
-        "philosophy"
-      ],
-      "aliases": [
-        "wonder",
-        "questioning"
-      ],
-      "description": "Drive to understand and explore"
-    },
-    {
-      "id": "mental_models",
-      "name": "mental-models",
-      "ids": [
-        "learning",
-        "philosophy"
-      ],
-      "aliases": [
-        "frameworks",
-        "heuristics"
-      ],
-      "description": "Structured ways of thinking about domains"
-    },
-    {
-      "id": "expertise",
-      "name": "expertise",
-      "ids": [
-        "learning",
-        "career"
-      ],
-      "aliases": [
-        "mastery",
-        "depth"
-      ],
-      "description": "Deep knowledge in a specific area"
-    },
-    {
-      "id": "pattern_recognition",
-      "name": "pattern-recognition",
-      "ids": [
-        "learning"
-      ],
-      "aliases": [
-        "synthesis",
-        "connection"
-      ],
-      "description": "Noticing recurring structures across domains"
-    },
-    {
-      "id": "energy",
-      "name": "energy",
-      "ids": [
-        "health"
-      ],
-      "aliases": [
-        "vitality",
-        "capacity"
-      ],
-      "description": "Physical and mental fuel"
-    },
-    {
-      "id": "mental_health",
-      "name": "mental-health",
-      "ids": [
-        "health",
-        "emotions"
-      ],
-      "aliases": [
-        "psychological-wellbeing",
-        "mind"
-      ],
-      "description": "Emotional and psychological state"
-    },
-    {
-      "id": "habits",
-      "name": "habits",
-      "ids": [
-        "health",
-        "goals"
-      ],
-      "aliases": [
-        "routines",
-        "systems"
-      ],
-      "description": "Repeated behaviors that shape outcomes"
-    },
-    {
-      "id": "purpose",
-      "name": "purpose",
-      "ids": [
-        "values",
-        "philosophy"
-      ],
-      "aliases": [
-        "meaning",
-        "why"
-      ],
-      "description": "The sense of having a reason to act"
-    },
-    {
-      "id": "ethics",
-      "name": "ethics",
-      "ids": [
-        "values",
-        "philosophy"
-      ],
-      "aliases": [
-        "morality",
-        "right-and-wrong"
-      ],
-      "description": "Questions of what is right to do"
-    },
-    {
-      "id": "priorities",
-      "name": "priorities",
-      "ids": [
-        "values",
-        "goals"
-      ],
-      "aliases": [
-        "trade-offs",
-        "what-matters"
-      ],
-      "description": "What gets weight when choices must be made"
-    },
-    {
-      "id": "planning",
-      "name": "planning",
-      "ids": [
-        "goals"
-      ],
-      "aliases": [
-        "strategy",
-        "roadmap"
-      ],
-      "description": "Laying out steps toward a desired outcome"
-    },
-    {
-      "id": "motivation",
-      "name": "motivation",
-      "ids": [
-        "goals",
-        "emotions"
-      ],
-      "aliases": [
-        "drive",
-        "momentum"
-      ],
-      "description": "The force that initiates and sustains action"
-    },
-    {
-      "id": "procrastination",
-      "name": "procrastination",
-      "ids": [
-        "goals",
-        "emotions"
-      ],
-      "aliases": [
-        "avoidance",
-        "delay"
-      ],
-      "description": "Deferring action despite intent"
-    },
-    {
-      "id": "anxiety",
-      "name": "anxiety",
-      "ids": [
-        "emotions",
-        "health"
-      ],
-      "aliases": [
-        "worry",
-        "dread",
-        "nervousness"
-      ],
-      "description": "Apprehension about uncertain futures"
-    },
-    {
-      "id": "emotional_renewal",
-      "name": "emotional-renewal",
-      "ids": [
-        "emotions",
-        "identity",
-        "health"
-      ],
-      "aliases": [
-        "renewal",
-        "emotional-reset"
-      ],
-      "description": "Recovering or regenerating emotional capacity after strain"
-    },
-    {
-      "id": "joy",
-      "name": "joy",
-      "ids": [
-        "emotions"
-      ],
-      "aliases": [
-        "happiness",
-        "delight",
-        "pleasure"
-      ],
-      "description": "Positive emotional flourishing"
-    },
-    {
-      "id": "grief",
-      "name": "grief",
-      "ids": [
-        "emotions"
-      ],
-      "aliases": [
-        "loss",
-        "mourning",
-        "sadness"
-      ],
-      "description": "The experience of loss"
-    },
-    {
-      "id": "wonder",
-      "name": "wonder",
-      "ids": [
-        "emotions",
-        "philosophy"
-      ],
-      "aliases": [
-        "awe",
-        "amazement"
-      ],
-      "description": "Felt sense of something larger than self"
-    },
-    {
-      "id": "meaning",
-      "name": "meaning",
-      "ids": [
-        "philosophy",
-        "values"
-      ],
-      "aliases": [
-        "significance",
-        "mattering"
-      ],
-      "description": "Why things matter or have weight"
-    },
-    {
-      "id": "existential_questioning",
-      "name": "existential-questioning",
-      "ids": [
-        "philosophy",
-        "values",
         "identity"
       ],
-      "aliases": [
-        "existential-doubt",
-        "why-am-i-here"
-      ],
-      "description": "Questioning purpose, existence, or the grounds of meaning"
-    },
-    {
-      "id": "moral_idealism",
-      "name": "moral-idealism",
-      "ids": [
-        "values",
-        "philosophy",
-        "identity"
-      ],
-      "aliases": [
-        "idealism",
-        "moral-aspiration"
-      ],
-      "description": "Holding or striving toward high moral standards"
-    },
-    {
-      "id": "disillusionment",
-      "name": "disillusionment",
-      "ids": [
-        "values",
-        "philosophy",
-        "emotions"
-      ],
-      "aliases": [
-        "disappointment",
-        "loss-of-faith"
-      ],
-      "description": "Loss of belief in something once trusted or idealized"
-    },
-    {
-      "id": "choosing_life",
-      "name": "choosing-life",
-      "ids": [
-        "values",
-        "philosophy",
-        "health"
-      ],
-      "aliases": [
-        "affirmation",
-        "commitment-to-live"
-      ],
-      "description": "Active choice to engage with life despite difficulty"
-    },
-    {
-      "id": "consciousness",
-      "name": "consciousness",
-      "ids": [
-        "philosophy"
-      ],
-      "aliases": [
-        "awareness",
-        "experience",
-        "qualia"
-      ],
-      "description": "The fact and nature of subjective experience"
-    },
-    {
-      "id": "time",
-      "name": "time",
-      "ids": [
-        "philosophy",
-        "goals"
-      ],
-      "aliases": [
-        "impermanence",
-        "change",
-        "mortality"
-      ],
-      "description": "The passage and finitude of moments"
-    },
-    {
-      "id": "iteration",
-      "name": "iteration",
-      "ids": [
-        "projects",
-        "learning"
-      ],
-      "aliases": [
-        "refinement",
-        "feedback-loop"
-      ],
-      "description": "Repeated cycles of build-measure-learn"
-    },
-    {
-      "id": "tools",
-      "name": "tools",
-      "ids": [
-        "projects",
-        "learning"
-      ],
-      "aliases": [
-        "software",
-        "instruments",
-        "gear"
-      ],
-      "description": "Things used to accomplish work"
-    },
-    {
-      "id": "scope",
-      "name": "scope",
-      "ids": [
-        "projects",
-        "goals"
-      ],
-      "aliases": [
-        "scale",
-        "ambition-size"
-      ],
-      "description": "How large or bounded a project is"
-    },
-    {
-      "id": "technology",
-      "name": "technology",
-      "ids": [
-        "observations",
-        "projects"
-      ],
-      "aliases": [
-        "tech",
-        "software",
-        "digital"
-      ],
-      "description": "Tools and systems that extend human capability"
-    },
-    {
-      "id": "culture",
-      "name": "culture",
-      "ids": [
-        "observations",
-        "relationships"
-      ],
-      "aliases": [
-        "society",
-        "norms",
-        "shared-meaning"
-      ],
-      "description": "The shared context humans inhabit"
-    },
-    {
-      "id": "human_nature",
-      "name": "human-nature",
-      "ids": [
-        "observations",
-        "philosophy"
-      ],
-      "aliases": [
-        "psychology",
-        "behavior"
-      ],
-      "description": "What people are like and why"
-    },
-    {
-      "id": "literature_as_life",
-      "name": "literature-as-life",
-      "ids": [],
-      "aliases": [
-        "books-as-life",
-        "literature-as-experience"
-      ],
-      "description": "Viewing literature as a medium conveying deeper human experiences, shared life lessons, and existential insights."
+      "aliases": [],
+      "description": "The attempt and struggle to convey one's personal inner experiences, emotions, and identity through various forms, including language and art."
     }
   ]
 }

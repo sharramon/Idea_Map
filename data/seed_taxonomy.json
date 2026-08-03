@@ -1,0 +1,21 @@
+﻿{
+  "_comment": "Seed taxonomy — the baseline vocabulary to restore taxonomy.json from if it gets wiped or corrupted. Do not delete. Not used by the pipeline directly; copy into taxonomy.json to reset.",
+  "themes": [
+    { "id": "career", "name": "Career & Professional Growth", "description": "Work, ambition, skill-building, professional identity" },
+    { "id": "identity", "name": "Identity & Self-Understanding", "description": "Who I am, self-image, authenticity, personal growth" },
+    { "id": "relationships", "name": "Relationships & Connection", "description": "Friendships, trust, communication, belonging" },
+    { "id": "creativity", "name": "Creativity & Expression", "description": "Making things, artistic impulses, creative process" },
+    { "id": "learning", "name": "Learning & Curiosity", "description": "Intellectual curiosity, reading, mental models, expertise" },
+    { "id": "health", "name": "Health & Energy", "description": "Physical and mental wellbeing, habits, energy management" },
+    { "id": "values", "name": "Values & Meaning", "description": "What matters, ethics, purpose, integrity" },
+    { "id": "goals", "name": "Plans & Goals", "description": "Future vision, planning, motivation, progress tracking" },
+    { "id": "emotions", "name": "Emotions & Inner Life", "description": "Feelings, moods, internal experiences, emotional patterns" },
+    { "id": "philosophy", "name": "Philosophy & Big Questions", "description": "Meaning, consciousness, existence, how the world works" },
+    { "id": "projects", "name": "Projects & Making", "description": "Specific things being built, iterated on, shipped" },
+    { "id": "observations", "name": "Observations & World", "description": "Noticing things in culture, society, technology, nature" },
+    { "id": "culture", "name": "Culture & Media", "description": "Art, literature, shared narratives, cultural patterns" },
+    { "id": "technology", "name": "Technology & Systems", "description": "Software, hardware, digital tools, technical systems" },
+    { "id": "society", "name": "Society & Institutions", "description": "Social structures, norms, institutions, collective behavior" }
+  ],
+  "tags": []
+}

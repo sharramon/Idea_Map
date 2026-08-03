@@ -24,7 +24,7 @@ export interface Source {
   created_at: string;
   title: string;
   summary: string;
-  raw_text: string;
+  raw_text_path: string;
   content_hash: string;
   child_entry_ids: string[];
 }

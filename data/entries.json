@@ -3,262 +3,308 @@
     {
       "id": "entry_001",
       "source_id": "source_001",
-      "core_idea": "The narrator reflects on self-identity through the lens of what they are not, revealing a deep fear of rejection and a struggle with honesty and authenticity, while tracing these feelings back to childhood experiences and the desire to live a genuine life.",
-      "evidence_excerpt": "I’m not honest, but I try my best to be genuine... I think the main, or perhaps only reason people lie is because they’re afraid... Maybe I’m afraid of being dropped, of people finding out that I’m some sort of failure... Those moments when I returned home with a bad grade and had to then endure hours of being shouted at... I think I like this answer to this prompt. I am not an ostrich.",
-      "primary_theme": "identity",
+      "core_idea": "The narrator experiences a complex internal struggle involving emotional doubt, creative frustration, and questions about self-discipline while working on a challenging technical project.",
+      "evidence_excerpt": "I sat there, staring at the screen, a million little puzzles filling my head... I feel the old arguments rise, slowly swirling in the background noise of my mind... You’re creating a virtual reality experience that forms a useful tool... Some random snippet of something I read years ago flits across my mind, asking me how one can have self discipline if one is beating oneself into submission.",
+      "primary_theme": "emotions",
       "secondary_themes": [
-        "emotions",
-        "values"
+        "creativity",
+        "self_control"
       ],
       "tags": [
-        "self_discovery",
-        "fear_of_rejection",
-        "vulnerability",
-        "authenticity"
+        "inner_conflict",
+        "creative_process",
+        "self_control",
+        "existential_doubt"
       ],
       "tag_rationales": {
-        "self_discovery": "The narrator engages in introspection and learning about their own fears and values.",
-        "fear_of_rejection": "Fear of social rejection motivates much of the narrator’s inner conflict.",
-        "vulnerability": "The openness about fear and dishonesty illustrates a willingness to be emotionally exposed.",
-        "authenticity": "The narrator’s desire to live genuinely despite their fears underscores this key motif."
+        "inner_conflict": "The narrative centers on persistent internal emotional struggles and doubts.",
+        "creative_process": "The VR project highlights ongoing creative engagement amidst emotional challenges.",
+        "self_control": "Reflections on discipline and self-mastery add depth to the narrator’s inner life.",
+        "existential_doubt": "Questions about purpose and meaning pervade the narrator’s mindset."
       },
       "confidence": {
-        "primary_theme": 0.95,
+        "primary_theme": 0.9,
         "tags": {
-          "self_discovery": 0.9,
-          "fear_of_rejection": 0.9,
-          "vulnerability": 0.85,
-          "authenticity": 0.85
+          "inner_conflict": 0.9,
+          "creative_process": 0.85,
+          "self_control": 0.83,
+          "existential_doubt": 0.8
         }
       },
       "tag_quality": {
         "tags": {
-          "self_discovery": 0.9,
-          "fear_of_rejection": 0.9,
-          "vulnerability": 0.85,
-          "authenticity": 0.85
+          "inner_conflict": 0.9,
+          "creative_process": 0.85,
+          "self_control": 0.83,
+          "existential_doubt": 0.8
         }
       },
       "related_entry_ids": [
         "entry_002",
         "entry_004",
         "entry_005",
-        "entry_006",
-        "entry_007",
-        "entry_013",
+        "entry_008",
         "entry_016",
-        "entry_017",
-        "entry_019",
-        "entry_023",
-        "entry_027"
+        "entry_017"
       ]
     },
     {
       "id": "entry_002",
       "source_id": "source_002",
-      "core_idea": "The narrator reflects on a personal identity transition marked by the end of a chapter defined by resilience, anger, and coping mechanisms, now replaced by emptiness, coldness, and existential questioning.",
-      "evidence_excerpt": "I had been closing a chapter in my life. One written by wanting to be myself in a world that seemed perversely interested in finding ways to kick me down... I felt empty, hopelessly weighed down by all these self-made structures that no one could understand. The driving force of anger had burned to nothing, leaving me cold. Why was I here? Who was to blame? I hated it all.",
-      "primary_theme": "identity",
+      "core_idea": "The author is designing a new XR activity that balances playfulness and moments of vulnerability to foster meaningful connection, while also aiming for quick, impactful understanding and technical innovation within a personal, achievable project scope.",
+      "evidence_excerpt": "I want to give people a chance to be ‘playful’. But also I want moments where vulnerability is needed. Some way to connect. Not TOO deep, but deep enough. One moment in time...I need a ‘clever’ thing I can make as a weekend project. I need to create something new, that’s not been tried in XR...The impact should be front loaded. People should understand the ‘sell’ as fast as possible.",
+      "primary_theme": "creativity",
       "secondary_themes": [
         "emotions",
-        "values"
+        "technology"
       ],
       "tags": [
-        "self_discovery",
-        "disillusionment",
-        "existential_questioning"
+        "creative_process",
+        "innovation",
+        "inner_conflict"
       ],
       "tag_rationales": {
-        "self_discovery": "The narrator is exploring and re-evaluating their self-identity.",
-        "disillusionment": "Expressed through loss of purpose and frustration with self-made defenses.",
-        "existential_questioning": "Underlying questions about purpose and existence are central to the reflection."
-      },
-      "confidence": {
-        "primary_theme": 0.95,
-        "tags": {
-          "self_discovery": 0.9,
-          "disillusionment": 0.9,
-          "existential_questioning": 0.85
-        }
-      },
-      "tag_quality": {
-        "tags": {
-          "self_discovery": 0.9,
-          "disillusionment": 0.9,
-          "existential_questioning": 0.85
-        }
-      },
-      "related_entry_ids": [
-        "entry_001",
-        "entry_003",
-        "entry_005",
-        "entry_006",
-        "entry_007",
-        "entry_013",
-        "entry_015",
-        "entry_016",
-        "entry_017",
-        "entry_018",
-        "entry_019",
-        "entry_023",
-        "entry_027"
-      ]
-    },
-    {
-      "id": "entry_004",
-      "source_id": "source_002",
-      "core_idea": "The narrator explores relational dynamics through intimate conversation about empathy, sympathy, and vulnerability, reflecting on the difficulties of truly connecting and the desire to alleviate isolation.",
-      "evidence_excerpt": "We had talked about empathy and sympathy... To understand one person IS to sympathize with them!... I explained that to understand doesn’t mean that you sympathize... Yet we can hate ourselves... Because then no one would have to feel hopelessly isolated.",
-      "primary_theme": "relationships",
-      "secondary_themes": [
-        "emotions"
-      ],
-      "tags": [
-        "vulnerability",
-        "communication"
-      ],
-      "tag_rationales": {
-        "vulnerability": "Implied by openness required for such intimate conversations.",
-        "communication": "The entry focuses on their dialogue and exchange of ideas."
+        "creative_process": "The writing centers on designing a new, creative XR experience highlighting the creative process.",
+        "innovation": "There is clear emphasis on creating something new and untried in XR technology.",
+        "inner_conflict": "The tension between vulnerability, playfulness, and technical constraints suggests internal struggle in the process."
       },
       "confidence": {
         "primary_theme": 0.9,
         "tags": {
-          "vulnerability": 0.8,
-          "communication": 0.8
+          "creative_process": 0.9,
+          "innovation": 0.85,
+          "inner_conflict": 0.8
         }
       },
       "tag_quality": {
         "tags": {
-          "vulnerability": 0.8,
-          "communication": 0.8
+          "creative_process": 0.9,
+          "innovation": 0.85,
+          "inner_conflict": 0.8
         }
       },
       "related_entry_ids": [
         "entry_001",
-        "entry_006",
-        "entry_017",
-        "entry_018",
-        "entry_022",
-        "entry_023"
+        "entry_005",
+        "entry_008",
+        "entry_017"
       ]
     },
     {
       "id": "entry_003",
       "source_id": "source_003",
-      "core_idea": "The narrator reflects on a persistent, intimate internal dialogue with an existential question that has accompanied them for over a decade, driving deep philosophical inquiry about life’s meaning, purpose, and the value of existence, shaping their worldview and moral understanding over time.",
-      "evidence_excerpt": "I wonder if there has been a single day in the past decade where you have not taken up at least some corner of my thoughts... One frenchman even said “There is only one really serious philosophical question, and that is suicide.” ... Remember that time when I thought that life was about what you can leave behind?... I really did read too much fantasy back in the day... I had a stage where I thought life was about hope ...",
-      "primary_theme": "philosophy",
-      "secondary_themes": [
-        "values",
-        "emotions"
-      ],
-      "tags": [
-        "existential_questioning",
-        "purpose",
-        "moral_idealism"
-      ],
-      "tag_rationales": {
-        "existential_questioning": "The narrator wrestles continuously with the fundamental question of life’s worth and meaning.",
-        "purpose": "The narrative explores changing ideas about what makes life meaningful and worth living.",
-        "moral_idealism": "Reflection on living according to ideals such as hope, kindness, and helping others informs moral questioning."
-      },
-      "confidence": {
-        "primary_theme": 0.95,
-        "tags": {
-          "existential_questioning": 0.95,
-          "purpose": 0.85,
-          "moral_idealism": 0.8
-        }
-      },
-      "tag_quality": {
-        "tags": {
-          "existential_questioning": 0.95,
-          "purpose": 0.85,
-          "moral_idealism": 0.8
-        }
-      },
-      "related_entry_ids": [
-        "entry_002",
-        "entry_028"
-      ]
-    },
-    {
-      "id": "entry_005",
-      "source_id": "source_004",
-      "core_idea": "Individual identity and reality are fundamentally shaped by one’s thoughts and perceptions, meaning each person creates their own internal world that defines their sense of self and how they interpret the external world.",
-      "evidence_excerpt": "The person is defined by what they think and why they think it. ... As an extension of this thought, it would be fair to think that the idea is the world. The world is defined by what we think regardless of how the world itself is arranged. ... Every mind is a world for the world is in the eyes of the beholder.",
-      "primary_theme": "identity",
+      "core_idea": "The writer explores how culture emerges within small groups, including the role of hierarchy and specialized roles in forming shared mythologies and social structures, using MMO gaming roles as an analogy.",
+      "evidence_excerpt": "There must be a way that culture is created, even if it’s just between ten people. Especially if I give groups of three and then one ‘king’. But this is introducing hierarchy already. But this is also kind of how close range DPS, healer, tanker, long range DPS works in MMOs. As long as roles exist, mythology around these roles crystalize.",
+      "primary_theme": "culture",
       "secondary_themes": [
         "observations"
       ],
       "tags": [
-        "self_discovery",
-        "mind_over_matter",
-        "perception"
+        "social_roles",
+        "culture"
       ],
       "tag_rationales": {
-        "self_discovery": "Highlights the process of understanding how one's thoughts define personal identity.",
-        "mind_over_matter": "Emphasizes the concept that thought shapes the experience of the world.",
-        "perception": "Focuses on the role of individual perception in creating personal realities."
+        "social_roles": "The passage emphasizes how hierarchical roles influence group mythology and behavior.",
+        "culture": "Central motif is how culture forms within groups, particularly small ones."
       },
       "confidence": {
         "primary_theme": 0.9,
         "tags": {
-          "self_discovery": 0.9,
-          "mind_over_matter": 0.85,
-          "perception": 0.85
+          "social_roles": 0.8,
+          "culture": 0.9
         }
       },
       "tag_quality": {
         "tags": {
-          "self_discovery": 0.9,
-          "mind_over_matter": 0.85,
-          "perception": 0.85
+          "social_roles": 0.8,
+          "culture": 0.9
+        }
+      },
+      "related_entry_ids": [
+        "entry_015"
+      ]
+    },
+    {
+      "id": "entry_004",
+      "source_id": "source_004",
+      "core_idea": "The narrator reflects on a day of emotional struggle, inner conflict, and existential doubt while also considering self-identity and personal growth amid feelings of despair and resilience.",
+      "evidence_excerpt": "My mind was hopelessly scattered now. We had talked about empathy and sympathy. ... I started jogging. There was also a laughably convoluted conversation about how cutting carbs would free me from being dictated by hunger. I had been closing a chapter in my life. One written by wanting to be myself in a world that seemed perversely interested in finding ways to kick me down. ... The driving force of anger had burned to nothing, leaving me cold. I hated it all.",
+      "primary_theme": "emotions",
+      "secondary_themes": [
+        "identity"
+      ],
+      "tags": [
+        "inner_conflict",
+        "existential_doubt",
+        "self_control"
+      ],
+      "tag_rationales": {
+        "inner_conflict": "Reflects the narrator's intense emotional and mental struggles.",
+        "existential_doubt": "Central to the narrator’s questioning of purpose and meaning.",
+        "self_control": "Efforts to change habits and regain agency are key motifs."
+      },
+      "confidence": {
+        "primary_theme": 0.95,
+        "tags": {
+          "inner_conflict": 0.9,
+          "existential_doubt": 0.85,
+          "self_control": 0.8
+        }
+      },
+      "tag_quality": {
+        "tags": {
+          "inner_conflict": 0.9,
+          "existential_doubt": 0.85,
+          "self_control": 0.8
+        }
+      },
+      "related_entry_ids": [
+        "entry_001",
+        "entry_005",
+        "entry_008",
+        "entry_016",
+        "entry_017"
+      ]
+    },
+    {
+      "id": "entry_005",
+      "source_id": "source_005",
+      "core_idea": "The narrator experiences a deep emotional struggle with time slipping away indifferently, leading to feelings of loss of meaning, waning desire, and existential doubt about what one truly wants.",
+      "evidence_excerpt": "It seems to have something to do with attention and want. When one wants something you measure the time pass by one tick at a time...But when indifference settles, it settles like dust...There is no divinity that guides my hand, and so I am utterly alone...So then it becomes a problem of what I want. How does a person ever know what they want?",
+      "primary_theme": "emotions",
+      "secondary_themes": [
+        "philosophy"
+      ],
+      "tags": [
+        "inner_conflict",
+        "existential_doubt"
+      ],
+      "tag_rationales": {
+        "inner_conflict": "Reflects the narrator's internal struggles with meaning, motivation, and indifference.",
+        "existential_doubt": "Captures the questioning of existence, responsibility, and knowing what one truly wants."
+      },
+      "confidence": {
+        "primary_theme": 0.9,
+        "tags": {
+          "inner_conflict": 0.9,
+          "existential_doubt": 0.9
+        }
+      },
+      "tag_quality": {
+        "tags": {
+          "inner_conflict": 0.9,
+          "existential_doubt": 0.9
         }
       },
       "related_entry_ids": [
         "entry_001",
         "entry_002",
-        "entry_006",
+        "entry_004",
         "entry_007",
-        "entry_013",
+        "entry_008",
         "entry_016",
-        "entry_019",
-        "entry_023",
-        "entry_027"
+        "entry_017"
       ]
     },
     {
       "id": "entry_006",
-      "source_id": "source_005",
-      "core_idea": "The narrator reflects on the profound challenge of truly expressing their unique inner world through language and art, revealing a deep yearning to be genuinely known and to understand others beyond superficial interactions.",
-      "evidence_excerpt": "'How limited our means to do this. All language and art can't cover our whole existence. For my thoughts create a world, and your thoughts your world... I want to be known. I do so very want to be seen. I do so very want to see.'",
+      "source_id": "source_006",
+      "core_idea": "Individuals each live in their own subjective world shaped by their perceptions and thoughts, which means that personal realities vary greatly and others' significance or perceptions may differ from one's own assumptions.",
+      "evidence_excerpt": "As an extension of this thought, it would be fair to think that the idea is the world. The world is defined by what we think regardless of how the world itself is arranged... Every mind is a world for the world is in the eyes of the beholder. Doesn't this worry you sometimes? What if that one person you thought was nice to you actually just thought nothing of you?... The world is acting on you, but at the same time you are acting on the world.",
       "primary_theme": "identity",
-      "secondary_themes": [],
+      "secondary_themes": [
+        "observations"
+      ],
       "tags": [
-        "self_discovery",
-        "vulnerability",
-        "authenticity"
+        "perception",
+        "subjective_reality"
       ],
       "tag_rationales": {
-        "self_discovery": "The narrator examines their own identity and the desire to understand and be understood.",
-        "vulnerability": "Expressed by the openness and fear involved in revealing one's inner world.",
-        "authenticity": "The longing to be genuinely seen beyond superficial masks."
+        "perception": "The passage emphasizes that perception constructs personal realities and interpretations.",
+        "subjective_reality": "It explores how each mind creates a unique world differing from others."
       },
       "confidence": {
-        "primary_theme": 0.95,
+        "primary_theme": 0.9,
         "tags": {
-          "self_discovery": 0.9,
-          "vulnerability": 0.85,
-          "authenticity": 0.85
+          "perception": 0.85,
+          "subjective_reality": 0.8
         }
       },
       "tag_quality": {
         "tags": {
-          "self_discovery": 0.9,
-          "vulnerability": 0.85,
-          "authenticity": 0.85
+          "perception": 0.85,
+          "subjective_reality": 0.8
+        }
+      },
+      "related_entry_ids": [
+        "entry_007"
+      ]
+    },
+    {
+      "id": "entry_007",
+      "source_id": "source_008",
+      "core_idea": "The narrator meditates on the paradoxical and recursive nature of identity as an inescapable, self-referential trap.",
+      "evidence_excerpt": "Identity, the greatest lie of all. How can I see me from outside myself, when trying to get out leads me back to myself. To try and look at yourself is trying to escape the mobius strip by walking along it. Identity is an infinite trap.",
+      "primary_theme": "identity",
+      "secondary_themes": [
+        "self_understanding"
+      ],
+      "tags": [
+        "inner_conflict",
+        "perception",
+        "subjective_reality"
+      ],
+      "tag_rationales": {
+        "inner_conflict": "The narrator expresses a love-hate relationship with self and a struggle to understand identity, signaling inner turmoil.",
+        "perception": "The text explores the challenges of self-perception and the difficulty of viewing oneself externally.",
+        "subjective_reality": "The writing reflects on how personal experience and identity create a unique, subjective reality."
+      },
+      "confidence": {
+        "primary_theme": 0.9,
+        "tags": {
+          "inner_conflict": 0.85,
+          "perception": 0.8,
+          "subjective_reality": 0.8
+        }
+      },
+      "tag_quality": {
+        "tags": {
+          "inner_conflict": 0.85,
+          "perception": 0.8,
+          "subjective_reality": 0.8
+        }
+      },
+      "related_entry_ids": [
+        "entry_005",
+        "entry_006",
+        "entry_008",
+        "entry_017"
+      ]
+    },
+    {
+      "id": "entry_008",
+      "source_id": "source_011",
+      "core_idea": "A child struggles with intense emotional pain and frustration from feeling unheard and powerless within a hostile family environment, desperately seeking validation and understanding.",
+      "evidence_excerpt": "He just wanted to be heard. His anger boiling over to rage... If only he could TALK. If only he could be heard in this hellhole of a place.",
+      "primary_theme": "emotions",
+      "secondary_themes": [
+        "identity"
+      ],
+      "tags": [
+        "inner_conflict"
+      ],
+      "tag_rationales": {
+        "inner_conflict": "Captures the internal struggle of the child struggling between emotional pain and the desire to be seen."
+      },
+      "confidence": {
+        "primary_theme": 0.9,
+        "tags": {
+          "inner_conflict": 0.9
+        }
+      },
+      "tag_quality": {
+        "tags": {
+          "inner_conflict": 0.9
         }
       },
       "related_entry_ids": [
@@ -267,916 +313,328 @@
         "entry_004",
         "entry_005",
         "entry_007",
-        "entry_013",
         "entry_016",
-        "entry_019",
-        "entry_023",
-        "entry_027"
-      ]
-    },
-    {
-      "id": "entry_007",
-      "source_id": "source_006",
-      "core_idea": "The narrator contemplates the paradoxical nature of identity as an inescapable, infinite loop full of hidden depths and personal veils, expressing both familiarity and fear toward their own complex self.",
-      "evidence_excerpt": "Identity, the greatest lie of all. How can I see me from outside myself, when trying to get out leads me back to myself. To try and look at yourself is trying to escape the mobius strip by walking along it. Identity is an infinite trap... I know myself better than I know anybody, and the infinite alleys and curtains that branch and veil. I am afraid of the dark paths, that is why I have drawn curtains over them... Yet who but I can call myself by my own highest name? Who else can tread along these winding roads that split and crack and still comfortably call it home?",
-      "primary_theme": "identity",
-      "secondary_themes": [
-        "philosophy"
-      ],
-      "tags": [
-        "self_discovery",
-        "existential_questioning",
-        "concealment"
-      ],
-      "tag_rationales": {
-        "self_discovery": "The narrator explores multiple veiled and hidden aspects of self, indicating deep and ongoing self-knowledge pursuit.",
-        "existential_questioning": "The paradox of escaping oneself and the infinite trap metaphor reflect deep questions about existence and self.",
-        "concealment": "Fear of dark paths and drawing curtains over them suggests hiding or masking parts of the self."
-      },
-      "confidence": {
-        "primary_theme": 0.95,
-        "tags": {
-          "self_discovery": 0.9,
-          "existential_questioning": 0.9,
-          "concealment": 0.85
-        }
-      },
-      "tag_quality": {
-        "tags": {
-          "self_discovery": 0.9,
-          "existential_questioning": 0.9,
-          "concealment": 0.85
-        }
-      },
-      "related_entry_ids": [
-        "entry_001",
-        "entry_002",
-        "entry_005",
-        "entry_006",
-        "entry_013",
-        "entry_014",
-        "entry_015",
-        "entry_016",
-        "entry_019",
-        "entry_023",
-        "entry_027",
-        "entry_028"
-      ]
-    },
-    {
-      "id": "entry_008",
-      "source_id": "source_007",
-      "core_idea": "The narrator uses the metaphor of learning to depict the creative process as a journey of discovery, refinement, and striving for shared understanding through art, emphasizing the aesthetic sensibility and gradual mastery involved.",
-      "evidence_excerpt": "Imagine a time before art where a person stumbled upon a brick... They decided this moment... started about capturing it... Then about how there seems to be a line of light on the edge of the darkest edges... One day as he is doing this someone will stop him and say ‘that’s not quite how a brick looks’. It is in this moment that the gap has been closed.",
-      "primary_theme": "creativity",
-      "secondary_themes": [
-        "learning"
-      ],
-      "tags": [
-        "inspiration",
-        "aesthetics",
-        "skill_building"
-      ],
-      "tag_rationales": {
-        "inspiration": "The creative impulse to capture and render the brick signifies the spark that drives artistic creation.",
-        "aesthetics": "The attention to form, light, and color relates to aesthetic sensibility.",
-        "skill_building": "The progression from rudimentary drawing to nuanced shading shows deliberate craft improvement."
-      },
-      "confidence": {
-        "primary_theme": 0.9,
-        "tags": {
-          "inspiration": 0.9,
-          "aesthetics": 0.9,
-          "skill_building": 0.85
-        }
-      },
-      "tag_quality": {
-        "tags": {
-          "inspiration": 0.9,
-          "aesthetics": 0.9,
-          "skill_building": 0.85
-        }
-      },
-      "related_entry_ids": [
-        "entry_022"
+        "entry_017"
       ]
     },
     {
       "id": "entry_009",
-      "source_id": "source_008",
-      "core_idea": "The essay presents society as an artificial and malleable construction without absolute truths, emphasizing that social morals and systems are human-made and can be changed through conscious understanding.",
-      "evidence_excerpt": "Society is a construction. By a construction I mean to say that it carries two important qualities: it is artificial, and it is malleable. Society, being artificial, has no hard and fast truths; no absolute values. So all our morals, justice, and freedoms are all just constructs built on abstract nothings. So all of society is malleable, and nothing that is has to be that way. We can change it.",
-      "primary_theme": "observations",
-      "secondary_themes": [
-        "philosophy"
-      ],
+      "source_id": "source_012",
+      "core_idea": "Current VR systems track only the head and hands, leading to imprecise body representation and unique perception challenges in virtual environments.",
+      "evidence_excerpt": "In VR, your head is usually used as a point of reference as to where your character’s location actually is. This can lead to some oddly tricky situations where you’re peeking over a cliff or around a corner, but your whole body is moved. The game engine can’t really tell the difference between these as long as only the head and hands are tracked.",
+      "primary_theme": "technology",
+      "secondary_themes": [],
       "tags": [
-        "culture",
-        "social_systems",
-        "malleability"
+        "body_representation",
+        "user_experience"
       ],
       "tag_rationales": {
-        "culture": "Captures society as a shared context shaped by humans.",
-        "social_systems": "Emphasizes systemic nature of societal constructs.",
-        "malleability": "Highlights that society can be changed."
+        "body_representation": "Addresses how VR systems model user bodies based on limited tracking.",
+        "user_experience": "Focuses on the impact these limits have on how users experience VR."
       },
       "confidence": {
-        "primary_theme": 0.95,
+        "primary_theme": 0.9,
         "tags": {
-          "culture": 0.9,
-          "social_systems": 0.9,
-          "malleability": 0.85
+          "body_representation": 0.9,
+          "user_experience": 0.8
         }
       },
       "tag_quality": {
         "tags": {
-          "culture": 0.9,
-          "social_systems": 0.9,
-          "malleability": 0.85
+          "body_representation": 0.9,
+          "user_experience": 0.8
         }
       },
       "related_entry_ids": []
     },
     {
       "id": "entry_010",
-      "source_id": "source_008",
-      "core_idea": "The narrative critiques modern societal pathologies such as bureaucratic complexity, loss of solid moralities, and attention marketization, advocating for systemic awareness and meta-understanding to better see and interact with the complex systems shaping our world.",
-      "evidence_excerpt": "The progress of science and economy has brought us this far ... But now the themes of the day are a loss of solid moralities, near kafkaesque nightmares of bureaucracy, and marketization of our own attention... The problem is that we need to figure out how to see and interact with the systems that make up our world.",
-      "primary_theme": "observations",
+      "source_id": "source_012",
+      "core_idea": "The lack of tactile feedback and precise hand movement tracking in current VR input schemes limits natural interaction and causes frustration with tasks requiring fine motor skills.",
+      "evidence_excerpt": "In real life, we actually require extremely precise movements from our hands very frequently...The lack of weight and acceleration of objects is also why throwing objects in VR usually feels terrible...these signals are missing in current control schemes.",
+      "primary_theme": "technology",
       "secondary_themes": [
-        "philosophy"
+        "emotions"
       ],
       "tags": [
-        "technology",
-        "systemic_critique",
-        "meta_understanding"
+        "haptic_feedback",
+        "interaction_design"
       ],
       "tag_rationales": {
-        "technology": "Highlights role of internet and digital systems in societal issues.",
-        "systemic_critique": "Central to the critique of bureaucracy and societal dysfunction.",
-        "meta_understanding": "Emphasizes meta-game thinking and awareness of systems."
+        "haptic_feedback": "Describes the absence of tactile and force feedback crucial for realistic interaction.",
+        "interaction_design": "Relates to the challenge of designing intuitive control mechanisms."
       },
       "confidence": {
         "primary_theme": 0.9,
         "tags": {
-          "technology": 0.8,
-          "systemic_critique": 0.9,
-          "meta_understanding": 0.85
+          "haptic_feedback": 0.9,
+          "interaction_design": 0.85
         }
       },
       "tag_quality": {
         "tags": {
-          "technology": 0.8,
-          "systemic_critique": 0.9,
-          "meta_understanding": 0.85
+          "haptic_feedback": 0.9,
+          "interaction_design": 0.85
         }
       },
-      "related_entry_ids": []
+      "related_entry_ids": [
+        "entry_011"
+      ]
     },
     {
       "id": "entry_011",
-      "source_id": "source_008",
-      "core_idea": "The essay argues for the importance of understanding and engaging in society-building as a meta-game, learning the hidden rules, cultural narratives, and strategic moves that shape social structures to meaningfully influence and better the world.",
-      "evidence_excerpt": "The full meta-game comes in when we go into society building. In the creation of societies there are moves that we can make, the creation of cultural heroes and villains, a central narrative, celebrations... Society and its beliefs have building blocks.",
-      "primary_theme": "philosophy",
+      "source_id": "source_012",
+      "core_idea": "Creative VR interaction designs, like gesture controls, virtual magic spells, and reimagined body mechanics, expand human-computer interaction by inventing new forms of embodied expression.",
+      "evidence_excerpt": "VR games like Waltz of the Wizard or Rumble create new 'languages' of gestures and interactions...Reworking body roles, like Gorilla Tag’s arm-as-legs, explores more intuitive forms of movement.",
+      "primary_theme": "creativity",
+      "secondary_themes": [
+        "technology"
+      ],
+      "tags": [
+        "interaction_design"
+      ],
+      "tag_rationales": {
+        "interaction_design": "Describes novel user input techniques through gestures and body movements."
+      },
+      "confidence": {
+        "primary_theme": 0.9,
+        "tags": {
+          "interaction_design": 0.9
+        }
+      },
+      "tag_quality": {
+        "tags": {
+          "interaction_design": 0.9
+        }
+      },
+      "related_entry_ids": [
+        "entry_010"
+      ]
+    },
+    {
+      "id": "entry_012",
+      "source_id": "source_013",
+      "core_idea": "The writer reflects on their evolving journey with reading, from enjoying light entertainment fiction in youth to discovering the deeper insight and challenge found in classics and more difficult literature, emphasizing how books broaden horizons and enrich life beyond mere amusement.",
+      "evidence_excerpt": "I was an avid reader during my adolescent years... I tried my hand at the classics... It was kinda great, and that surprised me... Books are treasure troves... repositories of experience that people have put together... There's so much more to life, and books are treasure troves... This is why I always try to see if I can get people to read more difficult books, and it's why I try to read more difficult books (and I have a long way to go).",
+      "primary_theme": "learning",
       "secondary_themes": [
         "values"
       ],
       "tags": [
-        "culture",
-        "meta_game",
-        "society_building"
+        "reading_habits",
+        "literary_expansion",
+        "personal_growth"
       ],
       "tag_rationales": {
-        "culture": "Reflects myths, narratives, and shared meaning shaping society.",
-        "meta_game": "Captures the concept of strategic understanding of society.",
-        "society_building": "Emphasizes active engagement in constructing social realities."
-      },
-      "confidence": {
-        "primary_theme": 0.9,
-        "tags": {
-          "culture": 0.85,
-          "meta_game": 0.9,
-          "society_building": 0.85
-        }
-      },
-      "tag_quality": {
-        "tags": {
-          "culture": 0.85,
-          "meta_game": 0.9,
-          "society_building": 0.85
-        }
-      },
-      "related_entry_ids": []
-    },
-    {
-      "id": "entry_012",
-      "source_id": "source_009",
-      "core_idea": "Understanding loneliness and pain comes from personal emotional experience, while reaching out to others expresses relational empathy and shared human connection.",
-      "evidence_excerpt": "Those who know loneliness are the ones who will understand what it means to be lonely. The ones who reach out to help others are the ones who know pain. ... Perhaps that’s where we can see hope.",
-      "primary_theme": "emotions",
-      "secondary_themes": [
-        "relationships"
-      ],
-      "tags": [
-        "loneliness",
-        "trust"
-      ],
-      "tag_rationales": {
-        "loneliness": "Captures the central emotional pattern of feeling disconnected.",
-        "trust": "Reflects the relational bond implied by reaching out to others."
-      },
-      "confidence": {
-        "primary_theme": 0.9,
-        "tags": {
-          "loneliness": 0.9,
-          "trust": 0.85
-        }
-      },
-      "tag_quality": {
-        "tags": {
-          "loneliness": 0.9,
-          "trust": 0.85
-        }
-      },
-      "related_entry_ids": [
-        "entry_017",
-        "entry_018",
-        "entry_023"
-      ]
-    },
-    {
-      "id": "entry_014",
-      "source_id": "source_011",
-      "core_idea": "The narrator reflects on emotional disengagement and indifference as a slow decay of meaningful experience, illustrating how this emotional fatigue dulls perception of time and effort, while also grappling with existential awareness of living life fully in the present moment.",
-      "evidence_excerpt": "When indifference settles, it settles like dust. Filling the grooves of effort painfully etched with the minutes, dulling their edges... All is slow and time quite immeasurable so that the seconds fade into minutes, and the minutes somehow to days... Life is now. Life is here.",
-      "primary_theme": "emotions",
-      "secondary_themes": [
-        "philosophy"
-      ],
-      "tags": [
-        "emotional_renewal",
-        "existential_questioning",
-        "time"
-      ],
-      "tag_rationales": {
-        "emotional_renewal": "Captures the central motif of emotional decay and the dulling of engagement.",
-        "existential_questioning": "Reflects the core philosophical questioning of life’s presence and meaning.",
-        "time": "Highlights the theme of temporal experience and the subjective perception of time."
-      },
-      "confidence": {
-        "primary_theme": 0.93,
-        "tags": {
-          "emotional_renewal": 0.9,
-          "existential_questioning": 0.9,
-          "time": 0.85
-        }
-      },
-      "tag_quality": {
-        "tags": {
-          "emotional_renewal": 0.9,
-          "existential_questioning": 0.9,
-          "time": 0.85
-        }
-      },
-      "related_entry_ids": [
-        "entry_007",
-        "entry_013",
-        "entry_015",
-        "entry_019",
-        "entry_028"
-      ]
-    },
-    {
-      "id": "entry_015",
-      "source_id": "source_012",
-      "core_idea": "The narrator experiences emotional fatigue and existential doubt while grappling with philosophical ideas and personal introspection, highlighting an internal struggle with motivation, meaning, and emotional renewal.",
-      "evidence_excerpt": "It sometimes feels like the reward for having a dream is doubt and poor sleep...Nietzche’s eternal recurrence, Sartre’s good faith, Camus’ absurd hero...My mind suddenly prompted...slowly turning into sludge from the accumulation of the everyday annoyances and vapid thoughts",
-      "primary_theme": "emotions",
-      "secondary_themes": [
-        "philosophy",
-        "identity"
-      ],
-      "tags": [
-        "emotional_renewal",
-        "existential_questioning",
-        "self_discovery"
-      ],
-      "tag_rationales": {
-        "emotional_renewal": "The narrator's descriptions of doubt and mental fatigue emphasize emotional strain and the need for renewal.",
-        "existential_questioning": "Philosophical references and existential prompts highlight deep questioning of existence and meaning.",
-        "self_discovery": "Introspection and awareness of internal states align with personal insight and identity exploration."
-      },
-      "confidence": {
-        "primary_theme": 0.9,
-        "tags": {
-          "emotional_renewal": 0.9,
-          "existential_questioning": 0.9,
-          "self_discovery": 0.85
-        }
-      },
-      "tag_quality": {
-        "tags": {
-          "emotional_renewal": 0.9,
-          "existential_questioning": 0.9,
-          "self_discovery": 0.85
-        }
-      },
-      "related_entry_ids": [
-        "entry_002",
-        "entry_007",
-        "entry_013",
-        "entry_014",
-        "entry_016",
-        "entry_019",
-        "entry_028"
-      ]
-    },
-    {
-      "id": "entry_016",
-      "source_id": "source_012",
-      "core_idea": "The narrator struggles with self-discipline, motivation, and self-imposed pressures to act, reflecting deeply on personal agency, the construction of internal barriers, and conflicting emotions about progress and worth.",
-      "evidence_excerpt": "I remember my journal entries for the last few years, demanding action, constructing this weird prison around myself to try and leave me no choice but to keep acting...Then am I the master or the slave? And how have I done so little?",
-      "primary_theme": "identity",
-      "secondary_themes": [
-        "goals",
-        "emotions"
-      ],
-      "tags": [
-        "self_discovery",
-        "motivation"
-      ],
-      "tag_rationales": {
-        "self_discovery": "The narrator's questioning of self-mastery highlights ongoing self-awareness development.",
-        "motivation": "Reflections on demanding action and persistently pushing oneself relate directly to motivational forces."
-      },
-      "confidence": {
-        "primary_theme": 0.9,
-        "tags": {
-          "self_discovery": 0.9,
-          "motivation": 0.85
-        }
-      },
-      "tag_quality": {
-        "tags": {
-          "self_discovery": 0.9,
-          "motivation": 0.85
-        }
-      },
-      "related_entry_ids": [
-        "entry_001",
-        "entry_002",
-        "entry_005",
-        "entry_006",
-        "entry_007",
-        "entry_013",
-        "entry_015",
-        "entry_019",
-        "entry_023",
-        "entry_027"
-      ]
-    },
-    {
-      "id": "entry_013",
-      "source_id": "source_010",
-      "core_idea": "The narrator reflects on the fluid nature of time and its deep connection to self-identity and personal growth, using temporal markers to grasp change and acknowledging past beliefs about others' care as filtered through personal experience.",
-      "evidence_excerpt": "It’s almost been a year. I think it’s odd that we mark the passage of time so much when time itself seems like a continuous concept that keeps flowing on... Time is tied to our ideas of change. Identity is a tricky thing to define, and so we look at makers- the days, the weeks, the years- in an attempt to grasp at what feels ungraspable... I hold little belief in the illusion that you would care about me at all. There are undercurrents of my past in this belief, as people seem to have a knack of not caring about me.",
-      "primary_theme": "identity",
-      "secondary_themes": [
-        "philosophy"
-      ],
-      "tags": [
-        "self_discovery",
-        "existential_questioning",
-        "time",
-        "growth_mindset"
-      ],
-      "tag_rationales": {
-        "self_discovery": "The essay focuses on understanding oneself through the lens of time and change.",
-        "existential_questioning": "The philosophical reflection on time and meaning reveals deep existential inquiry.",
-        "time": "Time is a persistent metaphor and conceptual frame throughout the essay.",
-        "growth_mindset": "The narrator considers growth and change as markers of identity evolution."
-      },
-      "confidence": {
-        "primary_theme": 0.9,
-        "tags": {
-          "self_discovery": 0.9,
-          "existential_questioning": 0.85,
-          "time": 0.85,
-          "growth_mindset": 0.8
-        }
-      },
-      "tag_quality": {
-        "tags": {
-          "self_discovery": 0.9,
-          "existential_questioning": 0.85,
-          "time": 0.85,
-          "growth_mindset": 0.8
-        }
-      },
-      "related_entry_ids": [
-        "entry_001",
-        "entry_002",
-        "entry_005",
-        "entry_006",
-        "entry_007",
-        "entry_014",
-        "entry_015",
-        "entry_016",
-        "entry_019",
-        "entry_023",
-        "entry_027",
-        "entry_028"
-      ]
-    },
-    {
-      "id": "entry_017",
-      "source_id": "source_010",
-      "core_idea": "The narrator grapples with relational distance, hope, and pain in connection with another person, expressing longing for understanding while confronting past wounds, intentional disconnection, and vulnerability in relationship dynamics.",
-      "evidence_excerpt": "Part of me hopes that you are still lost because maybe then there would be something to talk about, something both of us can relate to... I do not have the perspective to appreciate your answer... it was me who decided to raze even whatever hope we had to building a bridge between us... I wanted the cut... to be absolute.",
-      "primary_theme": "relationships",
-      "secondary_themes": [
-        "emotions"
-      ],
-      "tags": [
-        "trust",
-        "vulnerability",
-        "fear_of_rejection",
-        "disillusionment"
-      ],
-      "tag_rationales": {
-        "trust": "Trust and mistrust are central to the narrator's reflection on relational connection.",
-        "vulnerability": "The narrator exposes deep vulnerability in hopes, fears, and regret about connection.",
-        "fear_of_rejection": "The fear of being uncared for and of relationship loss is a driving motif.",
-        "disillusionment": "The intentional severance and regret reflect disillusionment with the relationship."
-      },
-      "confidence": {
-        "primary_theme": 0.9,
-        "tags": {
-          "trust": 0.9,
-          "vulnerability": 0.85,
-          "fear_of_rejection": 0.8,
-          "disillusionment": 0.75
-        }
-      },
-      "tag_quality": {
-        "tags": {
-          "trust": 0.9,
-          "vulnerability": 0.85,
-          "fear_of_rejection": 0.8,
-          "disillusionment": 0.75
-        }
-      },
-      "related_entry_ids": [
-        "entry_001",
-        "entry_002",
-        "entry_004",
-        "entry_012",
-        "entry_018"
-      ]
-    },
-    {
-      "id": "entry_018",
-      "source_id": "source_013",
-      "core_idea": "The narrator confronts feelings of relational disconnection and doubts about being cared for, reflecting on emotional loneliness, the limits of human connection, and the desire for authentic understanding despite past hurt and deliberate distancing.",
-      "evidence_excerpt": "I hold little belief in the illusion that you would care about me at all. There are undercurrents of my past in this belief...people have little time to spare about others who are not central to their lives...I was tired of hurt...My rather horrifying approach was the only way I could think of achieving it...I hope that my actions did not make you jaded in any way.",
-      "primary_theme": "relationships",
-      "secondary_themes": [
-        "emotions"
-      ],
-      "tags": [
-        "trust",
-        "loneliness",
-        "disillusionment",
-        "vulnerability"
-      ],
-      "tag_rationales": {
-        "trust": "Reflects doubts and beliefs about mutual care and attention.",
-        "loneliness": "Expresses the emotional experience of relational isolation.",
-        "disillusionment": "Shows the loss of idealism about connection.",
-        "vulnerability": "Highlights openness and risk in relational exposure."
-      },
-      "confidence": {
-        "primary_theme": 0.9,
-        "tags": {
-          "trust": 0.85,
-          "loneliness": 0.8,
-          "disillusionment": 0.75,
-          "vulnerability": 0.75
-        }
-      },
-      "tag_quality": {
-        "tags": {
-          "trust": 0.85,
-          "loneliness": 0.8,
-          "disillusionment": 0.75,
-          "vulnerability": 0.75
-        }
-      },
-      "related_entry_ids": [
-        "entry_002",
-        "entry_004",
-        "entry_012",
-        "entry_017",
-        "entry_023"
-      ]
-    },
-    {
-      "id": "entry_019",
-      "source_id": "source_013",
-      "core_idea": "The narrator reflects on how humans use markers of time to grasp identity and change, exploring the flow of time as a continuous concept tied to personal growth and self-understanding.",
-      "evidence_excerpt": "It’s almost been a year. I think it’s odd that we mark the passage of time so much when time itself seems like a continuous concept that keeps flowing on. It feels a little like seeing a river and trying to put marks in the water.",
-      "primary_theme": "identity",
-      "secondary_themes": [],
-      "tags": [
-        "time",
-        "self_discovery"
-      ],
-      "tag_rationales": {
-        "time": "Discusses marking the passage of time as tied to understanding self and change.",
-        "self_discovery": "Explores how temporal markers relate to grasping identity and growth."
-      },
-      "confidence": {
-        "primary_theme": 0.9,
-        "tags": {
-          "time": 0.9,
-          "self_discovery": 0.85
-        }
-      },
-      "tag_quality": {
-        "tags": {
-          "time": 0.9,
-          "self_discovery": 0.85
-        }
-      },
-      "related_entry_ids": [
-        "entry_001",
-        "entry_002",
-        "entry_005",
-        "entry_006",
-        "entry_007",
-        "entry_013",
-        "entry_014",
-        "entry_015",
-        "entry_016",
-        "entry_023",
-        "entry_027"
-      ]
-    },
-    {
-      "id": "entry_022",
-      "source_id": "source_015",
-      "core_idea": "The writer aims to create an innovative, playful yet emotionally resonant XR experience that balances light vulnerability and deep connection within a brief moment.",
-      "evidence_excerpt": "I want to give people a chance to be ‘playful’. But also I want moments where vulnerability is needed. Some way to connect. Not TOO deep, but deep enough....The ‘vibes’ should keep updating...People should understand the ‘sell’ as fast as possible",
-      "primary_theme": "creativity",
-      "secondary_themes": [
-        "learning",
-        "relationships"
-      ],
-      "tags": [
-        "inspiration",
-        "making",
-        "vulnerability",
-        "communication"
-      ],
-      "tag_rationales": {
-        "inspiration": "The writer expresses a strong creative impulse and desire to innovate.",
-        "making": "The writing discusses creating a new and clever XR experience.",
-        "vulnerability": "The desire for moments requiring vulnerability is central to the experience.",
-        "communication": "Focus on connection and messaging implies relational communication."
-      },
-      "confidence": {
-        "primary_theme": 0.9,
-        "tags": {
-          "inspiration": 0.9,
-          "making": 0.85,
-          "vulnerability": 0.85,
-          "communication": 0.8
-        }
-      },
-      "tag_quality": {
-        "tags": {
-          "inspiration": 0.9,
-          "making": 0.85,
-          "vulnerability": 0.85,
-          "communication": 0.8
-        }
-      },
-      "related_entry_ids": [
-        "entry_004",
-        "entry_008"
-      ]
-    },
-    {
-      "id": "entry_023",
-      "source_id": "source_016",
-      "core_idea": "The narrator reflects on a child's painful struggle to assert self-worth and be heard within a hostile family environment, highlighting the child's naive belief in his agency, the harsh rejection he faces, and the intense loneliness and emotional turmoil that ensue.",
-      "evidence_excerpt": "He thought that if he tried as hard as he could, he could change everything around him... but his voice wasn’t heard. Arguments that were so one sided, where his voice wasn’t heard. But his voice SHOULD be heard... If only he could TALK. If only he could be heard in this hellhole of a place... Why one earth was he so alone. Why did no one listen?",
-      "primary_theme": "identity",
-      "secondary_themes": [
-        "emotions"
-      ],
-      "tags": [
-        "self_discovery",
-        "loneliness",
-        "childhood_invalidation",
-        "vulnerability"
-      ],
-      "tag_rationales": {
-        "self_discovery": "The child's internal efforts and belief in his worth reflect a process of understanding and affirming his identity.",
-        "loneliness": "The pervasive feeling of being unheard and isolated is central to the emotional tone.",
-        "childhood_invalidation": "The repeated rejection and dismissal by family typifies early experiences of being unseen and shamed.",
-        "vulnerability": "The child's sensitive nature and emotional openness underpin the heartfelt appeal for acknowledgment."
-      },
-      "confidence": {
-        "primary_theme": 0.9,
-        "tags": {
-          "self_discovery": 0.9,
-          "loneliness": 0.85,
-          "childhood_invalidation": 0.8,
-          "vulnerability": 0.8
-        }
-      },
-      "tag_quality": {
-        "tags": {
-          "self_discovery": 0.9,
-          "loneliness": 0.85,
-          "childhood_invalidation": 0.8,
-          "vulnerability": 0.8
-        }
-      },
-      "related_entry_ids": [
-        "entry_001",
-        "entry_002",
-        "entry_004",
-        "entry_005",
-        "entry_006",
-        "entry_007",
-        "entry_012",
-        "entry_013",
-        "entry_016",
-        "entry_018",
-        "entry_019",
-        "entry_027"
-      ]
-    },
-    {
-      "id": "entry_020",
-      "source_id": "source_014",
-      "core_idea": "The writer reflects on how culture can emerge within small groups through social roles and hierarchy, using gaming roles as an example, and expresses curiosity about how to study long-term cultural experiments.",
-      "evidence_excerpt": "There must be a way that culture is created, even if it’s just between ten people... But this is also kind of how close range DPS, healer, tanker, long range DPS works in MMOs... I don’t know what long term experiments in culture creation even looks like.",
-      "primary_theme": "culture",
-      "secondary_themes": [],
-      "tags": [
-        "culture",
-        "hierarchy",
-        "social_roles"
-      ],
-      "tag_rationales": {
-        "culture": "Central to the reflection on how shared meanings and social structures arise.",
-        "hierarchy": "Highlights the introduction of rank and role in small group culture formation.",
-        "social_roles": "Uses MMO role archetypes as examples of cultural role mythologies."
+        "reading_habits": "The writer describes their evolving personal reading habits and lifelong engagement with books.",
+        "literary_expansion": "The focus on exploring classics and more challenging literature represents expanding literary horizons.",
+        "personal_growth": "Reading is portrayed as a vehicle for intellectual and personal development."
       },
       "confidence": {
         "primary_theme": 0.95,
         "tags": {
-          "culture": 0.9,
-          "hierarchy": 0.85,
-          "social_roles": 0.8
+          "reading_habits": 0.9,
+          "literary_expansion": 0.85,
+          "personal_growth": 0.85
         }
       },
       "tag_quality": {
         "tags": {
-          "culture": 0.9,
-          "hierarchy": 0.85,
-          "social_roles": 0.8
+          "reading_habits": 0.9,
+          "literary_expansion": 0.85,
+          "personal_growth": 0.85
         }
       },
       "related_entry_ids": []
     },
     {
-      "id": "entry_021",
-      "source_id": "source_014",
-      "core_idea": "The writer expresses uncertainty and curiosity about how to study and understand long-term culture creation processes.",
-      "evidence_excerpt": "I don’t know what long term experiments in culture creation even looks like. It would be good to read some stuff in this vein.",
-      "primary_theme": "learning",
-      "secondary_themes": [],
+      "id": "entry_013",
+      "source_id": "source_013",
+      "core_idea": "The writer critiques the superficial tendency to read only for entertainment and argues for appreciating books as profound conveyors of life, beliefs, and experience, whose difficulty reflects the complexity of sharing meaningful human insights rather than a status symbol.",
+      "evidence_excerpt": "Books are about life, and experiences, and beliefs... the sharing of life and ideas that should be considered... I would never look down on people who are still reading for entertainment... There’s a deep frustration... when someone argues it has equal merit as heavy literature... it's NOT the difficulty and the 'status'... but the sharing of life and ideas that should be considered.",
+      "primary_theme": "values",
+      "secondary_themes": [
+        "emotions"
+      ],
       "tags": [
-        "curiosity",
-        "experimentation"
+        "literature_value",
+        "book_interpretation",
+        "depth_of_content"
       ],
       "tag_rationales": {
-        "curiosity": "Reflects the expressed desire to understand and explore culture creation.",
-        "experimentation": "Focuses on mention of long-term experiments related to culture."
+        "literature_value": "Emphasizes valuing books for their meaningful content beyond entertainment.",
+        "book_interpretation": "Highlights differing perspectives on what counts as serious or valuable reading.",
+        "depth_of_content": "Focuses on the complexity and richness that difficult literature provides."
       },
       "confidence": {
         "primary_theme": 0.9,
         "tags": {
-          "curiosity": 0.85,
-          "experimentation": 0.8
+          "literature_value": 0.9,
+          "book_interpretation": 0.85,
+          "depth_of_content": 0.8
         }
       },
       "tag_quality": {
         "tags": {
-          "curiosity": 0.85,
-          "experimentation": 0.8
+          "literature_value": 0.9,
+          "book_interpretation": 0.85,
+          "depth_of_content": 0.8
+        }
+      },
+      "related_entry_ids": []
+    },
+    {
+      "id": "entry_014",
+      "source_id": "source_014",
+      "core_idea": "The writing reflects on how experiencing loneliness and pain fosters empathy and compassionate understanding of others' suffering.",
+      "evidence_excerpt": "Those who know loneliness are the ones who will understand what it means to be lonely. The ones who reach out to help others are the ones who know pain.",
+      "primary_theme": "emotions",
+      "secondary_themes": [
+        "values"
+      ],
+      "tags": [
+        "empathy",
+        "hope"
+      ],
+      "tag_rationales": {
+        "empathy": "The text centers on understanding others' suffering through shared emotional experience.",
+        "hope": "The hopeful outlook expressed highlights a fundamental value emerging from compassion."
+      },
+      "confidence": {
+        "primary_theme": 0.9,
+        "tags": {
+          "empathy": 0.9,
+          "hope": 0.85
+        }
+      },
+      "tag_quality": {
+        "tags": {
+          "empathy": 0.9,
+          "hope": 0.85
+        }
+      },
+      "related_entry_ids": []
+    },
+    {
+      "id": "entry_015",
+      "source_id": "source_015",
+      "core_idea": "Society is an artificial and malleable construction without absolute truths, shaped by historical narratives and systemic structures that influence collective behavior and individual agency.",
+      "evidence_excerpt": "Society is constructed. No, that isn’t quite true...it carries two important qualities: it is artificial, and it is malleable...the Age of Enlightenment...we distanced ourselves from the monarchies...created narratives around personal freedoms...Society and its beliefs have building blocks...creation of cultural heroes and villains, a central narrative, celebrations.",
+      "primary_theme": "society",
+      "secondary_themes": [
+        "culture",
+        "philosophy"
+      ],
+      "tags": [
+        "social_roles",
+        "cultural_formation",
+        "systemic_thinking"
+      ],
+      "tag_rationales": {
+        "social_roles": "Captures how social structures and roles build society's fabric.",
+        "cultural_formation": "Reflects the role of cultural narratives and myths in shaping society.",
+        "systemic_thinking": "Highlights the importance of understanding societal systems and their complexity."
+      },
+      "confidence": {
+        "primary_theme": 0.9,
+        "tags": {
+          "social_roles": 0.85,
+          "cultural_formation": 0.85,
+          "systemic_thinking": 0.8
+        }
+      },
+      "tag_quality": {
+        "tags": {
+          "social_roles": 0.85,
+          "cultural_formation": 0.85,
+          "systemic_thinking": 0.8
         }
       },
       "related_entry_ids": [
-        "entry_027"
+        "entry_003"
       ]
     },
     {
-      "id": "entry_024",
-      "source_id": "source_017",
-      "core_idea": "Current VR systems fundamentally track only head and hands, using software estimation to create a full avatar body, which leads to imprecise and sometimes visibly incorrect body poses, highlighting a technical limitation that affects embodiment and user experience.",
-      "evidence_excerpt": "In VR, that means that the software takes the position of your head and hands and then fits the whole body depending on those, knowing basic stuff like your elbows shouldn’t bend outwards. This is why in VR you sometimes get your avatar’s elbows sticking out to your sides, the program is just guessing wrong. But what all this means is that your body isn’t really there, what’s actually there is just your head and your hands.",
-      "primary_theme": "technology",
-      "secondary_themes": [],
-      "tags": [
-        "body_tracking",
-        "avatar",
-        "vr_systems"
-      ],
-      "tag_rationales": {
-        "body_tracking": "Highlights the core issue of how VR tracks body parts for avatar representation.",
-        "avatar": "Captures the concept of virtual body representation affected by tracking limits.",
-        "vr_systems": "Broad contextual tag for commercial virtual reality hardware and software."
-      },
-      "confidence": {
-        "primary_theme": 0.9,
-        "tags": {
-          "body_tracking": 0.9,
-          "avatar": 0.85,
-          "vr_systems": 0.8
-        }
-      },
-      "tag_quality": {
-        "tags": {
-          "body_tracking": 0.9,
-          "avatar": 0.85,
-          "vr_systems": 0.8
-        }
-      },
-      "related_entry_ids": []
-    },
-    {
-      "id": "entry_025",
-      "source_id": "source_017",
-      "core_idea": "The lack of tactile feedback and limitations in current VR input devices create a mismatch between natural hand interactions and their virtual representations, resulting in clumsy, inaccurate object manipulation and a sense of disembodiment.",
-      "evidence_excerpt": "For example, when we pick up a cup full of water we first need to feel the cup on our skin. The tactile feeling of the cup on our skin, as well as the resistance that the weight of the cup gives gives us precise signals as to how to move ... All of this is just not possible with the current control scheme in VR. Even with hand tracking there is no tactile feedback or resistance offered by objects.",
-      "primary_theme": "embodiment",
-      "secondary_themes": [],
-      "tags": [
-        "tactile_feedback",
-        "sensory_experience",
-        "embodied_interaction"
-      ],
-      "tag_rationales": {
-        "tactile_feedback": "Captures the core missing sensory element impacting natural VR interaction.",
-        "sensory_experience": "Highlights embodied perception critical to successful object manipulation.",
-        "embodied_interaction": "Focuses on how body experience informs interaction in VR environments."
-      },
-      "confidence": {
-        "primary_theme": 0.92,
-        "tags": {
-          "tactile_feedback": 0.9,
-          "sensory_experience": 0.85,
-          "embodied_interaction": 0.85
-        }
-      },
-      "tag_quality": {
-        "tags": {
-          "tactile_feedback": 0.9,
-          "sensory_experience": 0.85,
-          "embodied_interaction": 0.85
-        }
-      },
-      "related_entry_ids": []
-    },
-    {
-      "id": "entry_026",
-      "source_id": "source_017",
-      "core_idea": "VR control schemes represent hands as simplistic input devices often reduced to spheres or handles, limiting precision and naturalness, while varied controller designs attempt to approximate hand gestures and grips to enhance immersion and interaction fidelity.",
-      "evidence_excerpt": "Our hands actually aren’t hands. They’re too limited. The hands are actually an illusion, and it’s easier to think of them as spheres with button inputs to perform specific actions. People have come up with various clever ways of using the oculus controllers to do various things... The Valve Index controllers go a little bit further ... it can sense if you’re actually grabbing an object as opposed to just having your fingers down.",
-      "primary_theme": "interfaces",
+      "id": "entry_016",
+      "source_id": "source_016",
+      "core_idea": "The author reflects on their tendency to lie as stemming from underlying fear of rejection, being exposed as a fraud, and fear of reality, highlighting a deep internal emotional struggle with honesty and authenticity.",
+      "evidence_excerpt": "I think the main, or perhaps only reason people lie is because they’re afraid... I’m afraid of rejection, of being found out for the fraud that they think they are, afraid of reality.",
+      "primary_theme": "emotions",
       "secondary_themes": [
-        "embodiment"
+        "identity"
       ],
       "tags": [
-        "vr_controllers",
-        "input_devices",
-        "hand_tracking"
+        "inner_conflict",
+        "existential_doubt",
+        "self_control"
       ],
       "tag_rationales": {
-        "vr_controllers": "Focuses on hardware used as primary interaction method in VR.",
-        "input_devices": "Generalizes the theme of physical controls facilitating virtual input.",
-        "hand_tracking": "Covers the technology and limitations around sensing hand positions and gestures."
+        "inner_conflict": "Captures the author's struggle with honesty, fear, and self-doubt.",
+        "existential_doubt": "Reflects deeper questioning about self-worth and existence behind the fear.",
+        "self_control": "Relates to the effort to be genuine despite natural tendencies to lie."
       },
       "confidence": {
-        "primary_theme": 0.9,
+        "primary_theme": 0.93,
         "tags": {
-          "vr_controllers": 0.9,
-          "input_devices": 0.85,
-          "hand_tracking": 0.8
+          "inner_conflict": 0.9,
+          "existential_doubt": 0.85,
+          "self_control": 0.8
         }
       },
       "tag_quality": {
         "tags": {
-          "vr_controllers": 0.9,
-          "input_devices": 0.85,
-          "hand_tracking": 0.8
+          "inner_conflict": 0.9,
+          "existential_doubt": 0.85,
+          "self_control": 0.8
         }
       },
-      "related_entry_ids": []
+      "related_entry_ids": [
+        "entry_001",
+        "entry_004",
+        "entry_005",
+        "entry_008",
+        "entry_017"
+      ]
     },
     {
-      "id": "entry_027",
-      "source_id": "source_018",
-      "core_idea": "The author reflects on their evolving reading journey from enjoying fantasy and entertainment in adolescence to appreciating challenging classic and philosophical literature, which broadened their understanding of life and themselves.",
-      "evidence_excerpt": "I was an avid reader during my adolescent years... I started off with Harry Potter, LotR, Discworld... tried classics like 'A Christmas Carol', 'Oliver Twist', Lord of the Flies, Shakespeare, Dostoevsky, and more... I read Woolf and tried to piece together Dostoevsky's nihilism... This progression expanded my view from mere entertainment to deeper life experiences.",
+      "id": "entry_017",
+      "source_id": "source_017",
+      "core_idea": "The narrator meditates on the challenges of expressing personal identity and inner worlds through language and art, highlighting the emotional longing for genuine connection despite the limitations of communication.",
+      "evidence_excerpt": "All language and art can't cover our whole existence. For my thoughts create a world, and your thoughts your world... I do so very want to be seen. I do so very want to see.",
       "primary_theme": "identity",
       "secondary_themes": [
-        "learning"
+        "emotions",
+        "culture"
       ],
       "tags": [
-        "self_discovery",
-        "growth_mindset",
-        "curiosity"
+        "inner_conflict",
+        "creative_process"
       ],
       "tag_rationales": {
-        "self_discovery": "The narrative centers on how reading shaped the author's self-identity and worldview.",
-        "growth_mindset": "Shows openness to challenge and evolving understanding through literature.",
-        "curiosity": "Highlights the drive to explore deeper meaning in books beyond entertainment."
+        "inner_conflict": "Reflects the tension between the wish to communicate the inner self and the limits of language, causing internal struggle.",
+        "creative_process": "Focuses on the challenge and desire to express one's unique inner experience."
       },
       "confidence": {
         "primary_theme": 0.9,
         "tags": {
-          "self_discovery": 0.9,
-          "growth_mindset": 0.85,
-          "curiosity": 0.8
+          "inner_conflict": 0.85,
+          "creative_process": 0.8
         }
       },
       "tag_quality": {
         "tags": {
-          "self_discovery": 0.9,
-          "growth_mindset": 0.85,
-          "curiosity": 0.8
+          "inner_conflict": 0.85,
+          "creative_process": 0.8
         }
       },
       "related_entry_ids": [
         "entry_001",
         "entry_002",
+        "entry_004",
         "entry_005",
-        "entry_006",
         "entry_007",
-        "entry_013",
-        "entry_016",
-        "entry_019",
-        "entry_021",
-        "entry_023"
-      ]
-    },
-    {
-      "id": "entry_028",
-      "source_id": "source_018",
-      "core_idea": "The author advocates for engaging with challenging, 'difficult' literature to access deeper human experiences, shared life lessons, and philosophical questions, critiquing reading solely for entertainment or status.",
-      "evidence_excerpt": "Books are about life, experiences, and beliefs... it’s the sharing of life and ideas that should matter, not difficulty or status... I try to get people to read more difficult books because there is so much life being missed... discussing Kierkegaard, Dostoevsky, and Pennac's 'Rights of the Reader' on literature as a gift to understand life's meaning.",
-      "primary_theme": "values",
-      "secondary_themes": [
-        "philosophy"
-      ],
-      "tags": [
-        "purpose",
-        "literature_as_life",
-        "existential_questioning"
-      ],
-      "tag_rationales": {
-        "purpose": "Focus on why engaging with tough literature enriches one's understanding of what matters in life.",
-        "literature_as_life": "Sees books as vessels for shared human experience and deeper life engagement.",
-        "existential_questioning": "Highlights the philosophical inquiry evoked through challenging literature."
-      },
-      "confidence": {
-        "primary_theme": 0.9,
-        "tags": {
-          "purpose": 0.9,
-          "literature_as_life": 0.85,
-          "existential_questioning": 0.8
-        }
-      },
-      "tag_quality": {
-        "tags": {
-          "purpose": 0.9,
-          "literature_as_life": 0.85,
-          "existential_questioning": 0.8
-        }
-      },
-      "related_entry_ids": [
-        "entry_003",
-        "entry_007",
-        "entry_013",
-        "entry_014",
-        "entry_015"
+        "entry_008",
+        "entry_016"
       ]
     }
   ]

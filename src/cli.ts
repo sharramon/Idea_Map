@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { Command } from 'commander';
-import { processSource, DuplicateSourceError } from './pipeline/process';
+import { processSource, deleteSource, DuplicateSourceError } from './pipeline/process';
 import { generateGraph, publishSite, githubPagesUrl, openInBrowser } from './renderer/generate';
 import { config, validateConfig } from './config';
 
@@ -147,6 +147,24 @@ program
     }
   });
 
+// ─── delete-source ───────────────────────────────────────────────────────────
+program
+  .command('delete-source')
+  .description('Delete a source and all its extracted entries, links, and anchor refs')
+  .requiredOption('-i, --id <sourceId>', 'Source id to delete (e.g. source_001)')
+  .action(opts => {
+    try {
+      const result = deleteSource(opts.id);
+      const entryWord = result.removedEntryCount === 1 ? 'y' : 'ies';
+      const linkWord = result.removedLinkCount === 1 ? '' : 's';
+      console.log(`Deleted "${result.source.title}" (${result.source.id})`);
+      console.log(`  Removed ${result.removedEntryCount} entr${entryWord}, ${result.removedLinkCount} link${linkWord}`);
+    } catch (err) {
+      console.error('Delete failed:', err instanceof Error ? err.message : err);
+      process.exit(1);
+    }
+  });
+
 // ─── add-anchor ──────────────────────────────────────────────────────────────
 program
   .command('add-anchor')
@@ -184,6 +202,117 @@ program
     } catch (err) {
       console.error('add-anchor failed:', err instanceof Error ? err.message : err);
       process.exit(1);
+    }
+  });
+
+// ─── embed-viz ───────────────────────────────────────────────────────────────
+program
+  .command('embed-viz')
+  .description('Generate a 2D PCA scatter plot of entry embeddings')
+  .option('--no-open', 'Write HTML without opening the browser')
+  .action(opts => {
+    try {
+      const { generateEmbeddingMap } = require('./embeddings/visualize');
+      const outPath = path.join(__dirname, '../dist/embedding-map.html');
+      generateEmbeddingMap(outPath);
+      console.log(`Embedding map written to: ${outPath}`);
+      if (opts.open !== false) openInBrowser(outPath);
+    } catch (err) {
+      console.error('embed-viz failed:', err instanceof Error ? err.message : err);
+      process.exit(1);
+    }
+  });
+
+// ─── embed-backfill ──────────────────────────────────────────────────────────
+program
+  .command('embed-backfill')
+  .description('Generate and store embeddings for all entries in entries.json')
+  .option('--force', 'Re-embed entries that already have embeddings', false)
+  .action(async opts => {
+    const { createEmbeddingClient, EmbeddingStore } = require('./embeddings');
+    const { readJson } = require('./data/store');
+    const { embedding } = config;
+
+    if (!embedding.enabled) {
+      console.error('Embeddings are disabled. Set IDEA_MAP_EMBEDDINGS=true in your .env file.');
+      process.exit(1);
+    }
+    if (!embedding.apiKey) {
+      console.error('Missing OPENAI_API_KEY — required for embedding provider "openai".');
+      process.exit(1);
+    }
+
+    const client = createEmbeddingClient(embedding.provider, embedding.apiKey, embedding.model);
+    const store = EmbeddingStore.load(client);
+    const { entries } = readJson('entries.json') as {
+      entries: Array<{ id: string; core_idea?: string; evidence_excerpt?: string }>;
+    };
+
+    const toEmbed = opts.force
+      ? entries
+      : entries.filter((e: { id: string }) => !store.hasEntry(e.id));
+
+    if (!toEmbed.length) {
+      console.log(`All ${entries.length} entries already have embeddings.`);
+      return;
+    }
+
+    console.log(`Embedding ${toEmbed.length} entries (${entries.length - toEmbed.length} already done)...`);
+
+    const inputs = toEmbed.map((e: { id: string; core_idea?: string; evidence_excerpt?: string }) => ({
+      id: e.id,
+      text: [e.core_idea, e.evidence_excerpt].filter(Boolean).join(' '),
+    }));
+
+    await store.embedAndStore(inputs, client);
+    store.save();
+
+    console.log(`Done. ${store.entryCount} embeddings stored in data/embeddings.json`);
+  });
+
+// ─── wipe ────────────────────────────────────────────────────────────────────
+program
+  .command('wipe')
+  .description('Erase all extracted data and reseed taxonomy from seed_taxonomy.json')
+  .option('-y, --yes', 'Skip confirmation prompt', false)
+  .action(opts => {
+    const dataDir = path.join(__dirname, '../data');
+    const rawDir = path.join(dataDir, 'raw');
+    const seedPath = path.join(dataDir, 'seed_taxonomy.json');
+
+    if (!opts.yes) {
+      const readline = require('readline').createInterface({ input: process.stdin, output: process.stdout });
+      readline.question('This will erase all entries, sources, links, and raw files. Continue? (y/N) ', (ans: string) => {
+        readline.close();
+        if (ans.toLowerCase() !== 'y') { console.log('Aborted.'); return; }
+        doWipe();
+      });
+    } else {
+      doWipe();
+    }
+
+    function doWipe() {
+      const { writeJson } = require('./data/store');
+
+      if (!fs.existsSync(seedPath)) {
+        console.error(`seed_taxonomy.json not found at ${seedPath}`);
+        process.exit(1);
+      }
+      const seed = JSON.parse(fs.readFileSync(seedPath, 'utf-8').replace(/^﻿/, ''));
+
+      writeJson('entries.json', { entries: [] });
+      writeJson('sources.json', { sources: [] });
+      writeJson('links.json', { links: [] });
+      writeJson('taxonomy.json', seed);
+      writeJson('embeddings.json', { schema_version: 1, embedding_model: '', embedding_provider: 'openai', entries: [] });
+
+      if (fs.existsSync(rawDir)) {
+        for (const file of fs.readdirSync(rawDir)) {
+          fs.unlinkSync(path.join(rawDir, file));
+        }
+      }
+
+      console.log('Wiped entries, sources, links, raw files. Taxonomy reseeded from seed_taxonomy.json.');
     }
   });
 

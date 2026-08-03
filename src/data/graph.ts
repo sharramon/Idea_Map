@@ -1,4 +1,4 @@
-import { readJson } from './store';
+import { readJson, readRawText } from './store';
 import {
   Taxonomy, Entry, EntriesFile, SourcesFile, AnchorsFile,
   GraphData, GraphNode, GraphEdge, Anchor, GraphSourceMeta, GraphThemeCluster,
@@ -11,11 +11,13 @@ export function getGraph(themeFilter?: string): GraphData {
 
   const sourcesById: Record<string, GraphSourceMeta> = {};
   for (const s of sources) {
+    let raw_text = '';
+    try { raw_text = readRawText(s.raw_text_path); } catch { /* file missing — renderer degrades gracefully */ }
     sourcesById[s.id] = {
       id: s.id,
       title: s.title,
       created_at: s.created_at,
-      raw_text: s.raw_text,
+      raw_text,
     };
   }
 
@@ -31,16 +33,20 @@ export function getGraph(themeFilter?: string): GraphData {
     : entries;
 
   const knownThemeIds = new Set(taxonomy.themes.map(t => t.id));
-  const syntheticThemes = [...new Set(filteredEntries.map(e => e.primary_theme))]
+  const allUsedThemeIds = new Set([
+    ...filteredEntries.map(e => e.primary_theme),
+    ...filteredEntries.flatMap(e => e.secondary_themes ?? []),
+  ]);
+  const syntheticThemes = [...allUsedThemeIds]
     .filter(id => id && !knownThemeIds.has(id))
     .map(id => ({
       id,
       name: id.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
-      description: 'Synthetic theme generated from entry primary_theme.',
+      description: 'Synthetic theme.',
     }));
   const allThemes = [...taxonomy.themes, ...syntheticThemes];
 
-  const usedThemeIds = new Set(filteredEntries.map(e => e.primary_theme));
+  const usedThemeIds = allUsedThemeIds;
 
   const themeClusters: GraphThemeCluster[] = allThemes
     .filter(t => usedThemeIds.has(t.id))
@@ -106,7 +112,7 @@ export function getGraph(themeFilter?: string): GraphData {
   return {
     nodes: [...entryNodes, ...tagNodes],
     edges,
-    themes: allThemes,
+    themes: allThemes.filter(t => usedThemeIds.has(t.id)),
     themeClusters,
     sources: sourcesById,
   };

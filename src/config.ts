@@ -42,6 +42,12 @@ export const config = {
   defaults: {
     conservatism: 0.7,
   },
+  embedding: {
+    enabled:  process.env.IDEA_MAP_EMBEDDINGS === 'true',
+    provider: (process.env.IDEA_MAP_EMBEDDING_PROVIDER ?? 'openai') as 'openai' | 'local',
+    model:    process.env.IDEA_MAP_EMBEDDING_MODEL ?? 'text-embedding-3-small',
+    apiKey:   process.env.OPENAI_API_KEY ?? '',
+  },
 } as const;
 
 export function validateConfig(): void {

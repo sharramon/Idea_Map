@@ -1,4 +1,4 @@
-import { VerifierOutput, combinedTagScore, entryHasRequiredAnchors, countQualifyingSplitThemes } from './classification';
+import { ExtractorOutput, VerifierOutput, combinedTagScore, entryHasRequiredAnchors, countQualifyingSplitThemes } from './classification';
 import {
   HIGH_CONFIDENCE_THRESHOLD,
   EXTRA_ENTRY_STRONG_SCORE,
@@ -22,7 +22,7 @@ export function tagOverlapRatio(a: string[], b: string[]): number {
  * Entries are distinct if they occupy different regions of the map —
  * different tag neighborhoods or clearly different core ideas — even when primary_theme matches.
  */
-export function entriesAreDistinct(a: VerifierOutput, b: VerifierOutput): boolean {
+export function entriesAreDistinct(a: ExtractorOutput, b: ExtractorOutput): boolean {
   const overlap = tagOverlapRatio(a.tags ?? [], b.tags ?? []);
   const aCore = (a.core_idea ?? '').trim().toLowerCase();
   const bCore = (b.core_idea ?? '').trim().toLowerCase();
@@ -109,7 +109,8 @@ export interface FlexibleCapOptions {
 }
 
 /**
- * Keep the best baseline entries, then allow extras up to soft/hard caps only when strong and distinct.
+ * Keep entries in score order. Up to softMax need capRankScore ≥ HIGH_CONFIDENCE_THRESHOLD;
+ * beyond softMax need capRankScore ≥ EXTRA_ENTRY_STRONG_SCORE. Hard ceiling at hardMax.
  */
 export function applyFlexibleCap(
   entries: VerifierOutput[],
@@ -131,12 +132,7 @@ export function applyFlexibleCap(
       entries.length,
       Math.max(2, countQualifyingSplitThemes(entries)),
     );
-    softMax = Math.max(softMax, splitFloor);
     hardMax = Math.max(hardMax, splitFloor);
-  }
-
-  if (entries.length <= target) {
-    return { kept: entries, dropped: 0, keptExtra: 0, droppedThin: 0 };
   }
 
   const sorted = [...entries].sort((a, b) => capRankScore(b) - capRankScore(a));
@@ -144,31 +140,16 @@ export function applyFlexibleCap(
   let droppedThin = 0;
 
   for (const entry of sorted) {
-    if (kept.length >= hardMax) continue;
-
-    if (kept.length < target) {
-      kept.push(entry);
-      continue;
-    }
-
-    if (!entryHasRequiredAnchors(entry)) continue;
-    if (!kept.every(k => entriesAreDistinct(k, entry))) continue;
+    if (kept.length >= hardMax) break;
 
     const score = capRankScore(entry);
     const thin = isThinEntry(entry);
+    const threshold = kept.length < softMax ? HIGH_CONFIDENCE_THRESHOLD : EXTRA_ENTRY_STRONG_SCORE;
 
-    if (kept.length >= softMax) {
-      if (score < EXTRA_ENTRY_STRONG_SCORE || thin) {
-        if (thin) droppedThin++;
-        continue;
-      }
-    } else if (
-      score < HIGH_CONFIDENCE_THRESHOLD ||
-      (!strongSplitConfirmed && thin && score < EXTRA_ENTRY_STRONG_SCORE)
-    ) {
-      if (thin) droppedThin++;
-      continue;
-    }
+    if (score < threshold) continue;
+    if (!entryHasRequiredAnchors(entry)) continue;
+    if (kept.length > 0 && !kept.every(k => entriesAreDistinct(k, entry))) continue;
+    if (thin && score < EXTRA_ENTRY_STRONG_SCORE) { droppedThin++; continue; }
 
     kept.push(entry);
   }
