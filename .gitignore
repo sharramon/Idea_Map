@@ -5,5 +5,4 @@ diary/
 .env
 keys.txt
 *.js.map
-src/pipeline/prompts.ts
 data/raw/
