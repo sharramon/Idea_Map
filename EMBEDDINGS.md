@@ -12,15 +12,20 @@ Neither system alone is sufficient:
 - Directionality — `causes`, `contradicts`, `supports` link types require reasoning, not just proximity
 - Reusability decisions — whether a motif is worth tracking across future entries
 - Split/merge ontology — two similar entries can still be distinct map nodes
+- **Cross-topic connections via shared disposition/valence** — an entry about a career pivot and an entry about a relationship realization can be nowhere near each other in vocabulary or subject matter, yet both carry `hope` or `personal_growth`. Only a system reasoning about disposition rather than content draws that line; embeddings have no vocabulary overlap to key off of, so this connection is structurally invisible to them, not just harder to find.
 
 **Embeddings give you what LLM can't:**
 - Continuous similarity — no discrete bins, no taxonomy constraints
-- Cross-theme connections the LLM misses because it had to pick one category
+- Cross-theme, same-topic connections the LLM misses because it had to pick one primary category — e.g. an entry primarily tagged `technology` that also touches `creativity` still embeds near creativity-adjacent text, since the raw vocabulary spans both
 - Fast retrieval at scale without sending everything to the LLM
 - Cluster audit — detecting tag drift, synonymous tags, overstretched tags
 - Discovery — finding similar entries without knowing the tag name
 
-**Observation from initial test:** embedding clusters mapped the writing more accurately than LLM taxonomy in geometric terms, but the LLM captures semantic nuance (valence, directionality, reusability) that pure similarity misses. The right design uses both.
+**The corrected division of labor:** it's not "embeddings find connections, the LLM explains them." Each system is blind to the other's strength, not just weaker at it. Embeddings are the finer instrument *within* a topic — they catch the connections a single committed primary_theme misses. LLM tags are the only instrument *across* topics — they catch the connections that share a feeling or role in the narrative but share no vocabulary at all. (Earlier drafts of this doc credited embeddings with "cross-theme connections the LLM misses" as if it were one bucket — it's actually two, and the more narratively interesting one, cross-topic-same-disposition, belongs to the LLM, not the embedding layer.)
+
+**Compounding limitation:** embeddings here are computed over `core_idea` + `evidence_excerpt`, and `evidence_excerpt` is explicitly a verbatim quote from the source text (see prompt instructions in `pipeline/prompts.ts`). So embedding proximity is also partly tracking the author's own phrasing and register, not just idea content — two entries in a similar writing register can drift closer than their actual meaning warrants, which is a second, independent reason embedding clusters shouldn't be read as ground truth for what an idea "is about."
+
+**Observation from initial test:** embedding clusters mapped the writing more accurately than LLM taxonomy in geometric terms, but the LLM captures semantic nuance (valence, directionality, reusability) that pure similarity misses. The right design uses both — embeddings for within-topic, retrieval, and audit; LLM tags for cross-topic connection and directional/valence judgment.
 
 ## Current status
 
