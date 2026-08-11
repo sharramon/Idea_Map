@@ -548,14 +548,19 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
           const entries = tag.neighborhood('node[node_type = "entry"]');
           if (entries.length === 0) return;
 
-          let target;
           if (entries.length === 1) {
-            target = singletonTagTarget(entries[0].position(), graphCentroid);
-          } else {
-            let cx = 0, cyPos = 0;
-            entries.forEach(e => { cx += e.position('x'); cyPos += e.position('y'); });
-            target = { x: cx / entries.length, y: cyPos / entries.length };
+            // Hard placement, not a fractional pull: cose's idealEdgeLength (420) treats the
+            // entry-tag edge as a spring wanting ~420px of separation — the opposite of what we
+            // want here — and a slow, fading pull can't reliably out-compete that within the
+            // fixed pass budget. A singleton tag's position is fully determined by its one entry
+            // anyway, so just set it exactly, every pass, with no lag.
+            tag.position(singletonTagTarget(entries[0].position(), graphCentroid));
+            return;
           }
+
+          let cx = 0, cyPos = 0;
+          entries.forEach(e => { cx += e.position('x'); cyPos += e.position('y'); });
+          const target = { x: cx / entries.length, y: cyPos / entries.length };
 
           const p = tag.position();
           tag.position({
