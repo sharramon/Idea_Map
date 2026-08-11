@@ -363,13 +363,11 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
     const MIN_SHAPE_GAP = 28;
     /**
      * Three-tier pull, embedding clearly dominant — it sets the macro neighborhood an entry
-     * lives in and holds that ground. Theme is a light, secondary nudge on top of that (not a
-     * competing force strong enough to reorganize the embedding layout into tight mini-clusters —
-     * that overcorrection made things compress and overlap). Just enough theme pull to visibly
-     * sort same-theme entries a little closer together within their embedding neighborhood.
+     * lives in and holds that ground. Theme is a light, secondary nudge on top of that.
+     * These are the exact weights from before the "tighten theme" overcorrection.
      */
-    const CLUSTER_PULL = { embedding: 0.16, theme: 0.09, secondary: 0.035, tag: 0.10 };
-    const CLUSTER_PASSES = 42;
+    const CLUSTER_PULL = { embedding: 0.18, theme: 0.06, secondary: 0.025, tag: 0.10 };
+    const CLUSTER_PASSES = 40;
 
     function nodeCollisionRadius(node) {
       if (node.data('node_type') === 'entry') return 4;
