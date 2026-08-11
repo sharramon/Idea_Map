@@ -117,6 +117,12 @@ See [HARDWARE.md](HARDWARE.md) for full rationale. Short version:
 - **Now (OpenAI path):** all embedding computation is external. Device stores `embeddings.json` only — cosine search is pure arithmetic, no model needed on-device.
 - **Later (local path):** `nomic-embed-text-v1` INT8 ONNX (~67MB) runs on Snapdragon Reality Elite (48 TOPS NPU). Same interface, config change only, requires full re-embed.
 
+## Future possible improvements
+
+- **Near-duplicate detection, and how to scale its search (not built yet).** The planned check: when new entries are added, flag pairs that are unusually close in embedding space (relative to the corpus's own similarity distribution, not a fixed cosine threshold — the usable range differs by model/corpus) so the LLM is required to explicitly decide whether they should share a tag, rather than letting a striking near-duplicate go unexamined. The naive search — each new entry compared against the full existing corpus — is O(n) per new entry (excluding same-`source_id` pairs, since split-from-one-paragraph entries are *expected* to score high and that's not a meaningful signal). This is fine at any realistic scale for a personal journal: low milliseconds even at thousands of entries.
+  - If the corpus ever grows large enough for that to actually matter (unlikely for this tool), the standard technique is an IVF-style index: coarse-cluster entries by embedding, then only compare a new entry against its own cluster (+ nearest neighbors, to catch boundary cases). Deliberately not built now — it's approximate (can miss the exact near-duplicate pair sitting near a cluster boundary, which is the one thing this check exists to catch) and needs periodic re-clustering to stay accurate as the corpus grows. Revisit only if brute-force comparison is actually measured as slow, not preemptively.
+  - The pruning structure must be embedding-native (a coarse cluster computed from the vectors themselves), never the LLM's own theme/tags — the whole value of the check is catching cases where embedding similarity and LLM categorization *disagree*. Pruning by the LLM's own categories would make the check blind to exactly the cross-category convergences it exists to find.
+
 ## Related docs
 
 - [EMBEDDING_PIPELINE.md](EMBEDDING_PIPELINE.md) — component-level design of the standalone pipeline
