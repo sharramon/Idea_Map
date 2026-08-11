@@ -680,9 +680,14 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
       const allNodesArr = cy.nodes().toArray();
       const entryNodesArr = allNodesArr.filter(n => n.data('node_type') === 'entry');
       const tagNodesArr = allNodesArr.filter(n => n.data('node_type') === 'tag');
-      const MAX_STEP = 6; // px a node may move in a single tick — the actual smoothness guarantee
+      const MAX_STEP = 10;    // px a node may move in a single live-loop tick — the smoothness guarantee
+      const PULL_STEP = 0.045; // how much of each pull force is applied per tick — raise to converge faster
+      const REPEL_SCALE = 0.00005;
 
-      function simulationTick() {
+      // stepLimit overrides MAX_STEP for this call only — used to let the warm-up burst (nobody's
+      // watching those frames) take much bigger steps than the live, on-screen loop should.
+      function simulationTick(stepLimit) {
+        if (stepLimit === undefined) stepLimit = MAX_STEP;
         const pos = {};
         allNodesArr.forEach(n => { pos[n.id()] = n.position(); });
         const disp = {};
@@ -699,7 +704,7 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
             let distSq = dx * dx + dy * dy;
             if (distSq < 4) distSq = 4;
             const dist = Math.sqrt(distSq);
-            let force = (REPEL * 0.00003) / distSq;
+            let force = (REPEL * REPEL_SCALE) / distSq;
 
             const isConnectedTagEntry =
               (a.data('node_type') === 'tag') !== (b.data('node_type') === 'tag') &&
@@ -719,8 +724,8 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
           const anchor = embeddingAnchors[n.id()];
           if (!anchor) return;
           const p = pos[n.id()];
-          disp[n.id()].x += (anchor.x - p.x) * CLUSTER_PULL.embedding * 0.02;
-          disp[n.id()].y += (anchor.y - p.y) * CLUSTER_PULL.embedding * 0.02;
+          disp[n.id()].x += (anchor.x - p.x) * CLUSTER_PULL.embedding * PULL_STEP;
+          disp[n.id()].y += (anchor.y - p.y) * CLUSTER_PULL.embedding * PULL_STEP;
         });
 
         // Theme centroid pull, recomputed fresh from current positions every tick
@@ -737,8 +742,8 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
           const c = themeCenters[n.data('theme')];
           if (!c) return;
           const p = pos[n.id()];
-          disp[n.id()].x += (c.x - p.x) * CLUSTER_PULL.theme * 0.02;
-          disp[n.id()].y += (c.y - p.y) * CLUSTER_PULL.theme * 0.02;
+          disp[n.id()].x += (c.x - p.x) * CLUSTER_PULL.theme * PULL_STEP;
+          disp[n.id()].y += (c.y - p.y) * CLUSTER_PULL.theme * PULL_STEP;
         });
 
         // Secondary theme group pull
@@ -750,8 +755,8 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
           cx /= cnt; cySum /= cnt;
           ids.forEach(id => {
             const p = pos[id]; if (!p) return;
-            disp[id].x += (cx - p.x) * CLUSTER_PULL.secondary * 0.02;
-            disp[id].y += (cySum - p.y) * CLUSTER_PULL.secondary * 0.02;
+            disp[id].x += (cx - p.x) * CLUSTER_PULL.secondary * PULL_STEP;
+            disp[id].y += (cySum - p.y) * CLUSTER_PULL.secondary * PULL_STEP;
           });
         });
 
@@ -763,8 +768,8 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
           entries.forEach(e => { const p = pos[e.id()]; cx += p.x; cySum += p.y; });
           cx /= entries.length; cySum /= entries.length;
           const p = pos[tag.id()];
-          disp[tag.id()].x += (cx - p.x) * CLUSTER_PULL.tag * 0.02;
-          disp[tag.id()].y += (cySum - p.y) * CLUSTER_PULL.tag * 0.02;
+          disp[tag.id()].x += (cx - p.x) * CLUSTER_PULL.tag * PULL_STEP;
+          disp[tag.id()].y += (cySum - p.y) * CLUSTER_PULL.tag * PULL_STEP;
         });
 
         cy.batch(() => {
@@ -772,7 +777,7 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
             if (n.grabbed()) return; // don't fight an active drag
             const d = disp[n.id()];
             const mag = Math.hypot(d.x, d.y);
-            const scale = mag > MAX_STEP ? MAX_STEP / mag : 1;
+            const scale = mag > stepLimit ? stepLimit / mag : 1;
             const p = pos[n.id()];
             n.position({ x: p.x + d.x * scale, y: p.y + d.y * scale });
           });
@@ -781,9 +786,10 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
         updateThemeLabels();
       }
 
-      // Warm up synchronously so the map opens already settled rather than visibly crawling
-      // into place over hundreds of frames (MAX_STEP deliberately keeps each frame small).
-      for (let i = 0; i < 300; i++) simulationTick();
+      // Warm up with a much larger step limit than the live loop uses — nobody sees these
+      // frames, so there's no smoothness requirement here, only "converge fast." Far fewer
+      // iterations are needed at this step size than the live loop's small, gentle ones.
+      for (let i = 0; i < 120; i++) simulationTick(200);
       cy.fit(120);
 
       (function loop() {
