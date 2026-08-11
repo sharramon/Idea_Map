@@ -361,6 +361,7 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
     }
 
     const MIN_SHAPE_GAP = 130;
+    const TAG_ENTRY_GAP = 10; // much smaller floor for a tag against an entry it's actually connected to
     /**
      * Three-tier pull, embedding first: entries are seeded at (and continually re-pulled toward)
      * their embedding-PCA position — that's the primary macro layout, and it's now the strongest
@@ -380,7 +381,12 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
       return size / 2 + 4;
     }
 
-    /** Push overlapping nodes apart until every pair meets MIN_SHAPE_GAP between edges. */
+    /**
+     * Push overlapping nodes apart until every pair meets a minimum gap between edges. A tag and
+     * an entry it's actually connected to get TAG_ENTRY_GAP instead of the full minGap — this is
+     * what lets a single-connection tag sit right next to its one entry instead of being shoved
+     * the standard distance away like any unrelated pair.
+     */
     function enforceMinimumSeparation(cy, minGap, maxPasses) {
       maxPasses = maxPasses || 100;
       const nodes = cy.nodes().toArray();
@@ -390,12 +396,16 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
           for (let j = i + 1; j < nodes.length; j++) {
             const a = nodes[i];
             const b = nodes[j];
+            const aIsTag = a.data('node_type') === 'tag';
+            const bIsTag = b.data('node_type') === 'tag';
+            const isConnectedTagEntry = aIsTag !== bIsTag && a.edgesWith(b).nonempty();
+            const gap = isConnectedTagEntry ? TAG_ENTRY_GAP : minGap;
             const pa = a.position();
             const pb = b.position();
             let dx = pb.x - pa.x;
             let dy = pb.y - pa.y;
             let dist = Math.hypot(dx, dy);
-            const minDist = nodeCollisionRadius(a) + nodeCollisionRadius(b) + minGap;
+            const minDist = nodeCollisionRadius(a) + nodeCollisionRadius(b) + gap;
             if (dist < 1e-4) {
               const angle = Math.random() * Math.PI * 2;
               dx = Math.cos(angle);
