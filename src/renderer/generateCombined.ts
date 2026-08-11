@@ -78,6 +78,27 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
     .btn-primary { background: #1f3a5f; border-color: #388bfd; color: #e6edf3; }
     .btn-primary:hover { background: #264a7a; }
 
+    #force-panel {
+      position: fixed; top: 16px; right: 16px; z-index: 10;
+      background: #161b22; border: 1px solid #30363d; border-radius: 8px;
+      padding: 14px 16px; width: 220px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.35);
+    }
+    #force-panel h2 {
+      font-size: 10px; text-transform: uppercase; letter-spacing: 0.6px;
+      color: #8b949e; font-weight: 600; margin-bottom: 10px;
+    }
+    .force-row { margin-bottom: 10px; }
+    .force-row:last-child { margin-bottom: 0; }
+    .force-row-label {
+      display: flex; justify-content: space-between; font-size: 12px;
+      color: #c9d1d9; margin-bottom: 4px;
+    }
+    .force-row-label span.val { color: #58a6ff; font-variant-numeric: tabular-nums; }
+    .force-row input[type="range"] {
+      width: 100%; accent-color: #58a6ff; cursor: pointer;
+    }
+
     #info-panel {
       position: fixed; right: 0; top: 0; width: 340px; height: 100vh;
       background: #161b22; border-left: 1px solid #30363d;
@@ -205,6 +226,26 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
       <select id="theme-filter"><option value="">All themes</option></select>
       <button id="reset-btn">Reset</button>
       <button id="fit-btn">Fit</button>
+    </div>
+  </div>
+
+  <div id="force-panel">
+    <h2>Forces</h2>
+    <div class="force-row">
+      <div class="force-row-label"><span>Repel</span><span class="val" id="repel-val"></span></div>
+      <input type="range" id="repel-slider" min="50000" max="600000" step="10000" value="350000">
+    </div>
+    <div class="force-row">
+      <div class="force-row-label"><span>Cluster (embedding)</span><span class="val" id="cluster-val"></span></div>
+      <input type="range" id="cluster-slider" min="0" max="0.4" step="0.01" value="0.18">
+    </div>
+    <div class="force-row">
+      <div class="force-row-label"><span>Theme</span><span class="val" id="theme-val"></span></div>
+      <input type="range" id="theme-slider" min="0" max="0.3" step="0.01" value="0.08">
+    </div>
+    <div class="force-row">
+      <div class="force-row-label"><span>Tag</span><span class="val" id="tag-val"></span></div>
+      <input type="range" id="tag-slider" min="0" max="0.3" step="0.01" value="0.10">
     </div>
   </div>
 
@@ -367,12 +408,16 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
      * pull so it holds its ground. Theme is a medium pull that sorts same-theme entries within
      * wherever the embedding already placed them, kept deliberately loose so it nudges rather than
      * compacts — theme pulls toward a centroid that itself moves closer every pass, so even a
-     * modest weight compounds over 56 passes if left too strong. Tag pull stays precise (it needs
+     * modest weight compounds over many passes if left too strong. Tag pull stays precise (it needs
      * to track its centroid target closely, per the "tags at center of their topics" ask) but tag
      * position is derived from entries, so loosening entries automatically loosens tags too.
+     *
+     * These are just the starting values now — the Forces panel (top-right) exposes embedding
+     * ("Cluster"), theme, tag, and repulsion ("Repel") as live sliders, mutated in place below.
      */
-    const CLUSTER_PULL = { embedding: 0.18, theme: 0.06, secondary: 0.025, tag: 0.10 };
+    const CLUSTER_PULL = { embedding: 0.18, theme: 0.08, secondary: 0.033, tag: 0.10 };
     const CLUSTER_PASSES = 40;
+    let REPEL = 350000;
 
     function nodeCollisionRadius(node) {
       if (node.data('node_type') === 'entry') return 9;
@@ -606,6 +651,25 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
         elements.push({ group: 'edges', data: { id: e.id, source: e.source, target: e.target } });
       });
 
+      /** cose layout options, reading the live REPEL value so the Repel slider can re-trigger this. */
+      function coseOptions(animate) {
+        return {
+          name: 'cose',
+          animate: !!animate,
+          animationDuration: 700,
+          fit: true,
+          padding: 200,
+          randomize: false,
+          nodeRepulsion: REPEL,
+          nodeOverlap: 64,
+          idealEdgeLength: 420,
+          edgeElasticity: 0.22,
+          nestingFactor: 1,
+          gravity: 0.008,
+          numIter: 2000,
+        };
+      }
+
       const cy = cytoscape({
         container: document.getElementById('cy'),
         elements,
@@ -708,21 +772,7 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
           { selector: 'node.dimmed', style: { 'opacity': 0.08 } },
           { selector: 'edge.dimmed', style: { 'opacity': 0.06 } },
         ],
-        layout: {
-          name: 'cose',
-          animate: true,
-          animationDuration: 700,
-          fit: true,
-          padding: 200,
-          randomize: false,
-          nodeRepulsion: 350000,
-          nodeOverlap: 64,
-          idealEdgeLength: 420,
-          edgeElasticity: 0.22,
-          nestingFactor: 1,
-          gravity: 0.008,
-          numIter: 2000,
-        },
+        layout: coseOptions(true),
       });
 
       // Show labels only on recurring tags; singletons stay quiet until hover
@@ -942,6 +992,44 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
         cy.fit(80);
         updateThemeLabels();
       });
+
+      // Forces panel: every slider mutates a live variable that applyHierarchicalClustering /
+      // coseOptions already read each run, then resets to the embedding-seeded positions and
+      // reruns cose + the hierarchical passes from scratch. Resetting first keeps each slider
+      // adjustment reproducible instead of compounding on top of wherever the last drag left off.
+      let recomputeQueued = false;
+      function recomputeLayout() {
+        if (recomputeQueued) return;
+        recomputeQueued = true;
+        requestAnimationFrame(() => {
+          recomputeQueued = false;
+          Object.entries(initialPositions).forEach(([id, pos]) => {
+            const n = cy.getElementById(id);
+            if (n.nonempty()) n.position({ x: pos.x, y: pos.y });
+          });
+          cy.layout(coseOptions(false)).run();
+        });
+      }
+
+      function wireForceSlider(sliderId, valId, format, onChange) {
+        const slider = document.getElementById(sliderId);
+        const valEl = document.getElementById(valId);
+        const update = () => { valEl.textContent = format(parseFloat(slider.value)); };
+        update();
+        slider.addEventListener('input', () => {
+          onChange(parseFloat(slider.value));
+          update();
+          recomputeLayout();
+        });
+      }
+
+      wireForceSlider('repel-slider', 'repel-val', v => Math.round(v / 1000) + 'k', v => { REPEL = v; });
+      wireForceSlider('cluster-slider', 'cluster-val', v => v.toFixed(2), v => { CLUSTER_PULL.embedding = v; });
+      wireForceSlider('theme-slider', 'theme-val', v => v.toFixed(2), v => {
+        CLUSTER_PULL.theme = v;
+        CLUSTER_PULL.secondary = v * 0.42; // keep secondary's original ratio to theme (0.033 / 0.08)
+      });
+      wireForceSlider('tag-slider', 'tag-val', v => v.toFixed(2), v => { CLUSTER_PULL.tag = v; });
     }
   </script>
 </body>
