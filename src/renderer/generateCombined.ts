@@ -7,7 +7,7 @@ import { GraphData } from '../types';
 import type { EmbeddingsFile } from '../embeddings/types';
 
 /** Scale + center raw PCA coords so their spread matches the cytoscape canvas units the clustering constants below were tuned for. */
-function scaleToCanvas(coords: [number, number][], target = 900): [number, number][] {
+function scaleToCanvas(coords: [number, number][], target = 1500): [number, number][] {
   const xs = coords.map(c => c[0]);
   const ys = coords.map(c => c[1]);
   const minX = Math.min(...xs), maxX = Math.max(...xs);
@@ -360,7 +360,7 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
         escapeHtml(after);
     }
 
-    const MIN_SHAPE_GAP = 44;
+    const MIN_SHAPE_GAP = 70;
     /**
      * Three-tier pull, embedding first: entries are seeded at (and continually re-pulled toward)
      * their embedding-PCA position — that's the primary macro layout. Theme is a medium pull that
@@ -490,7 +490,8 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
           });
         });
 
-        // Weakest: tags orbit just outside their connected entry cluster
+        // Weakest: tags settle at the literal centroid of every entry they tag — the "center
+        // of mass" of their topics, not an orbit offset outside the cluster.
         cy.nodes('[node_type = "tag"]').forEach(tag => {
           const entries = tag.neighborhood('node[node_type = "entry"]');
           if (entries.length === 0) return;
@@ -500,21 +501,10 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
           cx /= entries.length;
           cyPos /= entries.length;
 
-          const theme = entries[0].data('theme');
-          const themeAnchor = themeCenters[theme] || { x: cx, y: cyPos };
-          let dx = cx - themeAnchor.x;
-          let dy = cyPos - themeAnchor.y;
-          const len = Math.hypot(dx, dy) || 1;
-          dx /= len;
-          dy /= len;
-          const orbit = 110 + entries.length * 22;
-          const targetX = cx + dx * orbit;
-          const targetY = cyPos + dy * orbit;
-
           const p = tag.position();
           tag.position({
-            x: p.x + (targetX - p.x) * tagPull,
-            y: p.y + (targetY - p.y) * tagPull,
+            x: p.x + (cx - p.x) * tagPull,
+            y: p.y + (cyPos - p.y) * tagPull,
           });
         });
 
@@ -545,7 +535,8 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
 
       // Tags seed just outside the centroid of whatever entries they're attached to — same
       // "orbit" idea as the LLM-only map, just relative to embedding-seeded positions instead
-      // of a theme circle.
+      // of a theme circle. Tags sit at the literal centroid of every entry they tag — not
+      // offset outward — so a tag's position directly shows the "center of mass" of its topics.
       GRAPH_DATA.nodes.filter(n => n.node_type === 'tag').forEach(tag => {
         const linkedIds = GRAPH_DATA.edges.filter(e => e.target === tag.id).map(e => e.source);
         const linkedPos = linkedIds.map(id => positions[id]).filter(Boolean);
@@ -555,13 +546,7 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
         }
         const cx = linkedPos.reduce((s, p) => s + p.x, 0) / linkedPos.length;
         const cy = linkedPos.reduce((s, p) => s + p.y, 0) / linkedPos.length;
-        const angle = Math.random() * Math.PI * 2;
-        const spread = (linkedPos.length - 1) * 28;
-        const push = 120 + spread;
-        positions[tag.id] = {
-          x: cx + Math.cos(angle) * push,
-          y: cy + Math.sin(angle) * push,
-        };
+        positions[tag.id] = { x: cx, y: cy };
       });
 
       return positions;
@@ -726,12 +711,12 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
           fit: true,
           padding: 200,
           randomize: false,
-          nodeRepulsion: 58000,
+          nodeRepulsion: 220000,
           nodeOverlap: 64,
-          idealEdgeLength: 270,
+          idealEdgeLength: 340,
           edgeElasticity: 0.22,
           nestingFactor: 1,
-          gravity: 0.03,
+          gravity: 0.012,
           numIter: 2000,
         },
       });
