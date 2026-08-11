@@ -7,7 +7,7 @@ import { GraphData } from '../types';
 import type { EmbeddingsFile } from '../embeddings/types';
 
 /** Scale + center raw PCA coords so their spread matches the cytoscape canvas units the clustering constants below were tuned for. */
-function scaleToCanvas(coords: [number, number][], target = 2200): [number, number][] {
+function scaleToCanvas(coords: [number, number][], target = 700): [number, number][] {
   const xs = coords.map(c => c[0]);
   const ys = coords.map(c => c[1]);
   const minX = Math.min(...xs), maxX = Math.max(...xs);
@@ -515,7 +515,7 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
     // Replaces cose's nodeRepulsion entirely — this is our own code, so it's fully deterministic
     // (no dependency on a CDN-loaded library's internal behavior, which we can't inspect or trust
     // to be reload-stable). Plain pairwise inverse-square repulsion among entries.
-    const REPULSION_K = 120000;
+    const REPULSION_K = 35000;
     function applyRepulsion(cy, step) {
       const nodes = cy.nodes('[node_type = "entry"]').toArray();
       const disp = nodes.map(() => ({ x: 0, y: 0 }));
