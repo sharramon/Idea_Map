@@ -360,8 +360,11 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
         escapeHtml(after);
     }
 
-    const MIN_SHAPE_GAP = 130;
-    const TAG_ENTRY_GAP = 10; // much smaller floor for a tag against an entry it's actually connected to
+    // A small floor, not a spacing force: enforceMinimumSeparation only exists to guarantee
+    // nothing visually overlaps. It used to double as a general "keep things apart" force
+    // (MIN_SHAPE_GAP = 130) — that's gone; this is just enough buffer to keep edges from touching.
+    const MIN_SHAPE_GAP = 4;
+    const ENTRY_DIAMETER = 12; // matches the entry node's rendered width/height below
     /**
      * Three-tier pull, embedding first: entries are seeded at (and continually re-pulled toward)
      * their embedding-PCA position — that's the primary macro layout, and it's now the strongest
@@ -375,18 +378,37 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
     const CLUSTER_PULL = { embedding: 0.18, theme: 0.85, secondary: 0.025, tag: 0.10 };
     const CLUSTER_PASSES = 40;
 
-    function nodeCollisionRadius(node) {
-      if (node.data('node_type') === 'entry') return 9;
-      const size = node.data('size') || 8;
-      return size / 2 + 4;
+    // Offscreen canvas purely for measuring rendered label width, so a tag's collision radius
+    // can account for its visible name text, not just the diamond shape — otherwise labels
+    // themselves could overlap neighboring shapes even when the diamonds don't.
+    const _measureCtx = document.createElement('canvas').getContext('2d');
+    _measureCtx.font = '8px -apple-system, BlinkMacSystemFont, sans-serif';
+    function labelHalfWidth(text) {
+      if (!text) return 0;
+      return _measureCtx.measureText(text).width / 2;
     }
 
-    /**
-     * Push overlapping nodes apart until every pair meets a minimum gap between edges. A tag and
-     * an entry it's actually connected to get TAG_ENTRY_GAP instead of the full minGap — this is
-     * what lets a single-connection tag sit right next to its one entry instead of being shoved
-     * the standard distance away like any unrelated pair.
-     */
+    /** Target position for a tag with exactly one connected entry: 1.5 entry-diameters out from
+     * the entry, along the line from the graph's overall center through that entry — so it sits
+     * near its one dot without landing on top of it, pointing away from the dense core. */
+    function singletonTagTarget(entryPos, centroid) {
+      let dx = entryPos.x - centroid.x;
+      let dy = entryPos.y - centroid.y;
+      let len = Math.hypot(dx, dy);
+      if (len < 1e-4) { dx = 1; dy = 0; len = 1; }
+      const dist = ENTRY_DIAMETER * 1.5;
+      return { x: entryPos.x + (dx / len) * dist, y: entryPos.y + (dy / len) * dist };
+    }
+
+    function nodeCollisionRadius(node) {
+      if (node.data('node_type') === 'entry') return ENTRY_DIAMETER / 2;
+      const size = node.data('size') || 8;
+      let r = size / 2 + 4;
+      if (node.data('tagTier') !== 'singleton') r += labelHalfWidth(node.data('label'));
+      return r;
+    }
+
+    /** Push overlapping nodes apart until every pair meets MIN_SHAPE_GAP between edges. */
     function enforceMinimumSeparation(cy, minGap, maxPasses) {
       maxPasses = maxPasses || 100;
       const nodes = cy.nodes().toArray();
@@ -396,16 +418,12 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
           for (let j = i + 1; j < nodes.length; j++) {
             const a = nodes[i];
             const b = nodes[j];
-            const aIsTag = a.data('node_type') === 'tag';
-            const bIsTag = b.data('node_type') === 'tag';
-            const isConnectedTagEntry = aIsTag !== bIsTag && a.edgesWith(b).nonempty();
-            const gap = isConnectedTagEntry ? TAG_ENTRY_GAP : minGap;
             const pa = a.position();
             const pb = b.position();
             let dx = pb.x - pa.x;
             let dy = pb.y - pa.y;
             let dist = Math.hypot(dx, dy);
-            const minDist = nodeCollisionRadius(a) + nodeCollisionRadius(b) + gap;
+            const minDist = nodeCollisionRadius(a) + nodeCollisionRadius(b) + minGap;
             if (dist < 1e-4) {
               const angle = Math.random() * Math.PI * 2;
               dx = Math.cos(angle);
@@ -504,21 +522,32 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
           });
         });
 
-        // Weakest: tags settle at the literal centroid of every entry they tag — the "center
-        // of mass" of their topics, not an orbit offset outside the cluster.
+        // Weakest: tags with 2+ tagged entries settle at their literal centroid — the "center of
+        // mass" of their topics. A tag with exactly one entry instead targets a fixed point 1.5
+        // entry-diameters out from that entry (see singletonTagTarget) — its centroid IS the
+        // entry itself, so "settle at centroid" would just mean sitting on top of it.
+        const graphEntries = cy.nodes('[node_type = "entry"]');
+        let gcx = 0, gcy = 0;
+        graphEntries.forEach(e => { gcx += e.position('x'); gcy += e.position('y'); });
+        const graphCentroid = { x: gcx / graphEntries.length, y: gcy / graphEntries.length };
+
         cy.nodes('[node_type = "tag"]').forEach(tag => {
           const entries = tag.neighborhood('node[node_type = "entry"]');
           if (entries.length === 0) return;
-          let cx = 0;
-          let cyPos = 0;
-          entries.forEach(e => { cx += e.position('x'); cyPos += e.position('y'); });
-          cx /= entries.length;
-          cyPos /= entries.length;
+
+          let target;
+          if (entries.length === 1) {
+            target = singletonTagTarget(entries[0].position(), graphCentroid);
+          } else {
+            let cx = 0, cyPos = 0;
+            entries.forEach(e => { cx += e.position('x'); cyPos += e.position('y'); });
+            target = { x: cx / entries.length, y: cyPos / entries.length };
+          }
 
           const p = tag.position();
           tag.position({
-            x: p.x + (cx - p.x) * tagPull,
-            y: p.y + (cyPos - p.y) * tagPull,
+            x: p.x + (target.x - p.x) * tagPull,
+            y: p.y + (target.y - p.y) * tagPull,
           });
         });
 
@@ -547,15 +576,27 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
         positions[n.id] = { x: Math.cos(angle) * 140, y: Math.sin(angle) * 140 };
       });
 
-      // Tags seed just outside the centroid of whatever entries they're attached to — same
-      // "orbit" idea as the LLM-only map, just relative to embedding-seeded positions instead
-      // of a theme circle. Tags sit at the literal centroid of every entry they tag — not
-      // offset outward — so a tag's position directly shows the "center of mass" of its topics.
+      // Tags with 2+ tagged entries seed at the literal centroid of every entry they tag — the
+      // "center of mass" of their topics. A tag with exactly one entry seeds 1.5 entry-diameters
+      // out from that entry instead (see singletonTagTarget), since its centroid is just the
+      // entry's own position.
+      const allEntryPos = entryNodes.map(n => positions[n.id]).filter(Boolean);
+      const graphCentroid = allEntryPos.length
+        ? {
+            x: allEntryPos.reduce((s, p) => s + p.x, 0) / allEntryPos.length,
+            y: allEntryPos.reduce((s, p) => s + p.y, 0) / allEntryPos.length,
+          }
+        : { x: 0, y: 0 };
+
       GRAPH_DATA.nodes.filter(n => n.node_type === 'tag').forEach(tag => {
         const linkedIds = GRAPH_DATA.edges.filter(e => e.target === tag.id).map(e => e.source);
         const linkedPos = linkedIds.map(id => positions[id]).filter(Boolean);
         if (!linkedPos.length) {
           positions[tag.id] = { x: (Math.random() - 0.5) * 300, y: (Math.random() - 0.5) * 300 };
+          return;
+        }
+        if (linkedPos.length === 1) {
+          positions[tag.id] = singletonTagTarget(linkedPos[0], graphCentroid);
           return;
         }
         const cx = linkedPos.reduce((s, p) => s + p.x, 0) / linkedPos.length;
@@ -718,22 +759,29 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
           { selector: 'node.dimmed', style: { 'opacity': 0.08 } },
           { selector: 'edge.dimmed', style: { 'opacity': 0.06 } },
         ],
-        layout: {
-          name: 'cose',
-          animate: true,
-          animationDuration: 700,
-          fit: true,
-          padding: 200,
-          randomize: false,
-          nodeRepulsion: 350000,
-          nodeOverlap: 64,
-          idealEdgeLength: 420,
-          edgeElasticity: 0.22,
-          nestingFactor: 1,
-          gravity: 0.008,
-          numIter: 2000,
-        },
+        layout: { name: 'preset' },
       });
+
+      // cose's repulsion is scoped to entry nodes only — tags never participate in it, so they
+      // have no repelling force of their own at all. There are no entry-entry edges in this graph
+      // (every edge is entry->tag), so this reduces to pure nodeRepulsion + gravity among entries;
+      // tags stay exactly where seedPositions put them until the discrete pull passes (which only
+      // ever pull a tag toward a target, never push it away from anything) take over.
+      cy.nodes('[node_type = "entry"]').layout({
+        name: 'cose',
+        animate: true,
+        animationDuration: 700,
+        fit: true,
+        padding: 200,
+        randomize: false,
+        nodeRepulsion: 350000,
+        nodeOverlap: 64,
+        idealEdgeLength: 420,
+        edgeElasticity: 0.22,
+        nestingFactor: 1,
+        gravity: 0.008,
+        numIter: 2000,
+      }).run();
 
       // Show labels only on recurring tags; singletons stay quiet until hover
       cy.nodes('[node_type = "tag"][tagTier != "singleton"]').addClass('show-label');
