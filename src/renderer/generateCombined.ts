@@ -379,7 +379,12 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
       return size / 2 + 4;
     }
 
-    /** Push overlapping nodes apart until every pair meets MIN_SHAPE_GAP between edges. */
+    /**
+     * Push overlapping nodes apart until every pair meets MIN_SHAPE_GAP between edges.
+     * Exempts a tag from its own connected entries — a tag is supposed to sit at the literal
+     * centroid of the entries it tags, which means it's expected to be closer to them than
+     * MIN_SHAPE_GAP allows for unrelated pairs. Only unrelated pairs get pushed apart.
+     */
     function enforceMinimumSeparation(cy, minGap, maxPasses) {
       maxPasses = maxPasses || 100;
       const nodes = cy.nodes().toArray();
@@ -389,6 +394,9 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
           for (let j = i + 1; j < nodes.length; j++) {
             const a = nodes[i];
             const b = nodes[j];
+            const aIsTag = a.data('node_type') === 'tag';
+            const bIsTag = b.data('node_type') === 'tag';
+            if (aIsTag !== bIsTag && a.edgesWith(b).nonempty()) continue;
             const pa = a.position();
             const pb = b.position();
             let dx = pb.x - pa.x;
@@ -513,6 +521,17 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
 
         if (pass % 2 === 1) enforceMinimumSeparation(cy, MIN_SHAPE_GAP, 20);
       }
+
+      // Final exact snap: whatever lag the fading tagPull left behind, put every tag dead-center
+      // on its entries' current centroid — this is a hard requirement, not just a preference.
+      cy.nodes('[node_type = "tag"]').forEach(tag => {
+        const entries = tag.neighborhood('node[node_type = "entry"]');
+        if (entries.length === 0) return;
+        let cx = 0;
+        let cyPos = 0;
+        entries.forEach(e => { cx += e.position('x'); cyPos += e.position('y'); });
+        tag.position({ x: cx / entries.length, y: cyPos / entries.length });
+      });
     }
 
     /** Entries seed directly at their embedding-PCA position — that's the primary, first-tier layout. */
