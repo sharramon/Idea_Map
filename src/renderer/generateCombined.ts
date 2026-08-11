@@ -515,7 +515,7 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
     // Replaces cose's nodeRepulsion entirely — this is our own code, so it's fully deterministic
     // (no dependency on a CDN-loaded library's internal behavior, which we can't inspect or trust
     // to be reload-stable). Plain pairwise inverse-square repulsion among entries.
-    const REPULSION_K = 400000;
+    const REPULSION_K = 120000;
     function applyRepulsion(cy, step) {
       const nodes = cy.nodes('[node_type = "entry"]').toArray();
       const disp = nodes.map(() => ({ x: 0, y: 0 }));
