@@ -375,8 +375,14 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
      * modest weight compounds over 56 passes if left too strong. Tag pull stays precise (it needs
      * to track its centroid target closely, per the "tags at center of their topics" ask) but tag
      * position is derived from entries, so loosening entries automatically loosens tags too.
+     *
+     * theme was pushed to 0.85 earlier and that's what broke everything: strong enough to collapse
+     * same-theme entries onto (near-)exactly the same point within a couple of passes, which turns
+     * enforceMinimumSeparation's rare exact-overlap fallback into the dominant behavior — and with
+     * many entries and tags all fighting over the same spot every pass, nothing converges cleanly.
+     * Brought back down to a value that still visibly sorts by theme without causing that collapse.
      */
-    const CLUSTER_PULL = { embedding: 0.18, theme: 0.85, secondary: 0.025, tag: 0.10 };
+    const CLUSTER_PULL = { embedding: 0.18, theme: 0.2, secondary: 0.025, tag: 0.10 };
     const CLUSTER_PASSES = 40;
 
     // Offscreen canvas purely for measuring rendered label width, so a tag's collision radius
@@ -399,6 +405,22 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
       if (len < 1e-4) { dx = 1; dy = 0; len = 1; }
       const dist = ENTRY_DIAMETER * 1.5;
       return { x: entryPos.x + (dx / len) * dist, y: entryPos.y + (dy / len) * dist };
+    }
+
+    /** True final word on singleton tag position — called after the last collision-avoidance
+     * pass too, so a nearby unrelated node's spacing requirement can't drag a singleton tag away
+     * from its one entry as a side effect. This is the "exception" overriding general spacing. */
+    function placeSingletonTags(cy) {
+      const graphEntries = cy.nodes('[node_type = "entry"]');
+      let gcx = 0, gcy = 0;
+      graphEntries.forEach(e => { gcx += e.position('x'); gcy += e.position('y'); });
+      const graphCentroid = { x: gcx / graphEntries.length, y: gcy / graphEntries.length };
+
+      cy.nodes('[node_type = "tag"][connectionCount = 1]').forEach(tag => {
+        const entries = tag.neighborhood('node[node_type = "entry"]');
+        if (entries.length !== 1) return;
+        tag.position(singletonTagTarget(entries[0].position(), graphCentroid));
+      });
     }
 
     function nodeCollisionRadius(node) {
@@ -438,7 +460,13 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
             let dist = Math.hypot(dx, dy);
             const minDist = nodeCollisionRadius(a) + nodeCollisionRadius(b) + gap;
             if (dist < 1e-4) {
-              const angle = Math.random() * Math.PI * 2;
+              // Deterministic, not random: two nodes at the exact same point need *some*
+              // direction to separate along, but it has to be the same direction every time this
+              // page loads, or the whole layout becomes non-reproducible run to run.
+              let hash = 0;
+              const key = a.id() + '|' + b.id();
+              for (let k = 0; k < key.length; k++) hash = (hash * 31 + key.charCodeAt(k)) | 0;
+              const angle = (Math.abs(hash) % 3600) / 3600 * Math.PI * 2;
               dx = Math.cos(angle);
               dy = Math.sin(angle);
               dist = 1;
@@ -492,7 +520,6 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
         const embeddingPull = CLUSTER_PULL.embedding * (0.35 + 0.65 * fade);
         const themePull = CLUSTER_PULL.theme * (0.35 + 0.65 * fade);
         const secondaryPull = CLUSTER_PULL.secondary * (0.35 + 0.65 * fade);
-        const tagPull = CLUSTER_PULL.tag * (0.35 + 0.65 * fade);
 
         // Primary: gently reel entries back toward their embedding-PCA anchor, so the macro layout
         // (topic proximity) holds even as the lighter theme/tag pulls below nudge things around.
@@ -558,15 +585,13 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
             return;
           }
 
+          // Also a hard placement now, not a fractional pull toward a moving target: with theme
+          // actively relocating entries every pass, a weak/fading tagPull could never fully keep
+          // up, leaving multi-entry tags visibly off-center. The centroid is trivial to compute
+          // fresh each pass, so there's no reason to lag behind it.
           let cx = 0, cyPos = 0;
           entries.forEach(e => { cx += e.position('x'); cyPos += e.position('y'); });
-          const target = { x: cx / entries.length, y: cyPos / entries.length };
-
-          const p = tag.position();
-          tag.position({
-            x: p.x + (target.x - p.x) * tagPull,
-            y: p.y + (target.y - p.y) * tagPull,
-          });
+          tag.position({ x: cx / entries.length, y: cyPos / entries.length });
         });
 
         if (pass % 2 === 1) enforceMinimumSeparation(cy, MIN_SHAPE_GAP, 20);
@@ -852,6 +877,7 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
       cy.on('layoutstop', () => {
         applyHierarchicalClustering(cy, embeddingAnchors, secondaryThemeGroups);
         enforceMinimumSeparation(cy, MIN_SHAPE_GAP);
+        placeSingletonTags(cy);
         saveAnchors();
         updateThemeLabels();
         cy.fit(120);
