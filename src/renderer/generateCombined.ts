@@ -7,7 +7,7 @@ import { GraphData } from '../types';
 import type { EmbeddingsFile } from '../embeddings/types';
 
 /** Scale + center raw PCA coords so their spread matches the cytoscape canvas units the clustering constants below were tuned for. */
-function scaleToCanvas(coords: [number, number][], target = 500): [number, number][] {
+function scaleToCanvas(coords: [number, number][], target = 2200): [number, number][] {
   const xs = coords.map(c => c[0]);
   const ys = coords.map(c => c[1]);
   const minX = Math.min(...xs), maxX = Math.max(...xs);
@@ -55,11 +55,11 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
     }
     .theme-label {
       position: absolute; transform: translate(-50%, -100%);
-      font-size: 9px; font-weight: 600; letter-spacing: 0.03em;
-      text-align: center; max-width: 150px; line-height: 1.3;
+      font-size: 11px; font-weight: 600; letter-spacing: 0.03em;
+      text-align: center; max-width: 180px; line-height: 1.3;
       opacity: 0.55; white-space: normal;
       text-shadow: 0 0 20px rgba(10, 14, 20, 0.98), 0 1px 3px rgba(0,0,0,0.9);
-      margin-top: -26px;
+      margin-top: -36px;
     }
 
     #controls {
@@ -300,9 +300,9 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
     }
 
     function tagSize(count) {
-      if (count <= 1) return 2;
-      if (count <= 3) return 3;
-      return 4;
+      if (count <= 1) return 8;
+      if (count <= 3) return 14;
+      return 18;
     }
 
     function escapeHtml(s) {
@@ -360,31 +360,29 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
         escapeHtml(after);
     }
 
-    const MIN_SHAPE_GAP = 28;
+    const MIN_SHAPE_GAP = 130;
     /**
-     * Three-tier pull, embedding clearly dominant — it sets the macro neighborhood an entry
-     * lives in and holds that ground. Theme is a light, secondary nudge on top of that.
-     * These are the exact weights from before the "tighten theme" overcorrection.
+     * Three-tier pull, embedding first: entries are seeded at (and continually re-pulled toward)
+     * their embedding-PCA position — that's the primary macro layout, and it's now the strongest
+     * pull so it holds its ground. Theme is a medium pull that sorts same-theme entries within
+     * wherever the embedding already placed them, kept deliberately loose so it nudges rather than
+     * compacts — theme pulls toward a centroid that itself moves closer every pass, so even a
+     * modest weight compounds over 56 passes if left too strong. Tag pull stays precise (it needs
+     * to track its centroid target closely, per the "tags at center of their topics" ask) but tag
+     * position is derived from entries, so loosening entries automatically loosens tags too.
      */
-    const CLUSTER_PULL = { embedding: 0.23, theme: 0.06, secondary: 0.025, tag: 0.04 };
+    const CLUSTER_PULL = { embedding: 0.18, theme: 0.06, secondary: 0.025, tag: 0.10 };
     const CLUSTER_PASSES = 40;
 
     function nodeCollisionRadius(node) {
-      if (node.data('node_type') === 'entry') return 2;
-      const size = node.data('size') || 2;
-      return size / 2 + 1;
+      if (node.data('node_type') === 'entry') return 9;
+      const size = node.data('size') || 8;
+      return size / 2 + 4;
     }
 
-    /**
-     * Push overlapping nodes apart until every pair keeps at least a minimum gap between edges.
-     * A tag and an entry it's connected to get a much smaller gap (CONNECTED_GAP) instead of the
-     * full MIN_SHAPE_GAP — a tag is supposed to sit at the literal centroid of the entries it
-     * tags, so it will legitimately be close to them, but "close" still isn't "on top of," so a
-     * small floor is enforced even here to guarantee no two shapes ever fully overlap.
-     */
-    function enforceMinimumSeparation(cy, minGap, maxPasses, connectedGap) {
+    /** Push overlapping nodes apart until every pair meets MIN_SHAPE_GAP between edges. */
+    function enforceMinimumSeparation(cy, minGap, maxPasses) {
       maxPasses = maxPasses || 100;
-      connectedGap = connectedGap === undefined ? 8 : connectedGap;
       const nodes = cy.nodes().toArray();
       for (let pass = 0; pass < maxPasses; pass++) {
         let moved = false;
@@ -392,16 +390,12 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
           for (let j = i + 1; j < nodes.length; j++) {
             const a = nodes[i];
             const b = nodes[j];
-            const aIsTag = a.data('node_type') === 'tag';
-            const bIsTag = b.data('node_type') === 'tag';
-            const isConnectedTagEntry = aIsTag !== bIsTag && a.edgesWith(b).nonempty();
-            const gap = isConnectedTagEntry ? connectedGap : minGap;
             const pa = a.position();
             const pb = b.position();
             let dx = pb.x - pa.x;
             let dy = pb.y - pa.y;
             let dist = Math.hypot(dx, dy);
-            const minDist = nodeCollisionRadius(a) + nodeCollisionRadius(b) + gap;
+            const minDist = nodeCollisionRadius(a) + nodeCollisionRadius(b) + minGap;
             if (dist < 1e-4) {
               const angle = Math.random() * Math.PI * 2;
               dx = Math.cos(angle);
@@ -500,9 +494,8 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
           });
         });
 
-        // Weakest, and deliberately light: tags only lean toward the centroid of every entry
-        // they tag, they don't lock onto it — a tag is a directional pointer toward its topics,
-        // not a marker that has to sit exactly on their center of mass.
+        // Weakest: tags settle at the literal centroid of every entry they tag — the "center
+        // of mass" of their topics, not an orbit offset outside the cluster.
         cy.nodes('[node_type = "tag"]').forEach(tag => {
           const entries = tag.neighborhood('node[node_type = "entry"]');
           if (entries.length === 0) return;
@@ -521,12 +514,6 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
 
         if (pass % 2 === 1) enforceMinimumSeparation(cy, MIN_SHAPE_GAP, 20);
       }
-
-      // No hard snap-to-centroid here on purpose: tags are directional indicators, not exact
-      // markers. A weak, ongoing pull toward their entries' centroid (tagPull, above) lets a
-      // tag's final resting point lean toward its topics without fully overriding wherever it
-      // was seeded — the direction reads, but it's not forced dead-center.
-      enforceMinimumSeparation(cy, MIN_SHAPE_GAP, 20);
     }
 
     /** Entries seed directly at their embedding-PCA position — that's the primary, first-tier layout. */
@@ -629,11 +616,11 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
             selector: 'node[node_type = "entry"]',
             style: {
               'background-color': 'data(color)',
-              'width': 2.5,
-              'height': 2.5,
+              'width': 12,
+              'height': 12,
               'shape': 'ellipse',
               'label': '',
-              'border-width': 0.35,
+              'border-width': 1.5,
               'border-color': 'data(color)',
               'border-opacity': 0.5,
               'background-opacity': 0.95,
@@ -642,11 +629,11 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
           {
             selector: 'node[node_type = "entry"]:selected',
             style: {
-              'border-width': 0.5,
+              'border-width': 2.5,
               'border-opacity': 1,
               'border-color': '#ffffff',
-              'width': 3.5,
-              'height': 3.5,
+              'width': 14,
+              'height': 14,
             }
           },
           {
@@ -654,7 +641,7 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
             style: {
               'background-color': '#12171f',
               'border-color': '#58a6ff',
-              'border-width': 0.8,
+              'border-width': 1.5,
               'shape': 'diamond',
               'width': 'data(size)',
               'height': 'data(size)',
@@ -679,13 +666,13 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
             selector: 'node[node_type = "tag"][tagTier = "singleton"]',
             style: {
               'opacity': 0.5,
-              'border-width': 0.5,
+              'border-width': 1,
             }
           },
           {
             selector: 'node[node_type = "tag"][tagTier = "frequent"]',
             style: {
-              'border-width': 1,
+              'border-width': 2,
               'background-color': '#1a2332',
             }
           },
@@ -699,7 +686,7 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
           {
             selector: 'edge',
             style: {
-              'width': 0.8,
+              'width': 1.5,
               'line-color': '#484f58',
               'opacity': 0.38,
               'curve-style': 'bezier',
@@ -711,7 +698,7 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
             style: {
               'opacity': 0.85,
               'line-color': '#58a6ff',
-              'width': 1.4,
+              'width': 2.5,
             }
           },
           {
@@ -726,14 +713,14 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
           animate: true,
           animationDuration: 700,
           fit: true,
-          padding: 90,
+          padding: 200,
           randomize: false,
-          nodeRepulsion: 95000,
+          nodeRepulsion: 350000,
           nodeOverlap: 64,
-          idealEdgeLength: 145,
+          idealEdgeLength: 420,
           edgeElasticity: 0.22,
           nestingFactor: 1,
-          gravity: 0.035,
+          gravity: 0.008,
           numIter: 2000,
         },
       });
@@ -798,7 +785,7 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
         enforceMinimumSeparation(cy, MIN_SHAPE_GAP);
         saveAnchors();
         updateThemeLabels();
-        cy.fit(50);
+        cy.fit(120);
       });
       cy.on('pan zoom resize', updateThemeLabels);
 
@@ -952,7 +939,7 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
         updateThemeLabels();
       });
       document.getElementById('fit-btn').addEventListener('click', () => {
-        cy.fit(50);
+        cy.fit(80);
         updateThemeLabels();
       });
     }
