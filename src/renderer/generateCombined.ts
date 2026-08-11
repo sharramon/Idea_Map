@@ -300,9 +300,9 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
     }
 
     function tagSize(count) {
-      if (count <= 1) return 4;
-      if (count <= 3) return 6;
-      return 8;
+      if (count <= 1) return 1.3;
+      if (count <= 3) return 2;
+      return 2.7;
     }
 
     function escapeHtml(s) {
@@ -370,9 +370,9 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
     const CLUSTER_PASSES = 40;
 
     function nodeCollisionRadius(node) {
-      if (node.data('node_type') === 'entry') return 4;
-      const size = node.data('size') || 4;
-      return size / 2 + 2;
+      if (node.data('node_type') === 'entry') return 1.3;
+      const size = node.data('size') || 1.3;
+      return size / 2 + 0.7;
     }
 
     /**
@@ -637,11 +637,11 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
             selector: 'node[node_type = "entry"]',
             style: {
               'background-color': 'data(color)',
-              'width': 5,
-              'height': 5,
+              'width': 1.7,
+              'height': 1.7,
               'shape': 'ellipse',
               'label': '',
-              'border-width': 1,
+              'border-width': 0.5,
               'border-color': 'data(color)',
               'border-opacity': 0.5,
               'background-opacity': 0.95,
@@ -650,11 +650,11 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
           {
             selector: 'node[node_type = "entry"]:selected',
             style: {
-              'border-width': 2,
+              'border-width': 0.7,
               'border-opacity': 1,
               'border-color': '#ffffff',
-              'width': 7,
-              'height': 7,
+              'width': 2.3,
+              'height': 2.3,
             }
           },
           {
@@ -736,12 +736,12 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
           fit: true,
           padding: 90,
           randomize: false,
-          nodeRepulsion: 55000,
+          nodeRepulsion: 130000,
           nodeOverlap: 64,
-          idealEdgeLength: 130,
+          idealEdgeLength: 170,
           edgeElasticity: 0.22,
           nestingFactor: 1,
-          gravity: 0.05,
+          gravity: 0.025,
           numIter: 2000,
         },
       });
