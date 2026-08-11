@@ -395,32 +395,58 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
       return _measureCtx.measureText(text).width / 2;
     }
 
-    /** Target position for a tag with exactly one connected entry: 1.5 entry-diameters out from
-     * the entry, along the line from the graph's overall center through that entry — so it sits
-     * near its one dot without landing on top of it, pointing away from the dense core. */
-    function singletonTagTarget(entryPos, centroid) {
-      let dx = entryPos.x - centroid.x;
-      let dy = entryPos.y - centroid.y;
-      let len = Math.hypot(dx, dy);
-      if (len < 1e-4) { dx = 1; dy = 0; len = 1; }
+    /**
+     * Target positions for tags with exactly one connected entry: 1.5 entry-diameters out from
+     * the entry, along the line from the graph's overall center through that entry. Grouped by
+     * entry, not computed per-tag in isolation — an entry can have several singleton tags (each
+     * used by only that one entry), and a purely per-tag formula gives every one of them the
+     * identical target, stacking them exactly on top of each other. With 2+ singleton tags on the
+     * same entry, they're distributed around it (evenly spaced angles) instead of sharing one
+     * point; with just one, it points away from the dense core same as before.
+     *
+     * pairs: [{ tagId, entryId, entryPos }]. Returns { [tagId]: {x, y} }.
+     */
+    function computeSingletonTargets(pairs, centroid) {
       const dist = ENTRY_DIAMETER * 1.5;
-      return { x: entryPos.x + (dx / len) * dist, y: entryPos.y + (dy / len) * dist };
+      const groups = {};
+      pairs.forEach(({ tagId, entryId, entryPos }) => {
+        (groups[entryId] = groups[entryId] || { entryPos, tagIds: [] }).tagIds.push(tagId);
+      });
+      const targets = {};
+      Object.values(groups).forEach(({ entryPos, tagIds }) => {
+        let dx = entryPos.x - centroid.x;
+        let dy = entryPos.y - centroid.y;
+        let len = Math.hypot(dx, dy);
+        const baseAngle = len < 1e-4 ? 0 : Math.atan2(dy, dx);
+        const n = tagIds.length;
+        tagIds.forEach((tagId, i) => {
+          const angle = n === 1 ? baseAngle : (2 * Math.PI * i) / n;
+          targets[tagId] = { x: entryPos.x + Math.cos(angle) * dist, y: entryPos.y + Math.sin(angle) * dist };
+        });
+      });
+      return targets;
+    }
+
+    function graphCentroidOf(cy) {
+      const graphEntries = cy.nodes('[node_type = "entry"]');
+      let gcx = 0, gcy = 0;
+      graphEntries.forEach(e => { gcx += e.position('x'); gcy += e.position('y'); });
+      return { x: gcx / graphEntries.length, y: gcy / graphEntries.length };
     }
 
     /** True final word on singleton tag position — called after the last collision-avoidance
      * pass too, so a nearby unrelated node's spacing requirement can't drag a singleton tag away
      * from its one entry as a side effect. This is the "exception" overriding general spacing. */
     function placeSingletonTags(cy) {
-      const graphEntries = cy.nodes('[node_type = "entry"]');
-      let gcx = 0, gcy = 0;
-      graphEntries.forEach(e => { gcx += e.position('x'); gcy += e.position('y'); });
-      const graphCentroid = { x: gcx / graphEntries.length, y: gcy / graphEntries.length };
-
+      const graphCentroid = graphCentroidOf(cy);
+      const pairs = [];
       cy.nodes('[node_type = "tag"][connectionCount = 1]').forEach(tag => {
         const entries = tag.neighborhood('node[node_type = "entry"]');
         if (entries.length !== 1) return;
-        tag.position(singletonTagTarget(entries[0].position(), graphCentroid));
+        pairs.push({ tagId: tag.id(), entryId: entries[0].id(), entryPos: entries[0].position() });
       });
+      const targets = computeSingletonTargets(pairs, graphCentroid);
+      Object.entries(targets).forEach(([tagId, pos]) => { cy.getElementById(tagId).position(pos); });
     }
 
     function nodeCollisionRadius(node) {
@@ -593,24 +619,20 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
 
         // Weakest: tags with 2+ tagged entries settle at their literal centroid — the "center of
         // mass" of their topics. A tag with exactly one entry instead targets a fixed point 1.5
-        // entry-diameters out from that entry (see singletonTagTarget) — its centroid IS the
+        // entry-diameters out from that entry (see computeSingletonTargets) — its centroid IS the
         // entry itself, so "settle at centroid" would just mean sitting on top of it.
-        const graphEntries = cy.nodes('[node_type = "entry"]');
-        let gcx = 0, gcy = 0;
-        graphEntries.forEach(e => { gcx += e.position('x'); gcy += e.position('y'); });
-        const graphCentroid = { x: gcx / graphEntries.length, y: gcy / graphEntries.length };
+        const graphCentroid = graphCentroidOf(cy);
+        const singletonPairs = [];
 
         cy.nodes('[node_type = "tag"]').forEach(tag => {
           const entries = tag.neighborhood('node[node_type = "entry"]');
           if (entries.length === 0) return;
 
           if (entries.length === 1) {
-            // Hard placement, not a fractional pull: cose's idealEdgeLength (420) treats the
-            // entry-tag edge as a spring wanting ~420px of separation — the opposite of what we
-            // want here — and a slow, fading pull can't reliably out-compete that within the
-            // fixed pass budget. A singleton tag's position is fully determined by its one entry
-            // anyway, so just set it exactly, every pass, with no lag.
-            tag.position(singletonTagTarget(entries[0].position(), graphCentroid));
+            // Collected and placed together below (computeSingletonTargets), not here — several
+            // singleton tags can share the same one entry, and each needs to know about its
+            // siblings to avoid landing exactly on top of them.
+            singletonPairs.push({ tagId: tag.id(), entryId: entries[0].id(), entryPos: entries[0].position() });
             return;
           }
 
@@ -622,6 +644,14 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
           entries.forEach(e => { cx += e.position('x'); cyPos += e.position('y'); });
           tag.position({ x: cx / entries.length, y: cyPos / entries.length });
         });
+
+        // Hard placement, not a fractional pull: cose's idealEdgeLength (420) treats the
+        // entry-tag edge as a spring wanting ~420px of separation — the opposite of what we want
+        // here — and a slow, fading pull can't reliably out-compete that within the fixed pass
+        // budget. A singleton tag's position is fully determined by its entry (and siblings)
+        // anyway, so just set it exactly, every pass, with no lag.
+        const singletonTargets = computeSingletonTargets(singletonPairs, graphCentroid);
+        Object.entries(singletonTargets).forEach(([tagId, pos]) => { cy.getElementById(tagId).position(pos); });
 
         if (pass % 2 === 1) enforceMinimumSeparation(cy, MIN_SHAPE_GAP, 20);
       }
@@ -650,8 +680,8 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
 
       // Tags with 2+ tagged entries seed at the literal centroid of every entry they tag — the
       // "center of mass" of their topics. A tag with exactly one entry seeds 1.5 entry-diameters
-      // out from that entry instead (see singletonTagTarget), since its centroid is just the
-      // entry's own position.
+      // out from that entry instead (see computeSingletonTargets, grouped so siblings on the same
+      // entry don't seed on top of each other), since its centroid is just the entry's own position.
       const allEntryPos = entryNodes.map(n => positions[n.id]).filter(Boolean);
       const graphCentroid = allEntryPos.length
         ? {
@@ -660,20 +690,31 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
           }
         : { x: 0, y: 0 };
 
+      const singletonPairs = [];
+
       GRAPH_DATA.nodes.filter(n => n.node_type === 'tag').forEach(tag => {
         const linkedIds = GRAPH_DATA.edges.filter(e => e.target === tag.id).map(e => e.source);
         const linkedPos = linkedIds.map(id => positions[id]).filter(Boolean);
         if (!linkedPos.length) {
-          positions[tag.id] = { x: (Math.random() - 0.5) * 300, y: (Math.random() - 0.5) * 300 };
+          // Shouldn't normally happen (every tag node here comes from at least one entry), but
+          // deterministic rather than random so this edge case can't itself cause reload drift.
+          let hash = 0;
+          for (let k = 0; k < tag.id.length; k++) hash = (hash * 31 + tag.id.charCodeAt(k)) | 0;
+          const angle = (Math.abs(hash) % 3600) / 3600 * Math.PI * 2;
+          positions[tag.id] = { x: Math.cos(angle) * 150, y: Math.sin(angle) * 150 };
           return;
         }
         if (linkedPos.length === 1) {
-          positions[tag.id] = singletonTagTarget(linkedPos[0], graphCentroid);
+          singletonPairs.push({ tagId: tag.id, entryId: linkedIds[0], entryPos: linkedPos[0] });
           return;
         }
         const cx = linkedPos.reduce((s, p) => s + p.x, 0) / linkedPos.length;
         const cy = linkedPos.reduce((s, p) => s + p.y, 0) / linkedPos.length;
         positions[tag.id] = { x: cx, y: cy };
+      });
+
+      Object.entries(computeSingletonTargets(singletonPairs, graphCentroid)).forEach(([tagId, pos]) => {
+        positions[tagId] = pos;
       });
 
       return positions;
