@@ -7,7 +7,7 @@ import { GraphData } from '../types';
 import type { EmbeddingsFile } from '../embeddings/types';
 
 /** Scale + center raw PCA coords so their spread matches the cytoscape canvas units the clustering constants below were tuned for. */
-function scaleToCanvas(coords: [number, number][], target = 1500): [number, number][] {
+function scaleToCanvas(coords: [number, number][], target = 2200): [number, number][] {
   const xs = coords.map(c => c[0]);
   const ys = coords.map(c => c[1]);
   const minX = Math.min(...xs), maxX = Math.max(...xs);
@@ -360,15 +360,19 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
         escapeHtml(after);
     }
 
-    const MIN_SHAPE_GAP = 70;
+    const MIN_SHAPE_GAP = 130;
     /**
      * Three-tier pull, embedding first: entries are seeded at (and continually re-pulled toward)
-     * their embedding-PCA position — that's the primary macro layout. Theme is a medium pull that
-     * sorts/tightens same-theme entries within wherever the embedding already placed them.
-     * Tags are the lightest, orbiting their connected entries same as the LLM-only map.
+     * their embedding-PCA position — that's the primary macro layout, and it's now the strongest
+     * pull so it holds its ground. Theme is a medium pull that sorts same-theme entries within
+     * wherever the embedding already placed them, kept deliberately loose so it nudges rather than
+     * compacts — theme pulls toward a centroid that itself moves closer every pass, so even a
+     * modest weight compounds over 56 passes if left too strong. Tag pull stays precise (it needs
+     * to track its centroid target closely, per the "tags at center of their topics" ask) but tag
+     * position is derived from entries, so loosening entries automatically loosens tags too.
      */
-    const CLUSTER_PULL = { embedding: 0.10, theme: 0.16, secondary: 0.08, tag: 0.05 };
-    const CLUSTER_PASSES = 56;
+    const CLUSTER_PULL = { embedding: 0.18, theme: 0.06, secondary: 0.025, tag: 0.10 };
+    const CLUSTER_PASSES = 40;
 
     function nodeCollisionRadius(node) {
       if (node.data('node_type') === 'entry') return 9;
@@ -508,7 +512,7 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
           });
         });
 
-        if (pass % 4 === 3) enforceMinimumSeparation(cy, MIN_SHAPE_GAP, 20);
+        if (pass % 2 === 1) enforceMinimumSeparation(cy, MIN_SHAPE_GAP, 20);
       }
     }
 
@@ -711,12 +715,12 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
           fit: true,
           padding: 200,
           randomize: false,
-          nodeRepulsion: 220000,
+          nodeRepulsion: 350000,
           nodeOverlap: 64,
-          idealEdgeLength: 340,
+          idealEdgeLength: 420,
           edgeElasticity: 0.22,
           nestingFactor: 1,
-          gravity: 0.012,
+          gravity: 0.008,
           numIter: 2000,
         },
       });
