@@ -374,7 +374,7 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
     const CLUSTER_PASSES = 48;
 
     function nodeCollisionRadius(node) {
-      if (node.data('node_type') === 'entry') return 7;
+      if (node.data('node_type') === 'entry') return 4;
       const size = node.data('size') || 6;
       return size / 2 + 3;
     }
@@ -641,11 +641,11 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
             selector: 'node[node_type = "entry"]',
             style: {
               'background-color': 'data(color)',
-              'width': 9,
-              'height': 9,
+              'width': 5,
+              'height': 5,
               'shape': 'ellipse',
               'label': '',
-              'border-width': 1.5,
+              'border-width': 1,
               'border-color': 'data(color)',
               'border-opacity': 0.5,
               'background-opacity': 0.95,
@@ -654,11 +654,11 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
           {
             selector: 'node[node_type = "entry"]:selected',
             style: {
-              'border-width': 2.5,
+              'border-width': 2,
               'border-opacity': 1,
               'border-color': '#ffffff',
-              'width': 11,
-              'height': 11,
+              'width': 7,
+              'height': 7,
             }
           },
           {
