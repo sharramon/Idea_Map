@@ -651,13 +651,19 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
         elements.push({ group: 'edges', data: { id: e.id, source: e.source, target: e.target } });
       });
 
-      /** cose layout options, reading the live REPEL value so the Repel slider can re-trigger this. */
-      function coseOptions(animate) {
+      /**
+       * cose layout options, reading the live REPEL value so the Repel slider can re-trigger this.
+       * randomize is always false, so cose relaxes from whatever positions are currently on
+       * screen rather than restarting from scratch — that's what makes slider drags read as a
+       * continuous adjustment instead of the layout jumping to an unrelated new arrangement.
+       */
+      function coseOptions(animate, duration, fit) {
         return {
           name: 'cose',
           animate: !!animate,
-          animationDuration: 700,
-          fit: true,
+          animationDuration: duration || 700,
+          animationEasing: 'ease-out',
+          fit: fit === undefined ? true : fit,
           padding: 200,
           randomize: false,
           nodeRepulsion: REPEL,
@@ -830,12 +836,19 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
         anchoredPositions[id] = { x: pos.x, y: pos.y };
       });
 
+      // Only auto-fit (re-zoom/pan the camera) on the very first layout — re-fitting on every
+      // slider-triggered recompute was its own source of jarring motion, on top of the nodes
+      // moving. After that, the camera stays put; use the Fit button if things drift off-screen.
+      let didInitialFit = false;
       cy.on('layoutstop', () => {
         applyHierarchicalClustering(cy, embeddingAnchors, secondaryThemeGroups);
         enforceMinimumSeparation(cy, MIN_SHAPE_GAP);
         saveAnchors();
         updateThemeLabels();
-        cy.fit(120);
+        if (!didInitialFit) {
+          didInitialFit = true;
+          cy.fit(120);
+        }
       });
       cy.on('pan zoom resize', updateThemeLabels);
 
@@ -994,21 +1007,19 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
       });
 
       // Forces panel: every slider mutates a live variable that applyHierarchicalClustering /
-      // coseOptions already read each run, then resets to the embedding-seeded positions and
-      // reruns cose + the hierarchical passes from scratch. Resetting first keeps each slider
-      // adjustment reproducible instead of compounding on top of wherever the last drag left off.
-      let recomputeQueued = false;
+      // coseOptions already read each run. Deliberately NOT resetting to the embedding seed here
+      // — cose has randomize:false, so it relaxes from wherever nodes currently sit, and with
+      // animate:true it tweens there instead of teleporting. That's what makes a slider nudge
+      // read as "the layout adjusting" rather than "the layout restarting from scratch," which is
+      // what a reset-then-instant-relayout was doing on every single input event.
+      // Debounced (not per-frame) so a fast drag collapses into one settle instead of firing a
+      // new animated layout every ~16ms and fighting the previous one mid-transition.
+      let recomputeTimer = null;
       function recomputeLayout() {
-        if (recomputeQueued) return;
-        recomputeQueued = true;
-        requestAnimationFrame(() => {
-          recomputeQueued = false;
-          Object.entries(initialPositions).forEach(([id, pos]) => {
-            const n = cy.getElementById(id);
-            if (n.nonempty()) n.position({ x: pos.x, y: pos.y });
-          });
-          cy.layout(coseOptions(false)).run();
-        });
+        clearTimeout(recomputeTimer);
+        recomputeTimer = setTimeout(() => {
+          cy.layout(coseOptions(true, 260, false)).run();
+        }, 90);
       }
 
       function wireForceSlider(sliderId, valId, format, onChange) {
