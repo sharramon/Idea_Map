@@ -512,6 +512,33 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
       return centers;
     }
 
+    // Replaces cose's nodeRepulsion entirely — this is our own code, so it's fully deterministic
+    // (no dependency on a CDN-loaded library's internal behavior, which we can't inspect or trust
+    // to be reload-stable). Plain pairwise inverse-square repulsion among entries.
+    const REPULSION_K = 400000;
+    function applyRepulsion(cy, step) {
+      const nodes = cy.nodes('[node_type = "entry"]').toArray();
+      const disp = nodes.map(() => ({ x: 0, y: 0 }));
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          const pa = nodes[i].position();
+          const pb = nodes[j].position();
+          let dx = pa.x - pb.x, dy = pa.y - pb.y;
+          let distSq = dx * dx + dy * dy;
+          if (distSq < 100) distSq = 100;
+          const dist = Math.sqrt(distSq);
+          const force = (REPULSION_K / distSq) * step;
+          const ux = dx / dist, uy = dy / dist;
+          disp[i].x += ux * force; disp[i].y += uy * force;
+          disp[j].x -= ux * force; disp[j].y -= uy * force;
+        }
+      }
+      nodes.forEach((n, i) => {
+        const p = n.position();
+        n.position({ x: p.x + disp[i].x, y: p.y + disp[i].y });
+      });
+    }
+
     function applyHierarchicalClustering(cy, embeddingAnchors, secondaryGroups, passes) {
       passes = passes || CLUSTER_PASSES;
 
@@ -520,6 +547,8 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
         const embeddingPull = CLUSTER_PULL.embedding * (0.35 + 0.65 * fade);
         const themePull = CLUSTER_PULL.theme * (0.35 + 0.65 * fade);
         const secondaryPull = CLUSTER_PULL.secondary * (0.35 + 0.65 * fade);
+
+        applyRepulsion(cy, 0.02);
 
         // Primary: gently reel entries back toward their embedding-PCA anchor, so the macro layout
         // (topic proximity) holds even as the lighter theme/tag pulls below nudge things around.
@@ -802,21 +831,10 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
           { selector: 'node.dimmed', style: { 'opacity': 0.08 } },
           { selector: 'edge.dimmed', style: { 'opacity': 0.06 } },
         ],
-        layout: {
-          name: 'cose',
-          animate: true,
-          animationDuration: 700,
-          fit: true,
-          padding: 200,
-          randomize: false,
-          nodeRepulsion: 350000,
-          nodeOverlap: 64,
-          idealEdgeLength: 420,
-          edgeElasticity: 0.22,
-          nestingFactor: 1,
-          gravity: 0.008,
-          numIter: 2000,
-        },
+        // preset — no algorithmic layout, no animation. Positions are computed by our own
+        // deterministic code below and set directly; nothing here depends on an external
+        // library's internal iteration/timing behavior, which is what made results vary by load.
+        layout: { name: 'preset' },
       });
 
       // Show labels only on recurring tags; singletons stay quiet until hover
@@ -859,14 +877,12 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
         });
       }
 
-      /** Snap a dragged node back to its layout anchor. */
+      /** Snap a dragged node back to its layout anchor — instantly, no animation. */
       function snapBack(node) {
         const anchor = anchoredPositions[node.id()];
         if (!anchor) return;
-        node.animation(
-          { position: { x: anchor.x, y: anchor.y } },
-          { duration: 400, easing: 'ease-out-cubic', complete: updateThemeLabels },
-        ).play();
+        node.position({ x: anchor.x, y: anchor.y });
+        updateThemeLabels();
       }
 
       // Seed anchors from preset positions until layout finishes
@@ -874,14 +890,16 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
         anchoredPositions[id] = { x: pos.x, y: pos.y };
       });
 
-      cy.on('layoutstop', () => {
-        applyHierarchicalClustering(cy, embeddingAnchors, secondaryThemeGroups);
-        enforceMinimumSeparation(cy, MIN_SHAPE_GAP);
-        placeSingletonTags(cy);
-        saveAnchors();
-        updateThemeLabels();
-        cy.fit(120);
-      });
+      // Direct, synchronous call — not an event handler. There's no "layout" running that could
+      // fire this at an unpredictable time relative to when we're ready for it; we compute the
+      // final positions ourselves, right here, once, and place everything immediately.
+      applyHierarchicalClustering(cy, embeddingAnchors, secondaryThemeGroups);
+      enforceMinimumSeparation(cy, MIN_SHAPE_GAP);
+      placeSingletonTags(cy);
+      saveAnchors();
+      updateThemeLabels();
+      cy.fit(120);
+
       cy.on('pan zoom resize', updateThemeLabels);
 
       cy.nodes().grabify();
