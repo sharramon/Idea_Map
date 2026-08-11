@@ -7,7 +7,7 @@ import { GraphData } from '../types';
 import type { EmbeddingsFile } from '../embeddings/types';
 
 /** Scale + center raw PCA coords so their spread matches the cytoscape canvas units the clustering constants below were tuned for. */
-function scaleToCanvas(coords: [number, number][], target = 1100): [number, number][] {
+function scaleToCanvas(coords: [number, number][], target = 500): [number, number][] {
   const xs = coords.map(c => c[0]);
   const ys = coords.map(c => c[1]);
   const minX = Math.min(...xs), maxX = Math.max(...xs);
@@ -360,7 +360,7 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
         escapeHtml(after);
     }
 
-    const MIN_SHAPE_GAP = 42;
+    const MIN_SHAPE_GAP = 28;
     /**
      * Three-tier pull, embedding still first but now deliberately loose: it sets the macro
      * neighborhood an entry starts in and keeps nudging it back toward that region, but it no
@@ -388,7 +388,7 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
      */
     function enforceMinimumSeparation(cy, minGap, maxPasses, connectedGap) {
       maxPasses = maxPasses || 100;
-      connectedGap = connectedGap === undefined ? 10 : connectedGap;
+      connectedGap = connectedGap === undefined ? 8 : connectedGap;
       const nodes = cy.nodes().toArray();
       for (let pass = 0; pass < maxPasses; pass++) {
         let moved = false;
@@ -535,6 +535,10 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
         entries.forEach(e => { cx += e.position('x'); cyPos += e.position('y'); });
         tag.position({ x: cx / entries.length, y: cyPos / entries.length });
       });
+
+      // Two tags with identical (or near-identical) entry sets can snap to the same point —
+      // separate those out immediately rather than waiting on the caller's own cleanup pass.
+      enforceMinimumSeparation(cy, MIN_SHAPE_GAP, 20);
     }
 
     /** Entries seed directly at their embedding-PCA position — that's the primary, first-tier layout. */
@@ -734,14 +738,14 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
           animate: true,
           animationDuration: 700,
           fit: true,
-          padding: 200,
+          padding: 90,
           randomize: false,
-          nodeRepulsion: 140000,
+          nodeRepulsion: 55000,
           nodeOverlap: 64,
-          idealEdgeLength: 230,
+          idealEdgeLength: 130,
           edgeElasticity: 0.22,
           nestingFactor: 1,
-          gravity: 0.02,
+          gravity: 0.05,
           numIter: 2000,
         },
       });
@@ -806,7 +810,7 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
         enforceMinimumSeparation(cy, MIN_SHAPE_GAP);
         saveAnchors();
         updateThemeLabels();
-        cy.fit(120);
+        cy.fit(50);
       });
       cy.on('pan zoom resize', updateThemeLabels);
 
@@ -960,7 +964,7 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
         updateThemeLabels();
       });
       document.getElementById('fit-btn').addEventListener('click', () => {
-        cy.fit(80);
+        cy.fit(50);
         updateThemeLabels();
       });
     }
