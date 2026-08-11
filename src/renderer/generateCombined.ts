@@ -371,7 +371,7 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
      * to track its centroid target closely, per the "tags at center of their topics" ask) but tag
      * position is derived from entries, so loosening entries automatically loosens tags too.
      */
-    const CLUSTER_PULL = { embedding: 0.18, theme: 0.075, secondary: 0.025, tag: 0.10 };
+    const CLUSTER_PULL = { embedding: 0.18, theme: 0.85, secondary: 0.025, tag: 0.10 };
     const CLUSTER_PASSES = 40;
 
     function nodeCollisionRadius(node) {
