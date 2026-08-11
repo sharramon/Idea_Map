@@ -362,16 +362,14 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
 
     const MIN_SHAPE_GAP = 28;
     /**
-     * Three-tier pull, embedding still first but now deliberately loose: it sets the macro
-     * neighborhood an entry starts in and keeps nudging it back toward that region, but it no
-     * longer holds so tightly that theme can't organize within it. Theme is now the tightening
-     * force — same-theme entries should visibly pull into a compact mini-cluster inside whatever
-     * embedding neighborhood they landed in, rather than just a loose sort. MIN_SHAPE_GAP is also
-     * cut back (130 -> 60) since a large blanket minimum gap was fighting same-theme entries'
-     * ability to sit close together, regardless of theme.
+     * Three-tier pull, embedding clearly dominant — it sets the macro neighborhood an entry
+     * lives in and holds that ground. Theme is a light, secondary nudge on top of that (not a
+     * competing force strong enough to reorganize the embedding layout into tight mini-clusters —
+     * that overcorrection made things compress and overlap). Just enough theme pull to visibly
+     * sort same-theme entries a little closer together within their embedding neighborhood.
      */
-    const CLUSTER_PULL = { embedding: 0.08, theme: 0.17, secondary: 0.05, tag: 0.10 };
-    const CLUSTER_PASSES = 48;
+    const CLUSTER_PULL = { embedding: 0.16, theme: 0.09, secondary: 0.035, tag: 0.10 };
+    const CLUSTER_PASSES = 42;
 
     function nodeCollisionRadius(node) {
       if (node.data('node_type') === 'entry') return 4;
