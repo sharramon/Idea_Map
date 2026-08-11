@@ -300,9 +300,9 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
     }
 
     function tagSize(count) {
-      if (count <= 1) return 6;
-      if (count <= 3) return 10;
-      return 13;
+      if (count <= 1) return 4;
+      if (count <= 3) return 6;
+      return 8;
     }
 
     function escapeHtml(s) {
@@ -375,8 +375,8 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
 
     function nodeCollisionRadius(node) {
       if (node.data('node_type') === 'entry') return 4;
-      const size = node.data('size') || 6;
-      return size / 2 + 3;
+      const size = node.data('size') || 4;
+      return size / 2 + 2;
     }
 
     /**
