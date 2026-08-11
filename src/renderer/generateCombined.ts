@@ -635,7 +635,12 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
         const linkedIds = GRAPH_DATA.edges.filter(e => e.target === tag.id).map(e => e.source);
         const linkedPos = linkedIds.map(id => positions[id]).filter(Boolean);
         if (!linkedPos.length) {
-          positions[tag.id] = { x: (Math.random() - 0.5) * 300, y: (Math.random() - 0.5) * 300 };
+          // Shouldn't normally happen (every tag node here comes from at least one entry), but
+          // deterministic rather than random so this edge case can't itself cause reload drift.
+          let hash = 0;
+          for (let k = 0; k < tag.id.length; k++) hash = (hash * 31 + tag.id.charCodeAt(k)) | 0;
+          const angle = (Math.abs(hash) % 3600) / 3600 * Math.PI * 2;
+          positions[tag.id] = { x: Math.cos(angle) * 150, y: Math.sin(angle) * 150 };
           return;
         }
         if (linkedPos.length === 1) {
@@ -802,10 +807,14 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
           { selector: 'node.dimmed', style: { 'opacity': 0.08 } },
           { selector: 'edge.dimmed', style: { 'opacity': 0.06 } },
         ],
+        // animate: false is deliberate — an animated cose layout ties its physics stepping to
+        // real elapsed frame time, which genuinely varies load to load (system load, browser
+        // throttling, background tabs...). That's a plausible source of "different every reload"
+        // independent of any randomness in our own code. Computing synchronously removes any
+        // dependency on wall-clock timing entirely.
         layout: {
           name: 'cose',
-          animate: true,
-          animationDuration: 700,
+          animate: false,
           fit: true,
           padding: 200,
           randomize: false,
