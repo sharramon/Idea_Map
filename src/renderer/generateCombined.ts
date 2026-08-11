@@ -360,19 +360,18 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
         escapeHtml(after);
     }
 
-    const MIN_SHAPE_GAP = 130;
+    const MIN_SHAPE_GAP = 60;
     /**
-     * Three-tier pull, embedding first: entries are seeded at (and continually re-pulled toward)
-     * their embedding-PCA position — that's the primary macro layout, and it's now the strongest
-     * pull so it holds its ground. Theme is a medium pull that sorts same-theme entries within
-     * wherever the embedding already placed them, kept deliberately loose so it nudges rather than
-     * compacts — theme pulls toward a centroid that itself moves closer every pass, so even a
-     * modest weight compounds over 56 passes if left too strong. Tag pull stays precise (it needs
-     * to track its centroid target closely, per the "tags at center of their topics" ask) but tag
-     * position is derived from entries, so loosening entries automatically loosens tags too.
+     * Three-tier pull, embedding still first but now deliberately loose: it sets the macro
+     * neighborhood an entry starts in and keeps nudging it back toward that region, but it no
+     * longer holds so tightly that theme can't organize within it. Theme is now the tightening
+     * force — same-theme entries should visibly pull into a compact mini-cluster inside whatever
+     * embedding neighborhood they landed in, rather than just a loose sort. MIN_SHAPE_GAP is also
+     * cut back (130 -> 60) since a large blanket minimum gap was fighting same-theme entries'
+     * ability to sit close together, regardless of theme.
      */
-    const CLUSTER_PULL = { embedding: 0.18, theme: 0.06, secondary: 0.025, tag: 0.10 };
-    const CLUSTER_PASSES = 40;
+    const CLUSTER_PULL = { embedding: 0.08, theme: 0.17, secondary: 0.05, tag: 0.10 };
+    const CLUSTER_PASSES = 48;
 
     function nodeCollisionRadius(node) {
       if (node.data('node_type') === 'entry') return 9;
