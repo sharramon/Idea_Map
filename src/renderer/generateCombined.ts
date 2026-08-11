@@ -366,7 +366,7 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
      * lives in and holds that ground. Theme is a light, secondary nudge on top of that.
      * These are the exact weights from before the "tighten theme" overcorrection.
      */
-    const CLUSTER_PULL = { embedding: 0.23, theme: 0.06, secondary: 0.025, tag: 0.10 };
+    const CLUSTER_PULL = { embedding: 0.23, theme: 0.06, secondary: 0.025, tag: 0.04 };
     const CLUSTER_PASSES = 40;
 
     function nodeCollisionRadius(node) {
@@ -500,8 +500,9 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
           });
         });
 
-        // Weakest: tags settle at the literal centroid of every entry they tag — the "center
-        // of mass" of their topics, not an orbit offset outside the cluster.
+        // Weakest, and deliberately light: tags only lean toward the centroid of every entry
+        // they tag, they don't lock onto it — a tag is a directional pointer toward its topics,
+        // not a marker that has to sit exactly on their center of mass.
         cy.nodes('[node_type = "tag"]').forEach(tag => {
           const entries = tag.neighborhood('node[node_type = "entry"]');
           if (entries.length === 0) return;
@@ -521,19 +522,10 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
         if (pass % 2 === 1) enforceMinimumSeparation(cy, MIN_SHAPE_GAP, 20);
       }
 
-      // Final exact snap: whatever lag the fading tagPull left behind, put every tag dead-center
-      // on its entries' current centroid — this is a hard requirement, not just a preference.
-      cy.nodes('[node_type = "tag"]').forEach(tag => {
-        const entries = tag.neighborhood('node[node_type = "entry"]');
-        if (entries.length === 0) return;
-        let cx = 0;
-        let cyPos = 0;
-        entries.forEach(e => { cx += e.position('x'); cyPos += e.position('y'); });
-        tag.position({ x: cx / entries.length, y: cyPos / entries.length });
-      });
-
-      // Two tags with identical (or near-identical) entry sets can snap to the same point —
-      // separate those out immediately rather than waiting on the caller's own cleanup pass.
+      // No hard snap-to-centroid here on purpose: tags are directional indicators, not exact
+      // markers. A weak, ongoing pull toward their entries' centroid (tagPull, above) lets a
+      // tag's final resting point lean toward its topics without fully overriding wherever it
+      // was seeded — the direction reads, but it's not forced dead-center.
       enforceMinimumSeparation(cy, MIN_SHAPE_GAP, 20);
     }
 
