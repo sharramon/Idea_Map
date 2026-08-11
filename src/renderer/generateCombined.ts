@@ -401,64 +401,23 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
         escapeHtml(after);
     }
 
-    const MIN_SHAPE_GAP = 130;
+    const MIN_SHAPE_GAP = 28; // soft floor added to repulsion when two unrelated shapes overlap
+    const TAG_ENTRY_GAP = 8;  // smaller floor for a tag against its own connected entries
     /**
-     * Three-tier pull, embedding first: entries are seeded at (and continually re-pulled toward)
-     * their embedding-PCA position — that's the primary macro layout, and it's now the strongest
-     * pull so it holds its ground. Theme is a medium pull that sorts same-theme entries within
-     * wherever the embedding already placed them, kept deliberately loose so it nudges rather than
-     * compacts — theme pulls toward a centroid that itself moves closer every pass, so even a
-     * modest weight compounds over many passes if left too strong. Tag pull stays precise (it needs
-     * to track its centroid target closely, per the "tags at center of their topics" ask) but tag
-     * position is derived from entries, so loosening entries automatically loosens tags too.
-     *
-     * These are just the starting values now — the Forces panel (top-right) exposes embedding
-     * ("Cluster"), theme, tag, and repulsion ("Repel") as live sliders, mutated in place below.
+     * Embedding is the primary pull (entries lean back toward their embedding-PCA position —
+     * the macro, topic-based layout). Theme and secondary are lighter pulls that sort same-theme
+     * entries closer together within wherever the embedding placed them. Tag pull draws a tag
+     * toward the centroid of the entries it tags. Repel is the general push-apart between every
+     * pair of shapes. All four are live — the Forces panel (top-right) exposes them as sliders
+     * that mutate these variables in place; simulationTick (below) reads them every frame.
      */
     const CLUSTER_PULL = { embedding: 0.18, theme: 0.08, secondary: 0.033, tag: 0.10 };
-    const CLUSTER_PASSES = 40;
     let REPEL = 350000;
 
     function nodeCollisionRadius(node) {
       if (node.data('node_type') === 'entry') return 9;
       const size = node.data('size') || 8;
       return size / 2 + 4;
-    }
-
-    /** Push overlapping nodes apart until every pair meets MIN_SHAPE_GAP between edges. */
-    function enforceMinimumSeparation(cy, minGap, maxPasses) {
-      maxPasses = maxPasses || 100;
-      const nodes = cy.nodes().toArray();
-      for (let pass = 0; pass < maxPasses; pass++) {
-        let moved = false;
-        for (let i = 0; i < nodes.length; i++) {
-          for (let j = i + 1; j < nodes.length; j++) {
-            const a = nodes[i];
-            const b = nodes[j];
-            const pa = a.position();
-            const pb = b.position();
-            let dx = pb.x - pa.x;
-            let dy = pb.y - pa.y;
-            let dist = Math.hypot(dx, dy);
-            const minDist = nodeCollisionRadius(a) + nodeCollisionRadius(b) + minGap;
-            if (dist < 1e-4) {
-              const angle = Math.random() * Math.PI * 2;
-              dx = Math.cos(angle);
-              dy = Math.sin(angle);
-              dist = 1;
-            }
-            if (dist < minDist) {
-              const push = (minDist - dist) / 2;
-              const ux = dx / dist;
-              const uy = dy / dist;
-              a.position({ x: pa.x - ux * push, y: pa.y - uy * push });
-              b.position({ x: pb.x + ux * push, y: pb.y + uy * push });
-              moved = true;
-            }
-          }
-        }
-        if (!moved) break;
-      }
     }
 
     function buildSecondaryThemeGroups() {
@@ -471,95 +430,11 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
       return groups;
     }
 
-    /** Tiered clustering after force layout: theme regions, then secondary affinities, then tag orbit. */
-    /** Theme centroids recomputed from wherever entries currently sit — there's no fixed circle anymore, embedding position is the anchor. */
-    function dynamicThemeCenters(cy) {
-      const sums = {};
-      cy.nodes('[node_type = "entry"]').forEach(node => {
-        const th = node.data('theme');
-        const p = node.position();
-        if (!sums[th]) sums[th] = { x: 0, y: 0, n: 0 };
-        sums[th].x += p.x;
-        sums[th].y += p.y;
-        sums[th].n += 1;
-      });
-      const centers = {};
-      Object.entries(sums).forEach(([th, s]) => { centers[th] = { x: s.x / s.n, y: s.y / s.n }; });
-      return centers;
-    }
-
-    function applyHierarchicalClustering(cy, embeddingAnchors, secondaryGroups, passes) {
-      passes = passes || CLUSTER_PASSES;
-
-      for (let pass = 0; pass < passes; pass++) {
-        const fade = 1 - pass / passes;
-        const embeddingPull = CLUSTER_PULL.embedding * (0.35 + 0.65 * fade);
-        const themePull = CLUSTER_PULL.theme * (0.35 + 0.65 * fade);
-        const secondaryPull = CLUSTER_PULL.secondary * (0.35 + 0.65 * fade);
-        const tagPull = CLUSTER_PULL.tag * (0.35 + 0.65 * fade);
-
-        // Primary: gently reel entries back toward their embedding-PCA anchor, so the macro layout
-        // (topic proximity) holds even as the lighter theme/tag pulls below nudge things around.
-        cy.nodes('[node_type = "entry"]').forEach(node => {
-          const anchor = embeddingAnchors[node.id()];
-          if (!anchor) return;
-          const p = node.position();
-          node.position({
-            x: p.x + (anchor.x - p.x) * embeddingPull,
-            y: p.y + (anchor.y - p.y) * embeddingPull,
-          });
-        });
-
-        // Medium: sort/tighten entries toward their primary theme's centroid, computed fresh from
-        // current (embedding-anchored) positions — this clusters within topic-space, not instead of it.
-        const themeCenters = dynamicThemeCenters(cy);
-        cy.nodes('[node_type = "entry"]').forEach(node => {
-          const center = themeCenters[node.data('theme')];
-          if (!center) return;
-          const p = node.position();
-          node.position({
-            x: p.x + (center.x - p.x) * themePull,
-            y: p.y + (center.y - p.y) * themePull,
-          });
-        });
-
-        // Weaker still: entries sharing a secondary theme drift toward that sub-group centroid
-        Object.values(secondaryGroups).forEach(ids => {
-          if (ids.length < 2) return;
-          const nodes = ids.map(id => cy.getElementById(id)).filter(n => n.nonempty());
-          if (nodes.length < 2) return;
-          const cx = nodes.reduce((s, n) => s + n.position('x'), 0) / nodes.length;
-          const cyPos = nodes.reduce((s, n) => s + n.position('y'), 0) / nodes.length;
-          nodes.forEach(node => {
-            const p = node.position();
-            node.position({
-              x: p.x + (cx - p.x) * secondaryPull,
-              y: p.y + (cyPos - p.y) * secondaryPull,
-            });
-          });
-        });
-
-        // Weakest: tags settle at the literal centroid of every entry they tag — the "center
-        // of mass" of their topics, not an orbit offset outside the cluster.
-        cy.nodes('[node_type = "tag"]').forEach(tag => {
-          const entries = tag.neighborhood('node[node_type = "entry"]');
-          if (entries.length === 0) return;
-          let cx = 0;
-          let cyPos = 0;
-          entries.forEach(e => { cx += e.position('x'); cyPos += e.position('y'); });
-          cx /= entries.length;
-          cyPos /= entries.length;
-
-          const p = tag.position();
-          tag.position({
-            x: p.x + (cx - p.x) * tagPull,
-            y: p.y + (cyPos - p.y) * tagPull,
-          });
-        });
-
-        if (pass % 2 === 1) enforceMinimumSeparation(cy, MIN_SHAPE_GAP, 20);
-      }
-    }
+    // The discrete "recompute everything from scratch" solver (cose + N hierarchical passes) is
+    // gone — that's what was making slider drags reshuffle into an unrelated configuration
+    // instead of drifting. Replaced by a continuous per-frame force simulation defined further
+    // down (simulationTick), which reads REPEL / CLUSTER_PULL live every frame and only ever
+    // takes small, clamped steps — see the comment above simulationTick for the full rationale.
 
     /** Entries seed directly at their embedding-PCA position — that's the primary, first-tier layout. */
     function seedPositions() {
@@ -617,7 +492,6 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
       const secondaryThemeGroups = buildSecondaryThemeGroups();
       const initialPositions = seedPositions();
       const embeddingAnchors = initialPositions;
-      const anchoredPositions = {};
 
       const elements = [];
 
@@ -650,31 +524,6 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
       GRAPH_DATA.edges.forEach(e => {
         elements.push({ group: 'edges', data: { id: e.id, source: e.source, target: e.target } });
       });
-
-      /**
-       * cose layout options, reading the live REPEL value so the Repel slider can re-trigger this.
-       * randomize is always false, so cose relaxes from whatever positions are currently on
-       * screen rather than restarting from scratch — that's what makes slider drags read as a
-       * continuous adjustment instead of the layout jumping to an unrelated new arrangement.
-       */
-      function coseOptions(animate, duration, fit) {
-        return {
-          name: 'cose',
-          animate: !!animate,
-          animationDuration: duration || 700,
-          animationEasing: 'ease-out',
-          fit: fit === undefined ? true : fit,
-          padding: 200,
-          randomize: false,
-          nodeRepulsion: REPEL,
-          nodeOverlap: 64,
-          idealEdgeLength: 420,
-          edgeElasticity: 0.22,
-          nestingFactor: 1,
-          gravity: 0.008,
-          numIter: 2000,
-        };
-      }
 
       const cy = cytoscape({
         container: document.getElementById('cy'),
@@ -778,7 +627,7 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
           { selector: 'node.dimmed', style: { 'opacity': 0.08 } },
           { selector: 'edge.dimmed', style: { 'opacity': 0.06 } },
         ],
-        layout: coseOptions(true),
+        layout: { name: 'preset' },
       });
 
       // Show labels only on recurring tags; singletons stay quiet until hover
@@ -815,49 +664,134 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
         });
       }
 
-      function saveAnchors() {
-        cy.nodes().forEach(n => {
-          anchoredPositions[n.id()] = { x: n.position('x'), y: n.position('y') };
-        });
-      }
-
-      /** Snap a dragged node back to its layout anchor. */
-      function snapBack(node) {
-        const anchor = anchoredPositions[node.id()];
-        if (!anchor) return;
-        node.animation(
-          { position: { x: anchor.x, y: anchor.y } },
-          { duration: 400, easing: 'ease-out-cubic', complete: updateThemeLabels },
-        ).play();
-      }
-
-      // Seed anchors from preset positions until layout finishes
-      Object.entries(initialPositions).forEach(([id, pos]) => {
-        anchoredPositions[id] = { x: pos.x, y: pos.y };
-      });
-
-      // Only auto-fit (re-zoom/pan the camera) on the very first layout — re-fitting on every
-      // slider-triggered recompute was its own source of jarring motion, on top of the nodes
-      // moving. After that, the camera stays put; use the Fit button if things drift off-screen.
-      let didInitialFit = false;
-      cy.on('layoutstop', () => {
-        applyHierarchicalClustering(cy, embeddingAnchors, secondaryThemeGroups);
-        enforceMinimumSeparation(cy, MIN_SHAPE_GAP);
-        saveAnchors();
-        updateThemeLabels();
-        if (!didInitialFit) {
-          didInitialFit = true;
-          cy.fit(120);
-        }
-      });
       cy.on('pan zoom resize', updateThemeLabels);
 
-      cy.nodes().grabify();
+      /**
+       * Continuous force simulation — replaces the old cose-layout-plus-40-discrete-passes
+       * approach entirely. That approach re-solved from scratch on every slider change, which is
+       * why nudging a slider could make the whole map reshuffle into an unrelated configuration:
+       * two independent solves rarely land in the same place even for a small parameter change.
+       *
+       * Here, every node's position updates by a small step EVERY FRAME, forever, based on the
+       * CURRENT values of REPEL / CLUSTER_PULL — there's no separate "solve" step and no reset.
+       * Moving a slider just changes the forces the next frame reads, so the layout drifts
+       * smoothly toward the new equilibrium instead of jumping to a freshly-computed one.
+       */
+      const allNodesArr = cy.nodes().toArray();
+      const entryNodesArr = allNodesArr.filter(n => n.data('node_type') === 'entry');
+      const tagNodesArr = allNodesArr.filter(n => n.data('node_type') === 'tag');
+      const MAX_STEP = 6; // px a node may move in a single tick — the actual smoothness guarantee
 
-      // Cytoscape fires "free" when a grabbed node is released
-      cy.on('free', 'node', evt => {
-        snapBack(evt.target);
-      });
+      function simulationTick() {
+        const pos = {};
+        allNodesArr.forEach(n => { pos[n.id()] = n.position(); });
+        const disp = {};
+        allNodesArr.forEach(n => { disp[n.id()] = { x: 0, y: 0 }; });
+
+        // General repulsion between every pair, plus a soft floor so shapes never fully overlap
+        // (a tag gets a smaller floor against entries it's actually connected to, since it's
+        // meant to sit close to — at — their centroid).
+        for (let i = 0; i < allNodesArr.length; i++) {
+          for (let j = i + 1; j < allNodesArr.length; j++) {
+            const a = allNodesArr[i], b = allNodesArr[j];
+            const pa = pos[a.id()], pb = pos[b.id()];
+            let dx = pa.x - pb.x, dy = pa.y - pb.y;
+            let distSq = dx * dx + dy * dy;
+            if (distSq < 4) distSq = 4;
+            const dist = Math.sqrt(distSq);
+            let force = (REPEL * 0.00003) / distSq;
+
+            const isConnectedTagEntry =
+              (a.data('node_type') === 'tag') !== (b.data('node_type') === 'tag') &&
+              a.edgesWith(b).nonempty();
+            const gap = isConnectedTagEntry ? TAG_ENTRY_GAP : MIN_SHAPE_GAP;
+            const minDist = nodeCollisionRadius(a) + nodeCollisionRadius(b) + gap;
+            if (dist < minDist) force += (minDist - dist) * 0.4;
+
+            const ux = dx / dist, uy = dy / dist;
+            disp[a.id()].x += ux * force; disp[a.id()].y += uy * force;
+            disp[b.id()].x -= ux * force; disp[b.id()].y -= uy * force;
+          }
+        }
+
+        // Embedding anchor pull (entries only) — the macro/topic layout
+        entryNodesArr.forEach(n => {
+          const anchor = embeddingAnchors[n.id()];
+          if (!anchor) return;
+          const p = pos[n.id()];
+          disp[n.id()].x += (anchor.x - p.x) * CLUSTER_PULL.embedding * 0.02;
+          disp[n.id()].y += (anchor.y - p.y) * CLUSTER_PULL.embedding * 0.02;
+        });
+
+        // Theme centroid pull, recomputed fresh from current positions every tick
+        const themeSums = {};
+        entryNodesArr.forEach(n => {
+          const th = n.data('theme');
+          const p = pos[n.id()];
+          if (!themeSums[th]) themeSums[th] = { x: 0, y: 0, n: 0 };
+          themeSums[th].x += p.x; themeSums[th].y += p.y; themeSums[th].n += 1;
+        });
+        const themeCenters = {};
+        Object.entries(themeSums).forEach(([th, s]) => { themeCenters[th] = { x: s.x / s.n, y: s.y / s.n }; });
+        entryNodesArr.forEach(n => {
+          const c = themeCenters[n.data('theme')];
+          if (!c) return;
+          const p = pos[n.id()];
+          disp[n.id()].x += (c.x - p.x) * CLUSTER_PULL.theme * 0.02;
+          disp[n.id()].y += (c.y - p.y) * CLUSTER_PULL.theme * 0.02;
+        });
+
+        // Secondary theme group pull
+        Object.values(secondaryThemeGroups).forEach(ids => {
+          if (ids.length < 2) return;
+          let cx = 0, cySum = 0, cnt = 0;
+          ids.forEach(id => { const p = pos[id]; if (p) { cx += p.x; cySum += p.y; cnt++; } });
+          if (cnt < 2) return;
+          cx /= cnt; cySum /= cnt;
+          ids.forEach(id => {
+            const p = pos[id]; if (!p) return;
+            disp[id].x += (cx - p.x) * CLUSTER_PULL.secondary * 0.02;
+            disp[id].y += (cySum - p.y) * CLUSTER_PULL.secondary * 0.02;
+          });
+        });
+
+        // Tag pull toward the centroid of the entries it tags
+        tagNodesArr.forEach(tag => {
+          const entries = tag.neighborhood('node[node_type = "entry"]');
+          if (entries.length === 0) return;
+          let cx = 0, cySum = 0;
+          entries.forEach(e => { const p = pos[e.id()]; cx += p.x; cySum += p.y; });
+          cx /= entries.length; cySum /= entries.length;
+          const p = pos[tag.id()];
+          disp[tag.id()].x += (cx - p.x) * CLUSTER_PULL.tag * 0.02;
+          disp[tag.id()].y += (cySum - p.y) * CLUSTER_PULL.tag * 0.02;
+        });
+
+        cy.batch(() => {
+          allNodesArr.forEach(n => {
+            if (n.grabbed()) return; // don't fight an active drag
+            const d = disp[n.id()];
+            const mag = Math.hypot(d.x, d.y);
+            const scale = mag > MAX_STEP ? MAX_STEP / mag : 1;
+            const p = pos[n.id()];
+            n.position({ x: p.x + d.x * scale, y: p.y + d.y * scale });
+          });
+        });
+
+        updateThemeLabels();
+      }
+
+      // Warm up synchronously so the map opens already settled rather than visibly crawling
+      // into place over hundreds of frames (MAX_STEP deliberately keeps each frame small).
+      for (let i = 0; i < 300; i++) simulationTick();
+      cy.fit(120);
+
+      (function loop() {
+        simulationTick();
+        requestAnimationFrame(loop);
+      })();
+
+      cy.nodes().grabify();
 
       const panel = document.getElementById('info-panel');
       const infoTitle = document.getElementById('info-title');
@@ -1006,22 +940,9 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
         updateThemeLabels();
       });
 
-      // Forces panel: every slider mutates a live variable that applyHierarchicalClustering /
-      // coseOptions already read each run. Deliberately NOT resetting to the embedding seed here
-      // — cose has randomize:false, so it relaxes from wherever nodes currently sit, and with
-      // animate:true it tweens there instead of teleporting. That's what makes a slider nudge
-      // read as "the layout adjusting" rather than "the layout restarting from scratch," which is
-      // what a reset-then-instant-relayout was doing on every single input event.
-      // Debounced (not per-frame) so a fast drag collapses into one settle instead of firing a
-      // new animated layout every ~16ms and fighting the previous one mid-transition.
-      let recomputeTimer = null;
-      function recomputeLayout() {
-        clearTimeout(recomputeTimer);
-        recomputeTimer = setTimeout(() => {
-          cy.layout(coseOptions(true, 260, false)).run();
-        }, 90);
-      }
-
+      // Forces panel: every slider just mutates a live variable — REPEL or a CLUSTER_PULL field
+      // — that simulationTick already reads fresh every single frame. No recompute call needed:
+      // the always-running loop picks up the new value on its very next tick.
       function wireForceSlider(sliderId, valId, format, onChange) {
         const slider = document.getElementById(sliderId);
         const valEl = document.getElementById(valId);
@@ -1030,7 +951,6 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
         slider.addEventListener('input', () => {
           onChange(parseFloat(slider.value));
           update();
-          recomputeLayout();
         });
       }
 
