@@ -360,10 +360,11 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
         escapeHtml(after);
     }
 
-    // A small floor, not a spacing force: enforceMinimumSeparation only exists to guarantee
-    // nothing visually overlaps. It used to double as a general "keep things apart" force
-    // (MIN_SHAPE_GAP = 130) — that's gone; this is just enough buffer to keep edges from touching.
-    const MIN_SHAPE_GAP = 4;
+    // This discrete-pass system has no continuous repulsion — cose only runs once, up front.
+    // MIN_SHAPE_GAP is what keeps everything spread apart on every pass after that, so it needs
+    // to stay a real spacing value, not just an anti-overlap floor.
+    const MIN_SHAPE_GAP = 130;
+    const TAG_ENTRY_GAP = 10; // narrow exception: a *singleton* tag against its one entry only
     const ENTRY_DIAMETER = 12; // matches the entry node's rendered width/height below
     /**
      * Three-tier pull, embedding first: entries are seeded at (and continually re-pulled toward)
@@ -408,7 +409,13 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
       return r;
     }
 
-    /** Push overlapping nodes apart until every pair meets MIN_SHAPE_GAP between edges. */
+    /**
+     * Push overlapping nodes apart until every pair meets a minimum gap. Everyone keeps the full
+     * MIN_SHAPE_GAP spacing except one narrow exception: a *singleton* tag (exactly one connected
+     * entry) against that specific entry gets TAG_ENTRY_GAP instead — that's the "close to its one
+     * dot" rule. A tag with 2+ entries gets no exception; it keeps full spacing from all of them,
+     * same as everything else.
+     */
     function enforceMinimumSeparation(cy, minGap, maxPasses) {
       maxPasses = maxPasses || 100;
       const nodes = cy.nodes().toArray();
@@ -418,12 +425,18 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
           for (let j = i + 1; j < nodes.length; j++) {
             const a = nodes[i];
             const b = nodes[j];
+            const aIsTag = a.data('node_type') === 'tag';
+            const bIsTag = b.data('node_type') === 'tag';
+            const singletonTag = aIsTag ? (a.data('connectionCount') === 1 ? a : null)
+                                : bIsTag ? (b.data('connectionCount') === 1 ? b : null) : null;
+            const isSingletonPair = aIsTag !== bIsTag && singletonTag && singletonTag.edgesWith(aIsTag ? b : a).nonempty();
+            const gap = isSingletonPair ? TAG_ENTRY_GAP : minGap;
             const pa = a.position();
             const pb = b.position();
             let dx = pb.x - pa.x;
             let dy = pb.y - pa.y;
             let dist = Math.hypot(dx, dy);
-            const minDist = nodeCollisionRadius(a) + nodeCollisionRadius(b) + minGap;
+            const minDist = nodeCollisionRadius(a) + nodeCollisionRadius(b) + gap;
             if (dist < 1e-4) {
               const angle = Math.random() * Math.PI * 2;
               dx = Math.cos(angle);
@@ -759,29 +772,22 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
           { selector: 'node.dimmed', style: { 'opacity': 0.08 } },
           { selector: 'edge.dimmed', style: { 'opacity': 0.06 } },
         ],
-        layout: { name: 'preset' },
+        layout: {
+          name: 'cose',
+          animate: true,
+          animationDuration: 700,
+          fit: true,
+          padding: 200,
+          randomize: false,
+          nodeRepulsion: 350000,
+          nodeOverlap: 64,
+          idealEdgeLength: 420,
+          edgeElasticity: 0.22,
+          nestingFactor: 1,
+          gravity: 0.008,
+          numIter: 2000,
+        },
       });
-
-      // cose's repulsion is scoped to entry nodes only — tags never participate in it, so they
-      // have no repelling force of their own at all. There are no entry-entry edges in this graph
-      // (every edge is entry->tag), so this reduces to pure nodeRepulsion + gravity among entries;
-      // tags stay exactly where seedPositions put them until the discrete pull passes (which only
-      // ever pull a tag toward a target, never push it away from anything) take over.
-      cy.nodes('[node_type = "entry"]').layout({
-        name: 'cose',
-        animate: true,
-        animationDuration: 700,
-        fit: true,
-        padding: 200,
-        randomize: false,
-        nodeRepulsion: 350000,
-        nodeOverlap: 64,
-        idealEdgeLength: 420,
-        edgeElasticity: 0.22,
-        nestingFactor: 1,
-        gravity: 0.008,
-        numIter: 2000,
-      }).run();
 
       // Show labels only on recurring tags; singletons stay quiet until hover
       cy.nodes('[node_type = "tag"][tagTier != "singleton"]').addClass('show-label');
