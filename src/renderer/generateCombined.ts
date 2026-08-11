@@ -693,7 +693,20 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
       const REPEL_SCALE = 0.00004;
       const MAX_VEL = 16; // safety clamp only — inertia + damping do the actual smoothing
 
+      // Cooling "temperature," same idea as d3-force's alpha: without this, forces that never
+      // reach exact zero (theme/tag pull targets are recomputed from moving positions every
+      // tick, so they're chasing a slightly-moving target) keep nudging velocity forever, however
+      // tiny — the sim never truly rests. alpha decays toward ALPHA_MIN every tick and scales
+      // every force; once below ALPHA_MIN the tick is a no-op and everything is genuinely still.
+      // reheat() resets it to 1 so a slider move or a drag-release makes the sim respond at full
+      // strength again immediately, then cool back down.
+      let alpha = 1;
+      const ALPHA_DECAY = 0.02;
+      const ALPHA_MIN = 0.001;
+      function reheat() { alpha = 1; }
+
       function simulationTick() {
+        if (alpha < ALPHA_MIN) return; // fully settled — nothing left to do until reheated
         const pos = {};
         allNodesArr.forEach(n => { pos[n.id()] = n.position(); });
         const disp = {};
@@ -784,14 +797,15 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
             if (n.grabbed()) { vel[id].x = 0; vel[id].y = 0; return; } // don't fight an active drag
             const v = vel[id];
             const f = disp[id];
-            v.x = (v.x + f.x) * DAMPING;
-            v.y = (v.y + f.y) * DAMPING;
+            v.x = (v.x + f.x * alpha) * DAMPING;
+            v.y = (v.y + f.y * alpha) * DAMPING;
             const mag = Math.hypot(v.x, v.y);
             if (mag > MAX_VEL) { const s = MAX_VEL / mag; v.x *= s; v.y *= s; }
             const p = pos[id];
             n.position({ x: p.x + v.x, y: p.y + v.y });
           });
         });
+        alpha *= (1 - ALPHA_DECAY);
 
         updateThemeLabels();
       }
@@ -807,6 +821,10 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
       })();
 
       cy.nodes().grabify();
+
+      // A manual drag disturbs the layout — reheat so the rest of the sim actually responds and
+      // resettles around the moved node, instead of staying frozen if alpha had already cooled.
+      cy.on('free', 'node', reheat);
 
       const panel = document.getElementById('info-panel');
       const infoTitle = document.getElementById('info-title');
@@ -957,7 +975,8 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
 
       // Forces panel: every slider just mutates a live variable — REPEL or a CLUSTER_PULL field
       // — that simulationTick already reads fresh every single frame. No recompute call needed:
-      // the always-running loop picks up the new value on its very next tick.
+      // the always-running loop picks up the new value on its very next tick. reheat() wakes the
+      // sim back up in case it had already cooled to a stop before this slider moved.
       function wireForceSlider(sliderId, valId, format, onChange) {
         const slider = document.getElementById(sliderId);
         const valEl = document.getElementById(valId);
@@ -966,6 +985,7 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
         slider.addEventListener('input', () => {
           onChange(parseFloat(slider.value));
           update();
+          reheat();
         });
       }
 
