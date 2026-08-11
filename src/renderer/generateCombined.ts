@@ -7,7 +7,7 @@ import { GraphData } from '../types';
 import type { EmbeddingsFile } from '../embeddings/types';
 
 /** Scale + center raw PCA coords so their spread matches the cytoscape canvas units the clustering constants below were tuned for. */
-function scaleToCanvas(coords: [number, number][], target = 2200): [number, number][] {
+function scaleToCanvas(coords: [number, number][], target = 1100): [number, number][] {
   const xs = coords.map(c => c[0]);
   const ys = coords.map(c => c[1]);
   const minX = Math.min(...xs), maxX = Math.max(...xs);
@@ -55,11 +55,11 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
     }
     .theme-label {
       position: absolute; transform: translate(-50%, -100%);
-      font-size: 11px; font-weight: 600; letter-spacing: 0.03em;
-      text-align: center; max-width: 180px; line-height: 1.3;
+      font-size: 9px; font-weight: 600; letter-spacing: 0.03em;
+      text-align: center; max-width: 150px; line-height: 1.3;
       opacity: 0.55; white-space: normal;
       text-shadow: 0 0 20px rgba(10, 14, 20, 0.98), 0 1px 3px rgba(0,0,0,0.9);
-      margin-top: -36px;
+      margin-top: -26px;
     }
 
     #controls {
@@ -300,9 +300,9 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
     }
 
     function tagSize(count) {
-      if (count <= 1) return 8;
-      if (count <= 3) return 14;
-      return 18;
+      if (count <= 1) return 6;
+      if (count <= 3) return 10;
+      return 13;
     }
 
     function escapeHtml(s) {
@@ -360,7 +360,7 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
         escapeHtml(after);
     }
 
-    const MIN_SHAPE_GAP = 60;
+    const MIN_SHAPE_GAP = 42;
     /**
      * Three-tier pull, embedding still first but now deliberately loose: it sets the macro
      * neighborhood an entry starts in and keeps nudging it back toward that region, but it no
@@ -374,19 +374,21 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
     const CLUSTER_PASSES = 48;
 
     function nodeCollisionRadius(node) {
-      if (node.data('node_type') === 'entry') return 9;
-      const size = node.data('size') || 8;
-      return size / 2 + 4;
+      if (node.data('node_type') === 'entry') return 7;
+      const size = node.data('size') || 6;
+      return size / 2 + 3;
     }
 
     /**
-     * Push overlapping nodes apart until every pair meets MIN_SHAPE_GAP between edges.
-     * Exempts a tag from its own connected entries — a tag is supposed to sit at the literal
-     * centroid of the entries it tags, which means it's expected to be closer to them than
-     * MIN_SHAPE_GAP allows for unrelated pairs. Only unrelated pairs get pushed apart.
+     * Push overlapping nodes apart until every pair keeps at least a minimum gap between edges.
+     * A tag and an entry it's connected to get a much smaller gap (CONNECTED_GAP) instead of the
+     * full MIN_SHAPE_GAP — a tag is supposed to sit at the literal centroid of the entries it
+     * tags, so it will legitimately be close to them, but "close" still isn't "on top of," so a
+     * small floor is enforced even here to guarantee no two shapes ever fully overlap.
      */
-    function enforceMinimumSeparation(cy, minGap, maxPasses) {
+    function enforceMinimumSeparation(cy, minGap, maxPasses, connectedGap) {
       maxPasses = maxPasses || 100;
+      connectedGap = connectedGap === undefined ? 10 : connectedGap;
       const nodes = cy.nodes().toArray();
       for (let pass = 0; pass < maxPasses; pass++) {
         let moved = false;
@@ -396,13 +398,14 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
             const b = nodes[j];
             const aIsTag = a.data('node_type') === 'tag';
             const bIsTag = b.data('node_type') === 'tag';
-            if (aIsTag !== bIsTag && a.edgesWith(b).nonempty()) continue;
+            const isConnectedTagEntry = aIsTag !== bIsTag && a.edgesWith(b).nonempty();
+            const gap = isConnectedTagEntry ? connectedGap : minGap;
             const pa = a.position();
             const pb = b.position();
             let dx = pb.x - pa.x;
             let dy = pb.y - pa.y;
             let dist = Math.hypot(dx, dy);
-            const minDist = nodeCollisionRadius(a) + nodeCollisionRadius(b) + minGap;
+            const minDist = nodeCollisionRadius(a) + nodeCollisionRadius(b) + gap;
             if (dist < 1e-4) {
               const angle = Math.random() * Math.PI * 2;
               dx = Math.cos(angle);
@@ -634,8 +637,8 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
             selector: 'node[node_type = "entry"]',
             style: {
               'background-color': 'data(color)',
-              'width': 12,
-              'height': 12,
+              'width': 9,
+              'height': 9,
               'shape': 'ellipse',
               'label': '',
               'border-width': 1.5,
@@ -650,8 +653,8 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
               'border-width': 2.5,
               'border-opacity': 1,
               'border-color': '#ffffff',
-              'width': 14,
-              'height': 14,
+              'width': 11,
+              'height': 11,
             }
           },
           {
@@ -733,12 +736,12 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
           fit: true,
           padding: 200,
           randomize: false,
-          nodeRepulsion: 350000,
+          nodeRepulsion: 140000,
           nodeOverlap: 64,
-          idealEdgeLength: 420,
+          idealEdgeLength: 230,
           edgeElasticity: 0.22,
           nestingFactor: 1,
-          gravity: 0.008,
+          gravity: 0.02,
           numIter: 2000,
         },
       });
