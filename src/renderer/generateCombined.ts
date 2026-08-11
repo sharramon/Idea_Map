@@ -680,14 +680,20 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
       const allNodesArr = cy.nodes().toArray();
       const entryNodesArr = allNodesArr.filter(n => n.data('node_type') === 'entry');
       const tagNodesArr = allNodesArr.filter(n => n.data('node_type') === 'tag');
-      const MAX_STEP = 10;    // px a node may move in a single live-loop tick — the smoothness guarantee
-      const PULL_STEP = 0.045; // how much of each pull force is applied per tick — raise to converge faster
-      const REPEL_SCALE = 0.00005;
 
-      // stepLimit overrides MAX_STEP for this call only — used to let the warm-up burst (nobody's
-      // watching those frames) take much bigger steps than the live, on-screen loop should.
-      function simulationTick(stepLimit) {
-        if (stepLimit === undefined) stepLimit = MAX_STEP;
+      // Real velocity, not a per-tick "nudge toward target": each node has momentum that
+      // accumulates from the current force and decays by DAMPING every tick. This is what makes
+      // it read as an object being pushed/pulled (it eases in, coasts, eases out) rather than
+      // "jumping" — a plain position += clamped-force approach has no inertia, so at any force
+      // strong enough to converge quickly it looks like a snap instead of a push.
+      const vel = {};
+      allNodesArr.forEach(n => { vel[n.id()] = { x: 0, y: 0 }; });
+      const DAMPING = 0.86;
+      const PULL_STEP = 0.03;
+      const REPEL_SCALE = 0.00004;
+      const MAX_VEL = 16; // safety clamp only — inertia + damping do the actual smoothing
+
+      function simulationTick() {
         const pos = {};
         allNodesArr.forEach(n => { pos[n.id()] = n.position(); });
         const disp = {};
@@ -774,22 +780,25 @@ function buildHtml(data: GraphData, embeddingPositions: Record<string, [number, 
 
         cy.batch(() => {
           allNodesArr.forEach(n => {
-            if (n.grabbed()) return; // don't fight an active drag
-            const d = disp[n.id()];
-            const mag = Math.hypot(d.x, d.y);
-            const scale = mag > stepLimit ? stepLimit / mag : 1;
-            const p = pos[n.id()];
-            n.position({ x: p.x + d.x * scale, y: p.y + d.y * scale });
+            const id = n.id();
+            if (n.grabbed()) { vel[id].x = 0; vel[id].y = 0; return; } // don't fight an active drag
+            const v = vel[id];
+            const f = disp[id];
+            v.x = (v.x + f.x) * DAMPING;
+            v.y = (v.y + f.y) * DAMPING;
+            const mag = Math.hypot(v.x, v.y);
+            if (mag > MAX_VEL) { const s = MAX_VEL / mag; v.x *= s; v.y *= s; }
+            const p = pos[id];
+            n.position({ x: p.x + v.x, y: p.y + v.y });
           });
         });
 
         updateThemeLabels();
       }
 
-      // Warm up with a much larger step limit than the live loop uses — nobody sees these
-      // frames, so there's no smoothness requirement here, only "converge fast." Far fewer
-      // iterations are needed at this step size than the live loop's small, gentle ones.
-      for (let i = 0; i < 120; i++) simulationTick(200);
+      // Warm up synchronously (nobody sees these frames) so the map opens already settled
+      // instead of visibly easing into place over the first second or two on screen.
+      for (let i = 0; i < 500; i++) simulationTick();
       cy.fit(120);
 
       (function loop() {
