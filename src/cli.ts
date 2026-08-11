@@ -223,6 +223,24 @@ program
     }
   });
 
+// ─── combined-viz ────────────────────────────────────────────────────────────
+program
+  .command('combined-viz')
+  .description('Test map: embedding position (primary) + theme sorting (medium) + tag orbit (light)')
+  .option('--theme <themeId>', 'Filter to a specific theme id')
+  .option('--no-open', 'Generate HTML without opening the browser')
+  .action(opts => {
+    try {
+      const { generateCombinedGraph } = require('./renderer/generateCombined');
+      const outPath = generateCombinedGraph(opts.theme);
+      console.log(`Combined map written to: ${outPath}`);
+      if (opts.open !== false) openInBrowser(outPath);
+    } catch (err) {
+      console.error('combined-viz failed:', err instanceof Error ? err.message : err);
+      process.exit(1);
+    }
+  });
+
 // ─── embed-backfill ──────────────────────────────────────────────────────────
 program
   .command('embed-backfill')
